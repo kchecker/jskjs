@@ -1,0 +1,8 @@
+# API fragments are for demos, not search results
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex"
+</IfModule>
+Options -Indexes
+<Files "_lib.php">
+  Require all denied
+</Files>

@@ -1,0 +1,42 @@
+{
+  "name": "jskjs",
+  "version": "1.0.0",
+  "description": "jQuery-compatible JavaScript with htmx-style requests, Alpine-style reactivity and GSAP-style animation in one ~8 KB file.",
+  "main": "dist/jskjs.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/unit.test.js",
+    "build:site": "node site/src/build.js && python3 site/src/og.py",
+    "serve": "php -S 127.0.0.1:8099 -t site/public",
+    "test:e2e": "node test/site.e2e.js"
+  },
+  "keywords": [
+    "jquery",
+    "htmx",
+    "alpinejs",
+    "gsap",
+    "animation",
+    "reactive",
+    "hypermedia",
+    "vibe-coding"
+  ],
+  "author": "Karan Checker",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "src",
+    "ai-kit"
+  ],
+  "homepage": "https://jskjs.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kchecker/jskjs.git"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1",
+    "terser": "^5.51.2",
+    "playwright": "^1.64.1"
+  }
+}

@@ -1,5 +1,5 @@
 /*!
- * jsKjs v1.0.0 — July 2026
+ * jsKjs v1.0.0 — https://jskjs.org — github.com/kchecker/jskjs
  * The jQuery you remember, the superpowers you wished for.
  * jQuery-compatible core + htmx-style declarative AJAX +
  * Alpine-style reactivity + GSAP-style animation engine.
@@ -187,16 +187,18 @@
     css(name, value) {
       if (typeof name === 'string' && value === undefined) {
         const el = this[0];
-        return el ? getComputedStyle(el)[camel(name)] : undefined;
+        if (!el) return undefined;
+        const cs = getComputedStyle(el);
+        return name.startsWith('--') ? cs.getPropertyValue(name).trim() : cs[camel(name)];
       }
       const styles = isObj(name) ? name : { [name]: value };
       return this.each((_, el) => {
         for (const k in styles) {
           let v = styles[k];
           const prop = camel(k);
+          if (k.startsWith('--')) { el.style.setProperty(k, String(v)); continue; }   // custom props: never auto-px
           if (typeof v === 'number' && !cssNumber.has(prop)) v += 'px';
-          if (k.startsWith('--')) el.style.setProperty(k, v);
-          else el.style[prop] = v;
+          el.style[prop] = v;
         }
       });
     },
@@ -287,8 +289,8 @@
       const test = typeof sel === 'function' ? (el, i) => sel.call(el, i, el) : el => el.matches(sel);
       return $([...this].filter((el, i) => test(el, i)));
     },
-    not(sel)    { return $([...this].filter(el => !el.matches(sel))); },
-    is(sel)     { return this.some(el => typeof sel === 'string' ? el.matches(sel) : el === (sel instanceof KJ ? sel[0] : sel)); },
+    not(sel)    { const t = matcher(sel); return $([...this].filter((el, i) => !t(el, i))); },
+    is(sel)     { const t = matcher(sel); return this.some((el, i) => t(el, i)); },
     closest(sel){ return $(unique(this.map(el => el.closest(sel)).filter(Boolean))); },
     parent()    { return $(unique(this.map(el => el.parentElement).filter(Boolean))); },
     parents(sel){
@@ -311,6 +313,13 @@
   });
 
   function unique(arr) { return [...new Set(arr)]; }
+  // selector | function(i, el) | element | collection → predicate
+  function matcher(sel) {
+    if (typeof sel === 'string') return el => el.nodeType === 1 && el.matches(sel);
+    if (typeof sel === 'function') return (el, i) => !!sel.call(el, i, el);
+    const set = new Set(sel && (sel.nodeType || sel === window) ? [sel] : [...(sel || [])]);
+    return el => set.has(el);
+  }
 
   /* ============================================================
    * EVENTS — on/off/one/trigger with delegation
@@ -424,10 +433,13 @@
       .finally(() => o.complete?.());
 
     promise.abort = () => controller.abort();
-    // jQuery-style .done/.fail/.always
-    promise.done = fn => (promise.then(fn), promise);
+    // Callback-style callers (error:) have handled the failure; don't report it as unhandled.
+    if (o.error) promise.catch(() => {});
+    // jQuery-style .done/.fail/.always (derived promises never surface as unhandled)
+    const quiet = p => p.catch(() => {});
+    promise.done = fn => (quiet(promise.then(fn)), promise);
     promise.fail = fn => (promise.catch(fn), promise);
-    promise.always = fn => (promise.finally(fn), promise);
+    promise.always = fn => (quiet(promise.then(fn, fn)), promise);
     return promise;
   };
 
@@ -449,8 +461,8 @@
         tpl.innerHTML = html;
         this.html('').append(...tpl.content.querySelectorAll(sel));
       } else this.html(html);
-      done?.call(this[0], html);
-    });
+      done?.call(this[0], html, 'success');
+    }, err => done?.call(this[0], '', 'error', err));
     return this;
   };
 
@@ -484,6 +496,8 @@
       return n * (t -= 2.625 / d) * t + 0.984375;
     },
   };
+
+  $.easings = Easings;
 
   const TRANSFORMS = new Set(['x', 'y', 'rotate', 'rotation', 'scale', 'scaleX', 'scaleY', 'skewX', 'skewY']);
   const UNITLESS = new Set(['opacity', 'scale', 'scaleX', 'scaleY']);
@@ -528,7 +542,7 @@
         if (start === undefined) start = now + delay;
         const elapsed = now - start;
         if (elapsed < 0) return requestAnimationFrame(frame);
-        const p = Math.min(elapsed / duration, 1);
+        const p = duration > 0 ? Math.min(elapsed / duration, 1) : 1;
         const v = ease(p);
         for (const j of jobs) {
           const val = j.from + (j.to - j.from) * v;
@@ -590,21 +604,35 @@
   };
 
   // Timelines: sequence tweens with position control
-  $.timeline = function (defaults = {}) {
+  // position: undefined → after the previous step · '<' → together with the previous step
+  //           '+=0.3' → 0.3 s after the previous step ends
+  $.timeline = function (options = {}) {
+    const { paused = false, onComplete, ...defaults } = options;
     const queue = [];
+    const wait = s => new Promise(r => setTimeout(r, s * 1000));
     const tl = {
       to(target, props, position) { queue.push({ fn: () => $.to(target, { ...defaults, ...props }), position }); return tl; },
       from(target, props, position) { queue.push({ fn: () => $.from(target, { ...defaults, ...props }), position }); return tl; },
+      fromTo(target, fromProps, toProps, position) { queue.push({ fn: () => $.fromTo(target, fromProps, { ...defaults, ...toProps }), position }); return tl; },
       add(fn, position) { queue.push({ fn, position }); return tl; },
       async play() {
+        let group = [];
         for (const step of queue) {
-          if (step.position === '<') step.fn();       // start with previous
-          else await step.fn();                        // sequential (default)
+          const pos = step.position;
+          if (pos !== '<') {
+            await Promise.all(group);
+            group = [];
+            const gap = typeof pos === 'string' && pos.startsWith('+=') ? parseFloat(pos.slice(2)) : 0;
+            if (gap > 0) await wait(gap);
+          }
+          group.push(Promise.resolve(step.fn()));
         }
+        await Promise.all(group);
+        onComplete?.(tl);
         return tl;
       },
     };
-    queueMicrotask(() => tl.play());
+    if (!paused) queueMicrotask(() => tl.play());
     return tl;
   };
 
@@ -711,6 +739,9 @@
       }
     }
 
+    // Like htmx: urlencoded bodies by default; multipart only when a form uploads files
+    const multipart = el.tagName === 'FORM' &&
+      (el.enctype === 'multipart/form-data' || !!el.querySelector('input[type="file"]'));
     if (indicator) $(indicator).show();
     el.setAttribute('aria-busy', 'true');
     $el.trigger('kj:before', { url, verb });
@@ -718,13 +749,17 @@
     try {
       const html = await $.ajax({
         url, method: verb.toUpperCase(),
-        data: verb === 'get' && data ? Object.fromEntries(data) : data,
+        data: data && !multipart ? new URLSearchParams(data) : data,
       });
-      if (target) hyperSwap(target, html, swap);
-      $el.trigger('kj:after', { url, verb, html });
+      $el.trigger('kj:after', { url, verb, html });        // response arrived (element still in the DOM)
       if (target) {
-        bindReactive(target.parentElement || document.body); // re-scan swapped content
-        $(target).trigger('kj:load');
+        const parent = target.parentElement;
+        hyperSwap(target, html, swap);
+        const landed = target.isConnected ? target : parent; // outerHTML replaced it → report on the parent
+        if (landed) {
+          bindReactive(landed.parentElement || landed);
+          $(landed).trigger('kj:load', { url, verb });
+        }
       }
       const pushUrl = el.getAttribute('kj-push-url');
       if (pushUrl) history.pushState({}, '', pushUrl === 'true' ? url : pushUrl);
@@ -754,7 +789,13 @@
           return;
         }
         const every = trigger.match(/^every\s+([\d.]+)s$/);
-        if (every) { setInterval(() => hyperRequest(el, verb, url), parseFloat(every[1]) * 1000); return; }
+        if (every) {
+          const id = setInterval(() => {
+            if (!el.isConnected) return clearInterval(id);       // element removed → stop polling
+            hyperRequest(el, verb, url);
+          }, parseFloat(every[1]) * 1000);
+          return;
+        }
 
         const [eventName, ...mods] = trigger.split(/\s+/);
         let handler = e => {
@@ -809,6 +850,8 @@
   }
 
   const componentScopes = new WeakMap();
+  let modelSource = null;
+  const lastHTML = new WeakMap();
 
   function findScope(el) {
     let node = el;
@@ -825,12 +868,15 @@
       el.setAttribute('data-kj-init', '');
       const raw = el.getAttribute('kj-data');
       let state;
-      if ($.components?.[raw]) state = $.components[raw]();       // registered component
-      else state = evalIn(raw || '{}', {}, el) || {};
+      const call = raw && raw.match(/^\s*([A-Za-z_$][\w$]*)\s*(?:\(([\s\S]*)\))?\s*$/);
+      if (call && $.components?.[call[1]]) {                         // registered component, optional args
+        const args = call[2] ? evalIn('[' + call[2] + ']', {}, el) || [] : [];
+        state = $.components[call[1]](...args);
+      } else state = evalIn(raw || '{}', {}, el) || {};
       const render = () => renderComponent(el);
       const scope = reactive(state, render);
       componentScopes.set(el, scope);
-      if (typeof scope.init === 'function') scope.init.call(scope);
+      if (typeof scope.init === 'function') scope.init.call(scope, el);
       renderComponent(el);
     });
 
@@ -860,7 +906,10 @@
         bound = true;
         el.addEventListener('input', () => {
           const scope = findScope(el);
-          if (scope) execIn(`${model} = $el.type === 'checkbox' ? $el.checked : $el.value`, scope, el);
+          if (!scope) return;
+          modelSource = el;                      // this element caused the change: don't rewrite it mid-typing
+          try { execIn(`${model} = $el.type === 'checkbox' ? $el.checked : $el.value`, scope, el); }
+          finally { modelSource = null; }
         });
       }
       if (bound) el.setAttribute('data-kj-events', '');
@@ -876,10 +925,13 @@
       if (el !== componentEl && el.closest('[kj-data]') !== componentEl) continue;
 
       const text = el.getAttribute('kj-text');
-      if (text != null) el.textContent = evalIn(text, scope, el) ?? '';
+      if (text != null) { const t = String(evalIn(text, scope, el) ?? ''); if (el.textContent !== t) el.textContent = t; }
 
       const htmlExpr = el.getAttribute('kj-html');
-      if (htmlExpr != null) el.innerHTML = evalIn(htmlExpr, scope, el) ?? '';
+      if (htmlExpr != null) {                       // only touch the DOM when the markup actually changed
+        const h = String(evalIn(htmlExpr, scope, el) ?? '');
+        if (lastHTML.get(el) !== h) { lastHTML.set(el, h); el.innerHTML = h; }
+      }
 
       const show = el.getAttribute('kj-show');
       if (show != null) el.style.display = evalIn(show, scope, el) ? '' : 'none';
@@ -888,7 +940,8 @@
       if (model != null) {
         const v = evalIn(model, scope, el);
         if (el.type === 'checkbox') el.checked = !!v;
-        else if (document.activeElement !== el) el.value = v ?? '';
+        else if (el.type === 'radio') el.checked = String(el.value) === String(v);
+        else if (el !== modelSource && el.value !== String(v ?? '')) el.value = v ?? '';
       }
 
       for (const attr of [...el.attributes]) {
@@ -934,7 +987,11 @@
   $.extend = (deep, target, ...sources) => {
     if (deep !== true) return Object.assign(deep, target, ...sources);
     for (const src of sources) for (const k in src) {
+      // Guard against prototype pollution (cf. jQuery CVE-2019-11358)
+      if (k === '__proto__' || k === 'constructor' || k === 'prototype') continue;
+      if (!Object.prototype.hasOwnProperty.call(src, k)) continue;
       if (isObj(src[k]) && isObj(target[k])) $.extend(true, target[k], src[k]);
+      else if ($.isPlainObject(src[k])) target[k] = $.extend(true, {}, src[k]);
       else target[k] = src[k];
     }
     return target;

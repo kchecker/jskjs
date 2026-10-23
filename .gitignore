@@ -1,0 +1,5 @@
+node_modules/
+site/public/
+site/og-manifest.json
+.skilltmp/
+*.log

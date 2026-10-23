@@ -1,0 +1,28 @@
+# Builds the website and pushes it to the `hostinger` branch.
+# In hPanel → Advanced → Git, deploy branch `hostinger` into public_html with auto-deployment on.
+name: Build site for Hostinger
+on:
+  push: { branches: [main] }
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci || npm install
+      - run: npm test
+      - run: pip install fonttools brotli pillow
+      - run: npm run build:site
+      - name: Push site/public to the hostinger branch
+        run: |
+          cd site/public
+          git init -q -b hostinger
+          git config user.name "jskjs-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -qm "Site build ${GITHUB_SHA::7}"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" hostinger
