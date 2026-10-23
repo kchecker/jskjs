@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$.from() and $.fromTo(): Entrance Animations and Split Text — jsKjs</title>
+<meta name="description" content="Animate elements in from a starting state with $.from(), or define both ends with $.fromTo(). Live demo: split-text headline, dealt cards and an elastic badge pop.">
+<link rel="canonical" href="https://jskjs.org/features/from-and-fromto/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="From &amp; fromTo">
+<meta property="og:description" content="Animate elements in from a starting state with $.from(), or define both ends with $.fromTo(). Live demo: split-text headline, dealt cards and an elastic badge pop.">
+<meta property="og:url" content="https://jskjs.org/features/from-and-fromto/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-from-and-fromto.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="From &amp; fromTo — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="From &amp; fromTo">
+<meta name="twitter:description" content="Animate elements in from a starting state with $.from(), or define both ends with $.fromTo(). Live demo: split-text headline, dealt cards and an elastic badge pop.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-from-and-fromto.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+#ft-title span { display:inline-block; }
+.ft-cards { display:flex; gap:12px; flex-wrap:wrap; margin-top:14px; }
+.ft-card { width:110px; height:140px; border-radius:12px; display:grid; place-items:center; font:800 15px var(--display); font-stretch:115%; color:#13152B; }
+.ft-card:nth-child(1) { background:var(--core); } .ft-card:nth-child(2) { background:var(--hyper); }
+.ft-card:nth-child(3) { background:var(--pulse); } .ft-card:nth-child(4) { background:var(--motion); }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"From & fromTo","description":"Animate elements in from a starting state with $.from(), or define both ends with $.fromTo(). Live demo: split-text headline, dealt cards and an elastic badge pop.","url":"https://jskjs.org/features/from-and-fromto/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Motion","item":"https://jskjs.org/features/#motion"},{"@type":"ListItem","position":4,"name":"From & fromTo","item":"https://jskjs.org/features/from-and-fromto/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="motion">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#motion">Motion</a></li><li><span aria-current="page">From &amp; fromTo</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Motion · GSAP-style</p>
+  <h1>From &amp; fromTo</h1>
+  <p class="lede"><code>$.from()</code> starts from the values you give and animates back to where the element already is — the perfect entrance. <code>$.fromTo()</code> spells out both ends.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<p>Entrances are easier to reason about as "where it comes <em>from</em>": the layout stays in your CSS, and the animation describes only the journey. <code>$.fromTo()</code> is the right choice when the start state isn't the element's resting state — a pop from <code>scale: 0</code>, or a replayable effect.</p>
+<p>The headline below is split into one span per character with <code>$.map()</code>, then each letter is staggered in — the effect GSAP's SplitText plugin popularised, in a few lines. The heading keeps an <code>aria-label</code> so screen readers hear words, not letters.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Split text, dealt cards, elastic pop</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><h2 id="ft-title" style="margin:0;font-size:clamp(1.8rem,5vw,3.1rem)">Animate everything.</h2>
+<div class="row" style="margin:16px 0">
+  <button type="button" id="ft-split">Replay headline</button>
+  <button type="button" id="ft-deal">Deal cards ($.from)</button>
+  <button type="button" id="ft-pop">Pop badge ($.fromTo)</button>
+  <span class="chip" id="ft-badge">NEW</span>
+</div>
+<div class="ft-cards" aria-hidden="true"><div class="ft-card">CORE</div><div class="ft-card">HYPER</div><div class="ft-card">PULSE</div><div class="ft-card">MOTION</div></div></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-99" aria-label="Copy HTML code">Copy</button><pre id="code-99" tabindex="0"><code><span class="t-tag">&lt;h2</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;ft-title&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin:0;font-size:clamp(1.8rem,5vw,3.1rem)&quot;</span><span class="t-tag">&gt;</span>Animate everything.<span class="t-tag">&lt;/h2</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin:16px 0&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;ft-split&quot;</span><span class="t-tag">&gt;</span>Replay headline<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;ft-deal&quot;</span><span class="t-tag">&gt;</span>Deal cards ($.from)<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;ft-pop&quot;</span><span class="t-tag">&gt;</span>Pop badge ($.fromTo)<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;chip&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;ft-badge&quot;</span><span class="t-tag">&gt;</span>NEW<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;ft-cards&quot;</span> <span class="t-at">aria-hidden</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;ft-card&quot;</span><span class="t-tag">&gt;</span>CORE<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;ft-card&quot;</span><span class="t-tag">&gt;</span>HYPER<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;ft-card&quot;</span><span class="t-tag">&gt;</span>PULSE<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;ft-card&quot;</span><span class="t-tag">&gt;</span>MOTION<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-100" aria-label="Copy JavaScript code">Copy</button><pre id="code-100" tabindex="0"><code><span class="t-k">const</span> $title = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#ft-title'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-k">const</span> text = $title<span class="t-f">.text</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+$title<span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'aria-label'</span><span class="t-p">,</span> text<span class="t-p">)</span><span class="t-f">.html</span><span class="t-p">(</span><span class="t-d">$</span><span class="t-f">.map</span><span class="t-p">(</span>text<span class="t-f">.split</span><span class="t-p">(</span><span class="t-s">''</span><span class="t-p">)</span><span class="t-p">,</span> c =&gt;
+  <span class="t-s">'&lt;span aria-hidden=&quot;true&quot;&gt;'</span> + <span class="t-p">(</span>c === <span class="t-s">' '</span> ? <span class="t-s">'&amp;nbsp;'</span> : <span class="t-d">$</span><span class="t-f">.escape</span><span class="t-p">(</span>c<span class="t-p">)</span><span class="t-p">)</span> + <span class="t-s">'&lt;/span&gt;'</span><span class="t-p">)</span><span class="t-f">.join</span><span class="t-p">(</span><span class="t-s">''</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-k">const</span> split = <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-d">$</span><span class="t-f">.fromTo</span><span class="t-p">(</span><span class="t-s">'#ft-title span'</span><span class="t-p">,</span>
+  <span class="t-p">{</span> y: <span class="t-n">30</span><span class="t-p">,</span> opacity: <span class="t-n">0</span><span class="t-p">,</span> rotate: <span class="t-n">12</span> <span class="t-p">}</span><span class="t-p">,</span>
+  <span class="t-p">{</span> y: <span class="t-n">0</span><span class="t-p">,</span> opacity: <span class="t-n">1</span><span class="t-p">,</span> rotate: <span class="t-n">0</span><span class="t-p">,</span> duration: .<span class="t-n">5</span><span class="t-p">,</span> stagger: .<span class="t-n">03</span><span class="t-p">,</span> ease: <span class="t-s">'back.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#ft-split'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> split<span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#ft-deal'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">async</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'disabled'</span><span class="t-p">,</span> <span class="t-k">true</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.from</span><span class="t-p">(</span><span class="t-s">'.ft-card'</span><span class="t-p">,</span> <span class="t-p">{</span> x: -<span class="t-n">80</span><span class="t-p">,</span> rotate: -<span class="t-n">14</span><span class="t-p">,</span> opacity: <span class="t-n">0</span><span class="t-p">,</span> duration: .<span class="t-n">45</span><span class="t-p">,</span> stagger: .<span class="t-n">08</span><span class="t-p">,</span> ease: <span class="t-s">'power2.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'disabled'</span><span class="t-p">,</span> <span class="t-k">false</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#ft-pop'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt;
+  <span class="t-d">$</span><span class="t-f">.fromTo</span><span class="t-p">(</span><span class="t-s">'#ft-badge'</span><span class="t-p">,</span> <span class="t-p">{</span> scale: <span class="t-n">0</span><span class="t-p">,</span> rotate: -<span class="t-n">30</span> <span class="t-p">}</span><span class="t-p">,</span> <span class="t-p">{</span> scale: <span class="t-n">1</span><span class="t-p">,</span> rotate: <span class="t-n">0</span><span class="t-p">,</span> duration: .<span class="t-n">8</span><span class="t-p">,</span> ease: <span class="t-s">'elastic.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-k">if</span> <span class="t-p">(</span>!matchMedia<span class="t-p">(</span><span class="t-s">'(prefers-reduced-motion: reduce)'</span><span class="t-p">)</span>.matches<span class="t-p">)</span> split<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Entrances</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-101" aria-label="Copy JavaScript code">Copy</button><pre id="code-101" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.from</span><span class="t-p">(</span><span class="t-s">'.hero h1'</span><span class="t-p">,</span> <span class="t-p">{</span> y: <span class="t-n">40</span><span class="t-p">,</span> opacity: <span class="t-n">0</span><span class="t-p">,</span> duration: .<span class="t-n">8</span><span class="t-p">,</span> ease: <span class="t-s">'power2.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-f">.from</span><span class="t-p">(</span><span class="t-s">'.feature'</span><span class="t-p">,</span> <span class="t-p">{</span> y: <span class="t-n">24</span><span class="t-p">,</span> opacity: <span class="t-n">0</span><span class="t-p">,</span> duration: .<span class="t-n">5</span><span class="t-p">,</span> stagger: .<span class="t-n">08</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-f">.fromTo</span><span class="t-p">(</span><span class="t-s">'.toast'</span><span class="t-p">,</span> <span class="t-p">{</span> x: <span class="t-n">80</span><span class="t-p">,</span> opacity: <span class="t-n">0</span> <span class="t-p">}</span><span class="t-p">,</span> <span class="t-p">{</span> x: <span class="t-n">0</span><span class="t-p">,</span> opacity: <span class="t-n">1</span><span class="t-p">,</span> duration: .<span class="t-n">3</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">$.from(target, props) → Promise</span><p>Jump to the given state, then tween back to the original — the classic entrance pattern.</p><a href="/docs/#motion-from" style="font-size:14px">Reference: $.from() →</a></div><div class="api-item"><span class="sig">$.fromTo(target, fromProps, toProps) → Promise</span><p>Explicit start and end states.</p><a href="/docs/#motion-fromto" style="font-size:14px">Reference: $.fromTo() →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from GSAP</strong><code>gsap.from()</code>/<code>gsap.fromTo()</code> → <code>$.from()</code>/<code>$.fromTo()</code>. <code>gsap.set()</code> has no separate equivalent — use <code>.css()</code> for styles, or a zero-duration <code>$.to()</code> for transforms.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="motion" href="/features/tweens/"><span class="label">Motion</span><h3>Tweens</h3><p>Animate any numeric CSS property and transforms (x, y, rotate, scale) with $.to().</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="motion" href="/features/stagger/"><span class="label">Motion</span><h3>Stagger</h3><p>Offset each element's start with the stagger option for cascades, or compute per-element delays for ripple and grid waves from any point.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="motion" href="/features/timelines/"><span class="label">Motion</span><h3>Timelines</h3><p>Sequence animations with $.timeline(): steps run in order, "<" runs a step alongside the previous one, "+=0.3" adds a gap, and await tl.play() tells you when it's done..</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/tweens/"><span class="dir">← Previous</span><strong>Tweens</strong></a>
+    <a class="next" href="/features/timelines/"><span class="dir">Next →</span><strong>Timelines</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Motion features">
+    <div class="aside-group"><h2>Motion · GSAP-style</h2><ul><li><a href="/features/tweens/">Tweens</a></li><li><a href="/features/from-and-fromto/" aria-current="page">From &amp; fromTo</a></li><li><a href="/features/timelines/">Timelines</a></li><li><a href="/features/stagger/">Stagger</a></li><li><a href="/features/easings/">Easings</a></li><li><a href="/features/transforms/">Transforms</a></li><li><a href="/features/classic-effects/">Classic effects</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#core">Core · jQuery-compatible</a></li><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/gsap/">What's ported from GSAP</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+const $title = $('#ft-title');
+const text = $title.text();
+$title.attr('aria-label', text).html($.map(text.split(''), c =>
+  '<span aria-hidden="true">' + (c === ' ' ? '&nbsp;' : $.escape(c)) + '</span>').join(''));
+
+const split = () => $.fromTo('#ft-title span',
+  { y: 30, opacity: 0, rotate: 12 },
+  { y: 0, opacity: 1, rotate: 0, duration: .5, stagger: .03, ease: 'back.out' });
+
+$('#ft-split').on('click', split);
+
+$('#ft-deal').on('click', async function () {
+  $(this).prop('disabled', true);
+  await $.from('.ft-card', { x: -80, rotate: -14, opacity: 0, duration: .45, stagger: .08, ease: 'power2.out' });
+  $(this).prop('disabled', false);
+});
+
+$('#ft-pop').on('click', () =>
+  $.fromTo('#ft-badge', { scale: 0, rotate: -30 }, { scale: 1, rotate: 0, duration: .8, ease: 'elastic.out' }));
+
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) split();
+</script>
+
+</body>
+</html>

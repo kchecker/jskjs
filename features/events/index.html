@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event Handling with on(), off(), one() and Namespaces — jsKjs</title>
+<meta name="description" content="Bind and unbind events with on(), off() and one(), group handlers with namespaces like click.menu, and use shortcut methods — the jQuery event API on native addEventListener.">
+<link rel="canonical" href="https://jskjs.org/features/events/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Events">
+<meta property="og:description" content="Bind and unbind events with on(), off() and one(), group handlers with namespaces like click.menu, and use shortcut methods — the jQuery event API on native addEventListener.">
+<meta property="og:url" content="https://jskjs.org/features/events/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-events.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Events — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Events">
+<meta name="twitter:description" content="Bind and unbind events with on(), off() and one(), group handlers with namespaces like click.menu, and use shortcut methods — the jQuery event API on native addEventListener.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-events.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+.ev-meter { height:34px; background:var(--surface-2); border-radius:99px; margin:14px 0 4px; position:relative; }
+#ev-pos { position:absolute; top:5px; left:5px; width:24px; height:24px; border-radius:50%; background:var(--core); transition:left .15s; }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Events","description":"Bind and unbind events with on(), off() and one(), group handlers with namespaces like click.menu, and use shortcut methods — the jQuery event API on native addEventListener.","url":"https://jskjs.org/features/events/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Core","item":"https://jskjs.org/features/#core"},{"@type":"ListItem","position":4,"name":"Events","item":"https://jskjs.org/features/events/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="core">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#core">Core</a></li><li><span aria-current="page">Events</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Core · jQuery-compatible</p>
+  <h1>Events</h1>
+  <p class="lede">Attach handlers with <code>.on()</code>, remove them precisely with <code>.off()</code>, fire once with <code>.one()</code>, and group related handlers with namespaces such as <code>keydown.shortcuts</code>.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<h2>Namespaces make cleanup easy</h2>
+<p>Suffix any event with a namespace — <code>'click.menu'</code>, <code>'keydown.shortcuts'</code> — and later remove exactly that group with <code>.off('.menu')</code>, leaving everyone else's handlers alone. This is the cleanest way to tear down a modal, a widget or a feature flag.</p>
+<h2>Shortcuts and handler signature</h2>
+<p><code>.click(fn)</code>, <code>.change(fn)</code>, <code>.submit(fn)</code> and friends bind; calling them with no argument triggers the event. Handlers receive <code>(event, detail)</code>, and <code>this</code> is the element — or, for delegated handlers, the matched descendant.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Keyboard shortcuts with namespaces</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><p style="margin:0 0 12px">Press <kbd>J</kbd> / <kbd>K</kbd> to move the dot, <kbd>?</kbd> for help — anywhere on this page.</p>
+<div class="row">
+  <button type="button" id="ev-toggle" aria-pressed="true">Shortcuts on</button>
+  <button type="button" id="ev-once">Claim one-time bonus</button>
+  <button type="button" id="ev-fake">Simulate “J”</button>
+</div>
+<div class="ev-meter" aria-hidden="true"><span id="ev-pos"></span></div>
+<pre class="out" id="ev-log" aria-live="polite">Event log…</pre></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-22" aria-label="Copy HTML code">Copy</button><pre id="code-22" tabindex="0"><code><span class="t-tag">&lt;p</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin:0 0 12px&quot;</span><span class="t-tag">&gt;</span>Press <span class="t-tag">&lt;kbd</span><span class="t-tag">&gt;</span>J<span class="t-tag">&lt;/kbd</span><span class="t-tag">&gt;</span> / <span class="t-tag">&lt;kbd</span><span class="t-tag">&gt;</span>K<span class="t-tag">&lt;/kbd</span><span class="t-tag">&gt;</span> to move the dot, <span class="t-tag">&lt;kbd</span><span class="t-tag">&gt;</span>?<span class="t-tag">&lt;/kbd</span><span class="t-tag">&gt;</span> for help — anywhere on this page.<span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;ev-toggle&quot;</span> <span class="t-at">aria-pressed</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span><span class="t-tag">&gt;</span>Shortcuts on<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;ev-once&quot;</span><span class="t-tag">&gt;</span>Claim one-time bonus<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;ev-fake&quot;</span><span class="t-tag">&gt;</span>Simulate “J”<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;ev-meter&quot;</span> <span class="t-at">aria-hidden</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;span</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;ev-pos&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;pre</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;out&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;ev-log&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;polite&quot;</span><span class="t-tag">&gt;</span>Event log…<span class="t-tag">&lt;/pre</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-23" aria-label="Copy JavaScript code">Copy</button><pre id="code-23" tabindex="0"><code><span class="t-k">let</span> pos = <span class="t-n">0</span><span class="t-p">;</span>
+<span class="t-k">const</span> log = msg =&gt; <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#ev-log'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-p">(</span>msg + <span class="t-s">'\n'</span> + <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#ev-log'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-f">.split</span><span class="t-p">(</span><span class="t-s">'\n'</span><span class="t-p">)</span><span class="t-f">.slice</span><span class="t-p">(</span><span class="t-n">0</span><span class="t-p">,</span> <span class="t-n">6</span><span class="t-p">)</span><span class="t-f">.join</span><span class="t-p">(</span><span class="t-s">'\n'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-k">const</span> move = d =&gt; <span class="t-p">{</span>
+  pos = Math<span class="t-f">.max</span><span class="t-p">(</span><span class="t-n">0</span><span class="t-p">,</span> Math<span class="t-f">.min</span><span class="t-p">(</span><span class="t-n">10</span><span class="t-p">,</span> pos + d<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#ev-pos'</span><span class="t-p">)</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'left'</span><span class="t-p">,</span> <span class="t-s">'calc('</span> + pos * <span class="t-n">9</span> + <span class="t-s">'% + 5px)'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">;</span>
+
+<span class="t-k">function</span> bindShortcuts<span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-d">$</span><span class="t-p">(</span>document<span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'keydown.shortcuts'</span><span class="t-p">,</span> e =&gt; <span class="t-p">{</span>
+    <span class="t-k">if</span> <span class="t-p">(</span>e.target.closest &amp;&amp; e.target<span class="t-f">.closest</span><span class="t-p">(</span><span class="t-s">'input, textarea, select'</span><span class="t-p">)</span><span class="t-p">)</span> <span class="t-k">return</span><span class="t-p">;</span>
+    <span class="t-k">if</span> <span class="t-p">(</span>e.key === <span class="t-s">'j'</span><span class="t-p">)</span> <span class="t-p">{</span> move<span class="t-p">(</span><span class="t-n">1</span><span class="t-p">)</span><span class="t-p">;</span>  log<span class="t-p">(</span><span class="t-s">'keydown.shortcuts → J (position '</span> + pos + <span class="t-s">')'</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span>
+    <span class="t-k">if</span> <span class="t-p">(</span>e.key === <span class="t-s">'k'</span><span class="t-p">)</span> <span class="t-p">{</span> move<span class="t-p">(</span>-<span class="t-n">1</span><span class="t-p">)</span><span class="t-p">;</span> log<span class="t-p">(</span><span class="t-s">'keydown.shortcuts → K (position '</span> + pos + <span class="t-s">')'</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span>
+    <span class="t-k">if</span> <span class="t-p">(</span>e.key === <span class="t-s">'?'</span><span class="t-p">)</span> log<span class="t-p">(</span><span class="t-s">'Help: J moves right, K moves left'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span>
+bindShortcuts<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#ev-toggle'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">const</span> on = <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'aria-pressed'</span><span class="t-p">)</span> !== <span class="t-s">'true'</span><span class="t-p">;</span>
+  <span class="t-k">if</span> <span class="t-p">(</span>on<span class="t-p">)</span> bindShortcuts<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">else</span> <span class="t-d">$</span><span class="t-p">(</span>document<span class="t-p">)</span><span class="t-f">.off</span><span class="t-p">(</span><span class="t-s">'.shortcuts'</span><span class="t-p">)</span><span class="t-p">;</span>          <span class="t-c">// removes only this namespace</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'aria-pressed'</span><span class="t-p">,</span> String<span class="t-p">(</span>on<span class="t-p">)</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span>on ? <span class="t-s">'Shortcuts on'</span> : <span class="t-s">'Shortcuts off'</span><span class="t-p">)</span><span class="t-p">;</span>
+  log<span class="t-p">(</span>on ? <span class="t-s">&quot;on('keydown.shortcuts') bound&quot;</span> : <span class="t-s">&quot;off('.shortcuts') — namespace removed, other handlers untouched&quot;</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#ev-once'</span><span class="t-p">)</span><span class="t-f">.one</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  log<span class="t-p">(</span><span class="t-s">'.one() fired. Click again — nothing happens.'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-s">'Bonus claimed ✓'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#ev-fake'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; document<span class="t-f">.dispatchEvent</span><span class="t-p">(</span><span class="t-k">new</span> KeyboardEvent<span class="t-p">(</span><span class="t-s">'keydown'</span><span class="t-p">,</span> <span class="t-p">{</span> key: <span class="t-s">'j'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>The full toolbox</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-24" aria-label="Copy JavaScript code">Copy</button><pre id="code-24" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.btn'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click mouseenter'</span><span class="t-p">,</span> handler<span class="t-p">)</span><span class="t-p">;</span>       <span class="t-c">// several events</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#dialog'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'keydown.modal'</span><span class="t-p">,</span> onKey<span class="t-p">)</span><span class="t-p">;</span>          <span class="t-c">// namespaced</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#dialog'</span><span class="t-p">)</span><span class="t-f">.off</span><span class="t-p">(</span><span class="t-s">'.modal'</span><span class="t-p">)</span><span class="t-p">;</span>                       <span class="t-c">// remove the group</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#intro'</span><span class="t-p">)</span><span class="t-f">.one</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> dismiss<span class="t-p">)</span><span class="t-p">;</span>                <span class="t-c">// runs once</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#save'</span><span class="t-p">)</span><span class="t-f">.click</span><span class="t-p">(</span>save<span class="t-p">)</span><span class="t-p">;</span>  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#save'</span><span class="t-p">)</span><span class="t-f">.click</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>      <span class="t-c">// bind / trigger</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.hover</span><span class="t-p">(</span>lift<span class="t-p">,</span> drop<span class="t-p">)</span><span class="t-p">;</span>                     <span class="t-c">// mouseenter + mouseleave</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">.on(types [, delegateSelector], handler) → self</span><p>Attach handlers. Multiple space-separated events and <code>.namespace</code> suffixes are supported. With a delegate selector, the handler fires for matching descendants — including ones added later — and <code>this</code> is the matched element.</p><a href="/docs/#events-on" style="font-size:14px">Reference: .on() →</a></div><div class="api-item"><span class="sig">.one(types [, delegateSelector], handler) → self</span><p>Like <code>.on()</code> but the handler runs at most once.</p><a href="/docs/#events-one" style="font-size:14px">Reference: .one() →</a></div><div class="api-item"><span class="sig">.off([types] [, handler]) → self</span><p>Remove handlers — all of them, by event type, by namespace, or by specific handler reference.</p><a href="/docs/#events-off" style="font-size:14px">Reference: .off() →</a></div><div class="api-item"><span class="sig">.trigger(type [, detail]) → self</span><p>Dispatch an event (bubbling, cancelable). The optional payload arrives as the handler’s second argument.</p><a href="/docs/#events-trigger" style="font-size:14px">Reference: .trigger() →</a></div><div class="api-item"><span class="sig">.hover(enterFn [, leaveFn]) → self</span><p>Shorthand for mouseenter/mouseleave.</p><a href="/docs/#events-hover" style="font-size:14px">Reference: .hover() →</a></div><div class="api-item"><span class="sig">.click([fn]) .change([fn]) .submit([fn]) … → self</span><p>With a handler: binds it. Without: triggers the event. Available for <code>click, dblclick, change, input, submit, keydown, keyup, keypress, mousedown, mouseup, mousemove, mouseenter, mouseleave, scroll, resize, touchstart, touchend, contextmenu</code>.</p><a href="/docs/#events-shortcuts" style="font-size:14px">Reference: Shortcuts →</a></div><div class="api-item"><span class="sig">.focus([fn]) · .blur([fn]) → self</span><p>Bind a handler, or move focus when called without one.</p><a href="/docs/#events-focus-blur" style="font-size:14px">Reference: .focus() / .blur() →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from jQuery</strong>Same signatures. Handlers receive the native <code>Event</code> (no jQuery event wrapper), so use <code>e.key</code>, <code>e.target</code>, <code>e.preventDefault()</code> as usual. Legacy <code>.bind()</code>, <code>.live()</code>, <code>.delegate()</code> are not included — use <code>.on()</code>.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="core" href="/features/event-delegation/"><span class="label">Core</span><h3>Event delegation</h3><p>Handle clicks on thousands of rows — including rows added later — with a single listener using .on(event, selector, handler).</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="core" href="/features/custom-events/"><span class="label">Core</span><h3>Custom events</h3><p>Decouple your UI with custom events: trigger("cart:add", payload) once and let any number of independent listeners react.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="pulse" href="/features/event-directives/"><span class="label">Pulse</span><h3>Event directives</h3><p>Handle events right in your markup with @click and kj-on:, including the .prevent, .stop, .enter and .escape modifiers.</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/traversal/"><span class="dir">← Previous</span><strong>DOM traversal</strong></a>
+    <a class="next" href="/features/event-delegation/"><span class="dir">Next →</span><strong>Event delegation</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Core features">
+    <div class="aside-group"><h2>Core · jQuery-compatible</h2><ul><li><a href="/features/selectors/">Selectors &amp; collections</a></li><li><a href="/features/dom-manipulation/">DOM manipulation</a></li><li><a href="/features/attributes-and-data/">Attributes, properties &amp; data</a></li><li><a href="/features/classes-and-css/">Classes &amp; CSS</a></li><li><a href="/features/geometry-and-scroll/">Geometry, scroll &amp; visibility</a></li><li><a href="/features/traversal/">DOM traversal</a></li><li><a href="/features/events/" aria-current="page">Events</a></li><li><a href="/features/event-delegation/">Event delegation</a></li><li><a href="/features/custom-events/">Custom events</a></li><li><a href="/features/ajax/">AJAX with $.ajax</a></li><li><a href="/features/fetch-shorthands/">$.get, $.post &amp; $.getJSON</a></li><li><a href="/features/load-fragments/">Loading HTML fragments</a></li><li><a href="/features/forms-and-serialize/">Forms &amp; serialization</a></li><li><a href="/features/timeouts-and-errors/">Timeouts, aborts &amp; retries</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#motion">Motion · GSAP-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/jquery/">What's ported from jQuery</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+let pos = 0;
+const log = msg => $('#ev-log').text((msg + '\n' + $('#ev-log').text()).split('\n').slice(0, 6).join('\n'));
+const move = d => {
+  pos = Math.max(0, Math.min(10, pos + d));
+  $('#ev-pos').css('left', 'calc(' + pos * 9 + '% + 5px)');
+};
+
+function bindShortcuts() {
+  $(document).on('keydown.shortcuts', e => {
+    if (e.target.closest && e.target.closest('input, textarea, select')) return;
+    if (e.key === 'j') { move(1);  log('keydown.shortcuts → J (position ' + pos + ')'); }
+    if (e.key === 'k') { move(-1); log('keydown.shortcuts → K (position ' + pos + ')'); }
+    if (e.key === '?') log('Help: J moves right, K moves left');
+  });
+}
+bindShortcuts();
+
+$('#ev-toggle').on('click', function () {
+  const on = $(this).attr('aria-pressed') !== 'true';
+  if (on) bindShortcuts();
+  else $(document).off('.shortcuts');          // removes only this namespace
+  $(this).attr('aria-pressed', String(on)).text(on ? 'Shortcuts on' : 'Shortcuts off');
+  log(on ? "on('keydown.shortcuts') bound" : "off('.shortcuts') — namespace removed, other handlers untouched");
+});
+
+$('#ev-once').one('click', function () {
+  log('.one() fired. Click again — nothing happens.');
+  $(this).text('Bonus claimed ✓');
+});
+
+$('#ev-fake').on('click', () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'j' })));
+</script>
+
+</body>
+</html>

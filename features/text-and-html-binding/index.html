@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kj-text and kj-html: Bind Content to Reactive State Safely — jsKjs</title>
+<meta name="description" content="Bind element content to state with kj-text (always safe) and kj-html (for markup you control). Live demo: a post composer with a character counter and formatted preview.">
+<link rel="canonical" href="https://jskjs.org/features/text-and-html-binding/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Text &amp; HTML binding">
+<meta property="og:description" content="Bind element content to state with kj-text (always safe) and kj-html (for markup you control). Live demo: a post composer with a character counter and formatted preview.">
+<meta property="og:url" content="https://jskjs.org/features/text-and-html-binding/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-text-and-html-binding.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Text &amp; HTML binding — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Text &amp; HTML binding">
+<meta name="twitter:description" content="Bind element content to state with kj-text (always safe) and kj-html (for markup you control). Live demo: a post composer with a character counter and formatted preview.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-text-and-html-binding.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+.cp-preview { border:1px dashed var(--line); border-radius:12px; padding:14px; min-height:3em; overflow-wrap:anywhere; }
+.cp-preview mark { background:color-mix(in srgb, var(--pulse) 30%, transparent); color:inherit; border-radius:4px; padding:0 2px; }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Text & HTML binding","description":"Bind element content to state with kj-text (always safe) and kj-html (for markup you control). Live demo: a post composer with a character counter and formatted preview.","url":"https://jskjs.org/features/text-and-html-binding/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Pulse","item":"https://jskjs.org/features/#pulse"},{"@type":"ListItem","position":4,"name":"Text & HTML binding","item":"https://jskjs.org/features/text-and-html-binding/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="pulse">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#pulse">Pulse</a></li><li><span aria-current="page">Text &amp; HTML binding</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Pulse · Alpine-style</p>
+  <h1>Text &amp; HTML binding</h1>
+  <p class="lede"><code>kj-text</code> writes text — it can never inject markup. <code>kj-html</code> writes HTML for the cases where you built the markup yourself.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<p>Any JavaScript expression works inside the attribute: arithmetic, ternaries, method calls, template-free string concatenation. The binding re-runs whenever the component's state changes.</p>
+<p>The safe pattern for rich previews is <strong>escape first, then decorate</strong>: run user text through <code>$.escape()</code>, then add your own tags for hashtags or mentions. That way the only HTML that reaches the page is HTML you wrote.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Post composer</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><div kj-data="composer">
+  <label for="cp-msg">Your post</label>
+  <textarea id="cp-msg" rows="3" kj-model="msg" maxlength="400" style="margin-top:6px"></textarea>
+  <p class="row" style="justify-content:space-between;margin:8px 0 16px">
+    <span class="muted" kj-text="words() + ' words'"></span>
+    <span :class="left() < 0 ? 'no' : left() < 20 ? 'partial' : 'muted'" kj-text="left() + ' characters left'" aria-live="polite"></span>
+  </p>
+  <h4 style="margin:0 0 8px">Preview <small class="muted">(kj-html)</small></h4>
+  <div class="cp-preview" kj-html="preview()"></div>
+</div></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-75" aria-label="Copy HTML code">Copy</button><pre id="code-75" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-kj">kj-data</span><span class="t-p">=</span><span class="t-s">&quot;composer&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;cp-msg&quot;</span><span class="t-tag">&gt;</span>Your post<span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;textarea</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;cp-msg&quot;</span> <span class="t-at">rows</span><span class="t-p">=</span><span class="t-s">&quot;3&quot;</span> <span class="t-kj">kj-model</span><span class="t-p">=</span><span class="t-s">&quot;msg&quot;</span> <span class="t-at">maxlength</span><span class="t-p">=</span><span class="t-s">&quot;400&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin-top:6px&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/textarea</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;p</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;justify-content:space-between;margin:8px 0 16px&quot;</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;muted&quot;</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;words() + ' words'&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-kj">:class</span><span class="t-p">=</span><span class="t-s">&quot;left() &lt; 0 ? 'no' : left() &lt; 20 ? 'partial' : 'muted'&quot;</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;left() + ' characters left'&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;polite&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;h4</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin:0 0 8px&quot;</span><span class="t-tag">&gt;</span>Preview <span class="t-tag">&lt;small</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;muted&quot;</span><span class="t-tag">&gt;</span>(kj-html)<span class="t-tag">&lt;/small</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/h4</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;cp-preview&quot;</span> <span class="t-kj">kj-html</span><span class="t-p">=</span><span class="t-s">&quot;preview()&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-76" aria-label="Copy JavaScript code">Copy</button><pre id="code-76" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.component</span><span class="t-p">(</span><span class="t-s">'composer'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">(</span><span class="t-p">{</span>
+  msg: <span class="t-s">'Shipping #jskjs today — one script, four superpowers. Thanks @kchecker! &lt;b&gt;This tag stays text.&lt;/b&gt;'</span><span class="t-p">,</span>
+  left<span class="t-p">(</span><span class="t-p">)</span>  <span class="t-p">{</span> <span class="t-k">return</span> <span class="t-n">140</span> - <span class="t-k">this</span>.msg.length<span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">,</span>
+  words<span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span> <span class="t-k">return</span> <span class="t-k">this</span>.msg<span class="t-f">.trim</span><span class="t-p">(</span><span class="t-p">)</span> ? <span class="t-k">this</span>.msg<span class="t-f">.trim</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-f">.split</span><span class="t-p">(</span>/\s+/<span class="t-p">)</span>.length : <span class="t-n">0</span><span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">,</span>
+  preview<span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+    <span class="t-k">return</span> <span class="t-d">$</span><span class="t-f">.escape</span><span class="t-p">(</span><span class="t-k">this</span>.msg<span class="t-p">)</span>                       <span class="t-c">// 1. escape everything the user typed</span>
+      <span class="t-f">.replace</span><span class="t-p">(</span>/#<span class="t-p">(</span>\w+<span class="t-p">)</span>/g<span class="t-p">,</span> <span class="t-s">'&lt;mark&gt;#$1&lt;/mark&gt;'</span><span class="t-p">)</span>       <span class="t-c">// 2. then add markup we control</span>
+      <span class="t-f">.replace</span><span class="t-p">(</span>/@<span class="t-p">(</span>\w+<span class="t-p">)</span>/g<span class="t-p">,</span> <span class="t-s">'&lt;a href=&quot;https://github.com/$1&quot; rel=&quot;noopener&quot;&gt;@$1&lt;/a&gt;'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-p">}</span><span class="t-p">,</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Common bindings</h3><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-77" aria-label="Copy HTML code">Copy</button><pre id="code-77" tabindex="0"><code><span class="t-tag">&lt;span</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;count&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;p</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;user ? 'Hi ' + user.name : 'Please sign in'&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;ul</span> <span class="t-kj">kj-html</span><span class="t-p">=</span><span class="t-s">&quot;items.map(i</span> =<span class="t-tag">&gt;</span> '<span class="t-tag">&lt;li</span><span class="t-tag">&gt;</span>' + $.escape(i) + '<span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span>').join('')&quot;&gt;<span class="t-tag">&lt;/ul</span><span class="t-tag">&gt;</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">kj-text=&quot;expr&quot; · kj-html=&quot;expr&quot;</span><p>Bind <code>textContent</code> or <code>innerHTML</code> to an expression. Prefer <code>kj-text</code> for anything user-supplied.</p><a href="/docs/#pulse-kj-text-kj-html" style="font-size:14px">Reference: kj-text / kj-html →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from Alpine.js</strong><code>x-text</code> → <code>kj-text</code>, <code>x-html</code> → <code>kj-html</code>.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="pulse" href="/features/reactive-state/"><span class="label">Pulse</span><h3>Reactive state</h3><p>Declare state on an element with kj-data and every binding inside updates when it changes.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="pulse" href="/features/two-way-binding/"><span class="label">Pulse</span><h3>Two-way binding</h3><p>Bind form controls to state in both directions with kj-model — text, number, range, checkbox, radio and select.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="pulse" href="/features/attribute-binding/"><span class="label">Pulse</span><h3>Attribute binding</h3><p>Bind any attribute to state with :attr or kj-bind:attr — src, alt, aria-*, disabled, style.</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/reactive-state/"><span class="dir">← Previous</span><strong>Reactive state</strong></a>
+    <a class="next" href="/features/conditional-display/"><span class="dir">Next →</span><strong>Conditional display</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Pulse features">
+    <div class="aside-group"><h2>Pulse · Alpine-style</h2><ul><li><a href="/features/reactive-state/">Reactive state</a></li><li><a href="/features/text-and-html-binding/" aria-current="page">Text &amp; HTML binding</a></li><li><a href="/features/conditional-display/">Conditional display</a></li><li><a href="/features/two-way-binding/">Two-way binding</a></li><li><a href="/features/event-directives/">Event directives</a></li><li><a href="/features/attribute-binding/">Attribute binding</a></li><li><a href="/features/components/">Reusable components</a></li><li><a href="/features/global-store/">Global stores</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#core">Core · jQuery-compatible</a></li><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#motion">Motion · GSAP-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/alpine/">What's ported from Alpine.js</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+$.component('composer', () => ({
+  msg: 'Shipping #jskjs today — one script, four superpowers. Thanks @kchecker! <b>This tag stays text.</b>',
+  left()  { return 140 - this.msg.length; },
+  words() { return this.msg.trim() ? this.msg.trim().split(/\s+/).length : 0; },
+  preview() {
+    return $.escape(this.msg)                       // 1. escape everything the user typed
+      .replace(/#(\w+)/g, '<mark>#$1</mark>')       // 2. then add markup we control
+      .replace(/@(\w+)/g, '<a href="https://github.com/$1" rel="noopener">@$1</a>');
+  },
+}));
+</script>
+
+</body>
+</html>

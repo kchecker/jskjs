@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jsKjs vs jQuery, htmx, Alpine.js and GSAP — Honest Comparison</title>
+<meta name="description" content="How jsKjs compares with jQuery 4, htmx 2, Alpine.js 3 and GSAP 3: measured sizes, what each module ports, what it leaves out, and when to pick the original library instead.">
+<link rel="canonical" href="https://jskjs.org/compare/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="jsKjs compared, honestly">
+<meta property="og:description" content="How jsKjs compares with jQuery 4, htmx 2, Alpine.js 3 and GSAP 3: measured sizes, what each module ports, what it leaves out, and when to pick the original library instead.">
+<meta property="og:url" content="https://jskjs.org/compare/">
+<meta property="og:image" content="https://jskjs.org/assets/og/compare.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="jsKjs compared, honestly — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="jsKjs compared, honestly">
+<meta name="twitter:description" content="How jsKjs compares with jQuery 4, htmx 2, Alpine.js 3 and GSAP 3: measured sizes, what each module ports, what it leaves out, and when to pick the original library instead.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/compare.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"jsKjs compared, honestly","description":"How jsKjs compares with jQuery 4, htmx 2, Alpine.js 3 and GSAP 3: measured sizes, what each module ports, what it leaves out, and when to pick the original library instead.","url":"https://jskjs.org/compare/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Compare","item":"https://jskjs.org/compare/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/" aria-current="page">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/" aria-current="page">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><span aria-current="page">Compare</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Compare</p>
+  <h1>jsKjs compared, honestly</h1>
+  <p class="lede">jsKjs replaces the <em>commonly used</em> parts of four libraries. Here is precisely what that means — including when you should use the original instead.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div><div class="wrap section"><figure style="margin:24px 0"><div class="sizes" role="img" aria-label="Gzipped size comparison: jQuery 26.8 KB, htmx 16.4 KB, Alpine.js 19.4 KB, GSAP core 27.6 KB, All four 90.2 KB, jsKjs 8.1 KB">
+    <div class="size-row" title="jQuery: 26.8 KB gzipped"><span class="name">jQuery<small>v4.0.0</small></span><span class="track"><span class="fill" style="width:29.6%"></span></span><span class="val">26.8 KB</span></div><div class="size-row" title="htmx: 16.4 KB gzipped"><span class="name">htmx<small>v2.0.11</small></span><span class="track"><span class="fill" style="width:18.2%"></span></span><span class="val">16.4 KB</span></div><div class="size-row" title="Alpine.js: 19.4 KB gzipped"><span class="name">Alpine.js<small>v3.17.5</small></span><span class="track"><span class="fill" style="width:21.5%"></span></span><span class="val">19.4 KB</span></div><div class="size-row" title="GSAP core: 27.6 KB gzipped"><span class="name">GSAP core<small>v3.15.0</small></span><span class="track"><span class="fill" style="width:30.6%"></span></span><span class="val">27.6 KB</span></div><div class="size-row total" title="All four: 90.2 KB gzipped"><span class="name">All four<small>combined</small></span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="val">90.2 KB</span></div><div class="size-row kj" title="jsKjs: 8.1 KB gzipped"><span class="name">jsKjs<small>v1.0.0</small></span><span class="track"><span class="fill" style="width:9.0%"></span></span><span class="val">8.1 KB</span></div>
+  </div><figcaption class="muted" style="font-size:13.5px;margin-top:12px">Official minified builds from npm (jquery, htmx.org, alpinejs, gsap), compressed with <code>gzip -9</code>, October 2026. jsKjs ports the commonly used subset of each — <a href="/compare/">see exactly what's included</a>.</figcaption></figure>
+  <div class="table-wrap"><table><caption class="sr-only">Coverage summary</caption><thead><tr><th scope="col">Library</th><th scope="col">jsKjs module</th><th scope="col">Supported</th><th scope="col">Partial</th><th scope="col">Not included</th><th scope="col"></th></tr></thead><tbody>
+  <tr><th scope="row" style="font:inherit;font-weight:700;text-transform:none;letter-spacing:0;background:none;color:var(--ink)">jQuery 4.0.0</th><td>Core</td><td class="yes">11</td><td class="partial">4</td><td class="no">7</td><td><a href="/compare/jquery/">Details →</a></td></tr><tr><th scope="row" style="font:inherit;font-weight:700;text-transform:none;letter-spacing:0;background:none;color:var(--ink)">htmx 2.0.11</th><td>Hyper</td><td class="yes">6</td><td class="partial">5</td><td class="no">7</td><td><a href="/compare/htmx/">Details →</a></td></tr><tr><th scope="row" style="font:inherit;font-weight:700;text-transform:none;letter-spacing:0;background:none;color:var(--ink)">Alpine.js 3.17.5</th><td>Pulse</td><td class="yes">7</td><td class="partial">3</td><td class="no">8</td><td><a href="/compare/alpine/">Details →</a></td></tr><tr><th scope="row" style="font:inherit;font-weight:700;text-transform:none;letter-spacing:0;background:none;color:var(--ink)">GSAP 3.15.0</th><td>Motion</td><td class="yes">6</td><td class="partial">1</td><td class="no">10</td><td><a href="/compare/gsap/">Details →</a></td></tr>
+  </tbody></table></div>
+  <div class="grid g2" style="margin-top:30px"><a class="card plate mod-top" data-mod="core" href="/compare/jquery/"><span class="label">Core · jQuery-compatible</span><h3>jsKjs vs jQuery</h3><p>jsKjs vs jQuery 4.0.</p><span class="go">Full comparison →</span></a><a class="card plate mod-top" data-mod="hyper" href="/compare/htmx/"><span class="label">Hyper · htmx-style</span><h3>jsKjs vs htmx</h3><p>jsKjs Hyper vs htmx 2.</p><span class="go">Full comparison →</span></a><a class="card plate mod-top" data-mod="pulse" href="/compare/alpine/"><span class="label">Pulse · Alpine-style</span><h3>jsKjs vs Alpine.js</h3><p>jsKjs Pulse vs Alpine.js 3.</p><span class="go">Full comparison →</span></a><a class="card plate mod-top" data-mod="motion" href="/compare/gsap/"><span class="label">Motion · GSAP-style</span><h3>jsKjs vs GSAP</h3><p>jsKjs Motion vs GSAP 3.</p><span class="go">Full comparison →</span></a></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$.component(): Reusable Components with Arguments, No Build Step — jsKjs</title>
+<meta name="description" content="Register a component once with $.component(name, factory) and reuse it anywhere with kj-data=&quot;name(args)&quot;. Live demo: three independent star-rating widgets.">
+<link rel="canonical" href="https://jskjs.org/features/components/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Reusable components">
+<meta property="og:description" content="Register a component once with $.component(name, factory) and reuse it anywhere with kj-data=&quot;name(args)&quot;. Live demo: three independent star-rating widgets.">
+<meta property="og:url" content="https://jskjs.org/features/components/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-components.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reusable components — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Reusable components">
+<meta name="twitter:description" content="Register a component once with $.component(name, factory) and reuse it anywhere with kj-data=&quot;name(args)&quot;. Live demo: three independent star-rating widgets.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-components.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+.rate { display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:10px 0; border-bottom:1px dashed var(--line); }
+.rate-label { font-weight:700; min-width:120px; }
+.stars { display:flex; gap:2px; }
+.stage .stars button { border:0; background:transparent; color:var(--line); font-size:26px; line-height:1; padding:4px; }
+.stage .stars button[aria-pressed="true"] { color:var(--motion); background:transparent; }
+.stage .stars button:hover { background:var(--surface-2); color:var(--motion-ink); }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Reusable components","description":"Register a component once with $.component(name, factory) and reuse it anywhere with kj-data=\"name(args)\". Live demo: three independent star-rating widgets.","url":"https://jskjs.org/features/components/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Pulse","item":"https://jskjs.org/features/#pulse"},{"@type":"ListItem","position":4,"name":"Reusable components","item":"https://jskjs.org/features/components/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="pulse">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#pulse">Pulse</a></li><li><span aria-current="page">Reusable components</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Pulse · Alpine-style</p>
+  <h1>Reusable components</h1>
+  <p class="lede">Register once, use anywhere: <code>$.component('rating', (initial, label) =&gt; ({ … }))</code>, then <code>&lt;div kj-data="rating(4, 'Docs')"&gt;</code>.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<p>A component is a factory that returns a fresh state object. Each element using it gets its own instance, so three ratings on a page never interfere. Arguments in <code>kj-data="rating(4, 'Docs')"</code> are passed to the factory, and an <code>init(el)</code> method receives the root element if you need it.</p>
+<p>Register components in a script that runs before the DOM is ready — placing it right after the jsKjs script tag is enough.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Three independent ratings, one component</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><div kj-data="rating(4, 'Docs')" class="rate"></div>
+<div kj-data="rating(2, 'Demos')" class="rate"></div>
+<div kj-data="rating(0, 'Release notes')" class="rate"></div></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-90" aria-label="Copy HTML code">Copy</button><pre id="code-90" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-kj">kj-data</span><span class="t-p">=</span><span class="t-s">&quot;rating(4, 'Docs')&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;rate&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-kj">kj-data</span><span class="t-p">=</span><span class="t-s">&quot;rating(2, 'Demos')&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;rate&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-kj">kj-data</span><span class="t-p">=</span><span class="t-s">&quot;rating(0, 'Release notes')&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;rate&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-91" aria-label="Copy JavaScript code">Copy</button><pre id="code-91" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.component</span><span class="t-p">(</span><span class="t-s">'rating'</span><span class="t-p">,</span> <span class="t-p">(</span>initial = <span class="t-n">0</span><span class="t-p">,</span> label = <span class="t-s">'Rating'</span><span class="t-p">)</span> =&gt; <span class="t-p">(</span><span class="t-p">{</span>
+  value: initial<span class="t-p">,</span> label<span class="t-p">,</span>
+  init<span class="t-p">(</span>el<span class="t-p">)</span> <span class="t-p">{</span>                                         <span class="t-c">// build the widget's markup once</span>
+    el.innerHTML =
+      <span class="t-s">'&lt;span class=&quot;rate-label&quot; kj-text=&quot;label&quot;&gt;&lt;/span&gt;'</span> +
+      <span class="t-s">'&lt;div class=&quot;stars&quot; role=&quot;group&quot; aria-label=&quot;'</span> + label + <span class="t-s">' rating&quot;&gt;'</span> +
+      <span class="t-p">[</span><span class="t-n">1</span><span class="t-p">,</span> <span class="t-n">2</span><span class="t-p">,</span> <span class="t-n">3</span><span class="t-p">,</span> <span class="t-n">4</span><span class="t-p">,</span> <span class="t-n">5</span><span class="t-p">]</span><span class="t-f">.map</span><span class="t-p">(</span>n =&gt; <span class="t-s">'&lt;button type=&quot;button&quot; @click=&quot;rate('</span> + n + <span class="t-s">')&quot; :aria-pressed=&quot;value &gt;= '</span> + n +
+        <span class="t-s">' ? \'true\' : \'false\'&quot; aria-label=&quot;'</span> + n + <span class="t-s">' star'</span> + <span class="t-p">(</span>n &gt; <span class="t-n">1</span> ? <span class="t-s">'s'</span> : <span class="t-s">''</span><span class="t-p">)</span> + <span class="t-s">'&quot;&gt;★&lt;/button&gt;'</span><span class="t-p">)</span><span class="t-f">.join</span><span class="t-p">(</span><span class="t-s">''</span><span class="t-p">)</span> +
+      <span class="t-s">'&lt;/div&gt;&lt;span class=&quot;muted&quot; kj-text=&quot;value ? value + \' of 5\' : \'Not rated\'&quot; aria-live=&quot;polite&quot;&gt;&lt;/span&gt;'</span><span class="t-p">;</span>
+  <span class="t-p">}</span><span class="t-p">,</span>
+  rate<span class="t-p">(</span>n<span class="t-p">)</span> <span class="t-p">{</span> <span class="t-k">this</span>.value = <span class="t-k">this</span>.value === n ? <span class="t-n">0</span> : n<span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">,</span>  <span class="t-c">// click the same star again to clear</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>A dropdown component</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-92" aria-label="Copy JavaScript code">Copy</button><pre id="code-92" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.component</span><span class="t-p">(</span><span class="t-s">'dropdown'</span><span class="t-p">,</span> <span class="t-p">(</span>open = <span class="t-k">false</span><span class="t-p">)</span> =&gt; <span class="t-p">(</span><span class="t-p">{</span>
+  open<span class="t-p">,</span>
+  toggle<span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span> <span class="t-k">this</span>.open = !<span class="t-k">this</span>.open<span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">,</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-c">// &lt;div kj-data=&quot;dropdown(true)&quot;&gt; &lt;button @click=&quot;toggle()&quot;&gt;Menu&lt;/button&gt; &lt;ul kj-show=&quot;open&quot;&gt;…&lt;/ul&gt; &lt;/div&gt;</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">$.component(name, (...args) =&gt; state)</span><p>Register a reusable component factory, then use it with <code>kj-data="name"</code> or with arguments: <code>kj-data="name(4, 'Docs')"</code>. An <code>init(el)</code> method receives the root element.</p><a href="/docs/#pulse-component" style="font-size:14px">Reference: $.component() →</a></div><div class="api-item"><span class="sig">kj-data=&quot;{ … }&quot; | kj-data=&quot;componentName&quot;</span><p>Declares a component and its reactive scope. An <code>init()</code> method, if present, runs on mount. Pass a registered component name to reuse logic.</p><a href="/docs/#pulse-kj-data" style="font-size:14px">Reference: kj-data →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from Alpine.js</strong><code>Alpine.data('rating', …)</code> → <code>$.component('rating', …)</code>, including arguments: <code>x-data="rating(4)"</code> → <code>kj-data="rating(4)"</code>.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="pulse" href="/features/reactive-state/"><span class="label">Pulse</span><h3>Reactive state</h3><p>Declare state on an element with kj-data and every binding inside updates when it changes.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="pulse" href="/features/global-store/"><span class="label">Pulse</span><h3>Global stores</h3><p>Share state between components with $.store(name, data).</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="pulse" href="/features/attribute-binding/"><span class="label">Pulse</span><h3>Attribute binding</h3><p>Bind any attribute to state with :attr or kj-bind:attr — src, alt, aria-*, disabled, style.</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/attribute-binding/"><span class="dir">← Previous</span><strong>Attribute binding</strong></a>
+    <a class="next" href="/features/global-store/"><span class="dir">Next →</span><strong>Global stores</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Pulse features">
+    <div class="aside-group"><h2>Pulse · Alpine-style</h2><ul><li><a href="/features/reactive-state/">Reactive state</a></li><li><a href="/features/text-and-html-binding/">Text &amp; HTML binding</a></li><li><a href="/features/conditional-display/">Conditional display</a></li><li><a href="/features/two-way-binding/">Two-way binding</a></li><li><a href="/features/event-directives/">Event directives</a></li><li><a href="/features/attribute-binding/">Attribute binding</a></li><li><a href="/features/components/" aria-current="page">Reusable components</a></li><li><a href="/features/global-store/">Global stores</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#core">Core · jQuery-compatible</a></li><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#motion">Motion · GSAP-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/alpine/">What's ported from Alpine.js</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+$.component('rating', (initial = 0, label = 'Rating') => ({
+  value: initial, label,
+  init(el) {                                         // build the widget's markup once
+    el.innerHTML =
+      '<span class="rate-label" kj-text="label"></span>' +
+      '<div class="stars" role="group" aria-label="' + label + ' rating">' +
+      [1, 2, 3, 4, 5].map(n => '<button type="button" @click="rate(' + n + ')" :aria-pressed="value >= ' + n +
+        ' ? \'true\' : \'false\'" aria-label="' + n + ' star' + (n > 1 ? 's' : '') + '">★</button>').join('') +
+      '</div><span class="muted" kj-text="value ? value + \' of 5\' : \'Not rated\'" aria-live="polite"></span>';
+  },
+  rate(n) { this.value = this.value === n ? 0 : n; },  // click the same star again to clear
+}));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+# jsKjs
+
+> jsKjs is a single-file, zero-dependency JavaScript library (~8.1 KB gzipped) with a jQuery-compatible $ API plus htmx-style declarative requests (kj-* attributes), Alpine-style reactivity (kj-data) and GSAP-style animation ($.to). MIT licensed. Source: https://github.com/kchecker/jskjs
+
+Use one script tag: <script src="https://jskjs.org/cdn/1.0.0/jskjs.min.js"></script>. Never combine it with jQuery, htmx, Alpine.js or GSAP. Prefer kj-* attributes over JavaScript. $.to uses seconds; fadeIn/slideDown use milliseconds.
+
+## Essentials
+- [Complete rules and API for AI agents](https://jskjs.org/llms-full.txt): everything an agent needs in one file
+- [Getting started](https://jskjs.org/start/): install and first page
+- [API reference](https://jskjs.org/docs/): every function with examples
+- [Migrate from jQuery](https://jskjs.org/migrate/): differences and checklist
+
+## Features
+- [Selectors & collections](https://jskjs.org/features/selectors/): Use $() exactly like jQuery — CSS selectors, context, HTML creation and DOM-ready — powered by native querySelectorAll, with collections that are real JavaScript arrays.
+- [DOM manipulation](https://jskjs.org/features/dom-manipulation/): Insert, move, clone, wrap and remove elements with the jQuery API you know — .append(), .prepend(), .before(), .after(), .clone(), .empty() — on modern DOM primitives.
+- [Attributes, properties & data](https://jskjs.org/features/attributes-and-data/): Read and write HTML attributes, live DOM properties and per-element data. jsKjs parses data-* JSON automatically and stores values in a WeakMap, so nothing leaks.
+- [Classes & CSS](https://jskjs.org/features/classes-and-css/): Toggle classes and set styles with addClass(), toggleClass() and css() — including CSS custom properties, which jsKjs reads and writes without adding px.
+- [Geometry, scroll & visibility](https://jskjs.org/features/geometry-and-scroll/): Measure and position elements with width(), height(), offset() and position(), control scrolling with scrollTop(), and show or hide elements without losing their display value.
+- [DOM traversal](https://jskjs.org/features/traversal/): Walk the DOM with find(), closest(), parent(), parents(), children(), siblings(), next(), prev(), filter(), not() and is() — every result chainable and de-duplicated.
+- [Events](https://jskjs.org/features/events/): Bind and unbind events with on(), off() and one(), group handlers with namespaces like click.menu, and use shortcut methods — the jQuery event API on native addEventListener.
+- [Event delegation](https://jskjs.org/features/event-delegation/): Handle clicks on thousands of rows — including rows added later — with a single listener using .on(event, selector, handler). Live demo with 1,000+ rows.
+- [Custom events](https://jskjs.org/features/custom-events/): Decouple your UI with custom events: trigger("cart:add", payload) once and let any number of independent listeners react. Built on native CustomEvent.
+- [AJAX with $.ajax](https://jskjs.org/features/ajax/): jQuery's $.ajax rebuilt on fetch: native Promises and async/await, JSON bodies, headers, timeouts with auto-abort, plus success/error callbacks and .done/.fail for migration.
+- [$.get, $.post & $.getJSON](https://jskjs.org/features/fetch-shorthands/): One-line GET, POST and JSON requests that return Promises: await $.getJSON(url), $.get(url, data), $.post(url, data) — live examples against real endpoints.
+- [Loading HTML fragments](https://jskjs.org/features/load-fragments/): Fetch a page and insert only the fragment you need with $(el).load("/page.html #section") — the classic jQuery partial-loading pattern on fetch.
+- [Forms & serialization](https://jskjs.org/features/forms-and-serialize/): Turn forms into query strings or plain objects with serialize() and serializeObject(), then submit them with $.post — or declaratively with kj-post.
+- [Timeouts, aborts & retries](https://jskjs.org/features/timeouts-and-errors/): Handle real-world network failure: HTTP errors with status codes, automatic timeouts, manual abort(), and a retry-with-backoff helper — demonstrated against live endpoints.
+- [Declarative requests](https://jskjs.org/features/declarative-requests/): Make GET, POST, PUT, PATCH and DELETE requests straight from HTML with kj-get, kj-post and friends — htmx-style hypermedia with zero JavaScript. Live PHP-backed demos.
+- [Targets & swaps](https://jskjs.org/features/targets-and-swaps/): Control exactly where server HTML lands with kj-target and how it is inserted with kj-swap — innerHTML, outerHTML, beforebegin, afterbegin, beforeend, afterend, textContent or none.
+- [Triggers & debouncing](https://jskjs.org/features/triggers/): Choose when requests fire with kj-trigger: any DOM event plus a debounce like keyup delay:400ms — live search and server-side inline validation without JavaScript.
+- [Polling](https://jskjs.org/features/polling/): Keep a panel fresh with kj-trigger="every Ns". Polling stops automatically when the element leaves the page. Live demo: a PHP price ticker and server clock.
+- [Lazy loading & infinite scroll](https://jskjs.org/features/lazy-loading/): Load content when it scrolls into view with kj-trigger="revealed", or immediately with kj-trigger="load". Build infinite scroll with zero JavaScript — live PHP demo.
+- [Confirmations & loading indicators](https://jskjs.org/features/confirm-and-indicators/): Ask before destructive requests with kj-confirm and show progress with kj-indicator. Busy elements get aria-busy="true" automatically for accessible loading states.
+- [Sending extra data](https://jskjs.org/features/include-and-vals/): Send more than the element itself: kj-include adds another form's fields, kj-vals adds literal JSON values. Includes a stateless like-button round-trip demo in PHP.
+- [History & deep links](https://jskjs.org/features/push-url/): Keep the address bar in sync with AJAX navigation using kj-push-url, and restore state on back/forward with a three-line popstate handler. Deep links work too.
+- [Request lifecycle events](https://jskjs.org/features/lifecycle-events/): Every declarative request emits bubbling lifecycle events — kj:before, kj:after, kj:error and kj:load — so one document-level listener can drive a page-wide progress bar or error toast.
+- [Reactive state](https://jskjs.org/features/reactive-state/): Declare state on an element with kj-data and every binding inside updates when it changes. Methods, computed values and init() included — no build step, no virtual DOM.
+- [Text & HTML binding](https://jskjs.org/features/text-and-html-binding/): Bind element content to state with kj-text (always safe) and kj-html (for markup you control). Live demo: a post composer with a character counter and formatted preview.
+- [Conditional display](https://jskjs.org/features/conditional-display/): Show and hide parts of the page from state with kj-show. Live demo: an accessible three-step signup wizard with validation and focus management.
+- [Two-way binding](https://jskjs.org/features/two-way-binding/): Bind form controls to state in both directions with kj-model — text, number, range, checkbox, radio and select. Live demo: an RGB colour mixer with a WCAG contrast check.
+- [Event directives](https://jskjs.org/features/event-directives/): Handle events right in your markup with @click and kj-on:, including the .prevent, .stop, .enter and .escape modifiers. Live demo: a keyboard-friendly to-do list.
+- [Attribute binding](https://jskjs.org/features/attribute-binding/): Bind any attribute to state with :attr or kj-bind:attr — src, alt, aria-*, disabled, style. :class merges with static classes and false removes an attribute. Live gallery demo.
+- [Reusable components](https://jskjs.org/features/components/): Register a component once with $.component(name, factory) and reuse it anywhere with kj-data="name(args)". Live demo: three independent star-rating widgets.
+- [Global stores](https://jskjs.org/features/global-store/): Share state between components with $.store(name, data). Every component that reads the store re-renders when it changes. Live demo: a cart that survives a page refresh.
+- [Tweens](https://jskjs.org/features/tweens/): Animate any numeric CSS property and transforms (x, y, rotate, scale) with $.to(). Duration in seconds, professional easings, and a Promise you can await. Interactive demo.
+- [From & fromTo](https://jskjs.org/features/from-and-fromto/): Animate elements in from a starting state with $.from(), or define both ends with $.fromTo(). Live demo: split-text headline, dealt cards and an elastic badge pop.
+- [Timelines](https://jskjs.org/features/timelines/): Sequence animations with $.timeline(): steps run in order, "<" runs a step alongside the previous one, "+=0.3" adds a gap, and await tl.play() tells you when it's done.
+- [Stagger](https://jskjs.org/features/stagger/): Offset each element's start with the stagger option for cascades, or compute per-element delays for ripple and grid waves from any point. Interactive dot-grid demo.
+- [Easings](https://jskjs.org/features/easings/): Ten built-in easings — linear, ease-in/out, power2, back.out, elastic.out, bounce.out — plotted as curves and playable live. Or pass any function of t.
+- [Transforms](https://jskjs.org/features/transforms/): Animate x, y, rotate, scale, scaleX, scaleY, skewX and skewY independently — jsKjs composes them into one transform per frame. Interactive transform playground.
+- [Classic effects](https://jskjs.org/features/classic-effects/): jQuery's fadeIn, fadeOut, fadeToggle, slideDown, slideUp, slideToggle and animate() — same names, milliseconds and callbacks — rebuilt on the jsKjs Motion engine.
+- [Debounce & throttle](https://jskjs.org/features/debounce-and-throttle/): See the difference between debounce and throttle in real time: raw, throttled and debounced event lanes driven by your pointer. Built-in $.debounce() and $.throttle().
+- [Utilities](https://jskjs.org/features/utilities/): The $ helper belt: $.each, $.map, $.extend (deep, prototype-pollution safe), $.param, $.parseHTML, $.escape, $.uuid, type checks and $.noConflict — run them live.
+
+## AI agents
+- [The jsKjs agent kit](https://jskjs.org/ai/kit/): Download ready-made jsKjs rules for AI coding agents: AGENTS.md, CLAUDE.md and a Claude skill, Copilot instructions, Cursor .mdc, Cline, Roo Code, Continue, Windsurf and Gemini files.
+- [jsKjs with Claude Code & Claude.ai](https://jskjs.org/ai/claude/): Set up Claude Code and Claude.ai to write jsKjs: a CLAUDE.md that imports the shared rules, and a jskjs skill for .claude/skills/ or upload to Claude.ai.
+- [jsKjs with OpenAI Codex](https://jskjs.org/ai/codex/): Teach OpenAI Codex to build with jsKjs using a single AGENTS.md at your repository root. Merge order, size limits and a starter prompt.
+- [jsKjs with GitHub Copilot](https://jskjs.org/ai/copilot/): Configure GitHub Copilot for jsKjs with .github/copilot-instructions.md for the whole repo and a file-scoped .github/instructions/jskjs.instructions.md using applyTo.
+- [jsKjs with Cursor](https://jskjs.org/ai/cursor/): Add a Cursor project rule for jsKjs in .cursor/rules/jskjs.mdc with description and globs frontmatter — or rely on AGENTS.md, which Cursor also reads.
+- [jsKjs with VS Code agents with OpenRouter](https://jskjs.org/ai/vscode-openrouter/): OpenRouter routes your requests to hundreds of models — the rules live in your VS Code agent. Set up jsKjs rules for Cline (.clinerules), Roo Code (.roo/rules) and Continue (.continue/rules).
+- [jsKjs with Windsurf / Devin Desktop](https://jskjs.org/ai/windsurf/): Add a jsKjs workspace rule for Windsurf — now Devin Desktop — in .windsurf/rules/ with a glob trigger, or rely on AGENTS.md, which it processes as a rule.
+- [jsKjs with Gemini CLI](https://jskjs.org/ai/gemini/): Give Gemini CLI the jsKjs rules with a GEMINI.md in your project, or point context.fileName at AGENTS.md so every agent shares one file.
+- [Prompt library](https://jskjs.org/ai/prompts/): Copy-paste prompts that get AI coding agents to build with jsKjs: kick-off, PHP backend pairing, live search, forms, reactive widgets, motion, jQuery migration and rule-based review.
+- [Vibe recipes](https://jskjs.org/ai/recipes/): Real vibe-coding recipes: the prompt you give an AI agent and the jsKjs result, running live — newsletter signup, pricing toggle, live search with highlighting.
+- [llms.txt for jsKjs](https://jskjs.org/ai/llms-txt/): jsKjs publishes llms.txt (an index for language models) and llms-full.txt (the complete rules and API in one file) so any AI with web access can learn the library in one fetch.
+
+## Comparisons
+- [jsKjs vs jQuery](https://jskjs.org/compare/jquery/): jsKjs vs jQuery 4.0: which jQuery APIs are supported, which behave differently, which are missing, and when you should keep using jQuery. Measured sizes and migration notes.
+- [jsKjs vs htmx](https://jskjs.org/compare/htmx/): jsKjs Hyper vs htmx 2: attribute-by-attribute mapping (hx-get → kj-get, hx-target → kj-target…), which htmx features are supported, which are not, and when htmx is the better choice.
+- [jsKjs vs Alpine.js](https://jskjs.org/compare/alpine/): jsKjs Pulse vs Alpine.js 3: directive mapping (x-data → kj-data, x-model → kj-model…), components and stores, what is missing (x-for, x-if, $watch…), and when Alpine is the better pick.
+- [jsKjs vs GSAP](https://jskjs.org/compare/gsap/): jsKjs Motion vs GSAP 3: what maps across (to, from, fromTo, timelines, stagger, transforms), what does not (repeat, playback control, plugins like ScrollTrigger), and when to choose GSAP.
+
+## Optional
+- [The weight of compatibility](https://jskjs.org/jquery/weight/): jQuery 4.0.0 is 26.8 KB gzipped and still supports IE11. Add htmx, Alpine and GSAP and a typical interactive page ships ~90 KB. jsKjs covers the common core of all four in 8.1 KB.
+- [A selector engine the browser already has](https://jskjs.org/jquery/selector-engine/): jQuery 4 inlines its Sizzle-derived selector engine for custom pseudos like :visible. Every modern browser ships a faster, standards-complete engine: querySelectorAll. jsKjs uses it exclusively.
+- [jqXHR and the almost-promise](https://jskjs.org/jquery/promises/): jQuery AJAX predates native Promises: jqXHR and $.Deferred became Promises/A+ compliant only in 3.0, and jQuery 4's slim build removes Deferred entirely. jsKjs $.ajax is fetch with real Promises.
+- [Data in the wrong place](https://jskjs.org/jquery/memory/): Older jQuery kept element data and handlers in a central cache that could leak when nodes were removed outside jQuery. Modern jQuery improved this; jsKjs uses WeakMap so cleanup is a language guarantee.
+- [No model, only the DOM](https://jskjs.org/jquery/state/): jQuery has no concept of state: the DOM is the model, and every change is manual synchronisation. jsKjs adds Alpine-style reactivity with kj-data, so the UI follows the data.
+- [.animate() stopped at numbers](https://jskjs.org/jquery/animation/): jQuery .animate() tweens numeric CSS only — no transforms or colours without plugins, two easings without jQuery UI, and a queue model for sequencing. jsKjs Motion adds transforms, 10 easings, stagger and timelines.
+- [A handler for every endpoint](https://jskjs.org/jquery/ajax-boilerplate/): Every jQuery AJAX interaction needs JavaScript: bind, serialize, request, parse, render, handle errors. jsKjs Hyper moves the common cases into HTML attributes, htmx-style.
+- [Footguns: HTML strings and deep merges](https://jskjs.org/jquery/security/): jQuery's HTML-string APIs and deep $.extend led to CVE-2020-11022/11023 (XSS) and CVE-2019-11358 (prototype pollution). How jsKjs makes the safe path the short path — and a bug we caught in our own pre-release.
+- [CDN](https://jskjs.org/cdn/): pinned URLs and SRI hashes
+- [Release notes](https://jskjs.org/releases/)

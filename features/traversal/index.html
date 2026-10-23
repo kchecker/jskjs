@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DOM Traversal: find, closest, siblings, parents in jsKjs — jsKjs</title>
+<meta name="description" content="Walk the DOM with find(), closest(), parent(), parents(), children(), siblings(), next(), prev(), filter(), not() and is() — every result chainable and de-duplicated.">
+<link rel="canonical" href="https://jskjs.org/features/traversal/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="DOM traversal">
+<meta property="og:description" content="Walk the DOM with find(), closest(), parent(), parents(), children(), siblings(), next(), prev(), filter(), not() and is() — every result chainable and de-duplicated.">
+<meta property="og:url" content="https://jskjs.org/features/traversal/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-traversal.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="DOM traversal — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DOM traversal">
+<meta name="twitter:description" content="Walk the DOM with find(), closest(), parent(), parents(), children(), siblings(), next(), prev(), filter(), not() and is() — every result chainable and de-duplicated.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-traversal.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+.tree, .tree ul { list-style:none; padding-left:22px; margin:4px 0; }
+.tree { padding-left:0; }
+.tree li { padding:4px 8px; border-radius:7px; font:14px/1.5 var(--mono); }
+.tree li.hit { background:color-mix(in srgb, var(--core) 24%, transparent); }
+.tree li.anchor { outline:2px solid var(--core-ink); }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"DOM traversal","description":"Walk the DOM with find(), closest(), parent(), parents(), children(), siblings(), next(), prev(), filter(), not() and is() — every result chainable and de-duplicated.","url":"https://jskjs.org/features/traversal/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Core","item":"https://jskjs.org/features/#core"},{"@type":"ListItem","position":4,"name":"DOM traversal","item":"https://jskjs.org/features/traversal/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="core">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#core">Core</a></li><li><span aria-current="page">DOM traversal</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Core · jQuery-compatible</p>
+  <h1>DOM traversal</h1>
+  <p class="lede">Move around the tree from wherever you are: up with <code>.closest()</code>, down with <code>.find()</code>, sideways with <code>.siblings()</code>, and narrow down with <code>.filter()</code> and <code>.not()</code>.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<p>Traversal methods return new, de-duplicated collections, so you can chain them freely. <code>.filter()</code>, <code>.not()</code> and <code>.is()</code> accept a selector, an element, a collection, or a predicate function <code>(index, element) =&gt; boolean</code>.</p>
+<p><code>.closest()</code> is the workhorse of event handling: from the element that was clicked, climb to the card, row or form that owns it. It is built on the native <code>Element.closest()</code>.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Traversal playground</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><p class="muted" style="margin:0 0 10px;font-size:14.5px">The outlined node is the starting point. Each button highlights what the method returns.</p>
+<ul class="tree" id="tree" aria-label="Example tree">
+  <li>root
+    <ul>
+      <li class="branch">branch A
+        <ul><li class="leaf">leaf A1</li><li class="leaf anchor" id="anchor-node">leaf A2 (start)</li><li class="leaf special">leaf A3 (.special)</li></ul>
+      </li>
+      <li class="branch">branch B
+        <ul><li class="leaf">leaf B1</li><li class="leaf special">leaf B2 (.special)</li></ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<div class="row" id="trav-buttons" style="margin-top:12px">
+  <button type="button" data-m="siblings">.siblings()</button>
+  <button type="button" data-m="next">.next()</button>
+  <button type="button" data-m="prev">.prev()</button>
+  <button type="button" data-m="parent">.parent().closest('li')</button>
+  <button type="button" data-m="parents">.parents('.branch')</button>
+  <button type="button" data-m="find">$('#tree').find('.leaf')</button>
+  <button type="button" data-m="filter">.filter('.special')</button>
+  <button type="button" data-m="notfn">.not(fn)</button>
+</div>
+<pre class="out" id="trav-out" aria-live="polite"></pre></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-19" aria-label="Copy HTML code">Copy</button><pre id="code-19" tabindex="0"><code><span class="t-tag">&lt;p</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;muted&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin:0 0 10px;font-size:14.5px&quot;</span><span class="t-tag">&gt;</span>The outlined node is the starting point. Each button highlights what the method returns.<span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;ul</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;tree&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tree&quot;</span> <span class="t-at">aria-label</span><span class="t-p">=</span><span class="t-s">&quot;Example tree&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;li</span><span class="t-tag">&gt;</span>root
+    <span class="t-tag">&lt;ul</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;li</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;branch&quot;</span><span class="t-tag">&gt;</span>branch A
+        <span class="t-tag">&lt;ul</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;li</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;leaf&quot;</span><span class="t-tag">&gt;</span>leaf A1<span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;li</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;leaf anchor&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;anchor-node&quot;</span><span class="t-tag">&gt;</span>leaf A2 (start)<span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;li</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;leaf special&quot;</span><span class="t-tag">&gt;</span>leaf A3 (.special)<span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/ul</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;li</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;branch&quot;</span><span class="t-tag">&gt;</span>branch B
+        <span class="t-tag">&lt;ul</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;li</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;leaf&quot;</span><span class="t-tag">&gt;</span>leaf B1<span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;li</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;leaf special&quot;</span><span class="t-tag">&gt;</span>leaf B2 (.special)<span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/ul</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;/ul</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/ul</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;trav-buttons&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin-top:12px&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-m</span><span class="t-p">=</span><span class="t-s">&quot;siblings&quot;</span><span class="t-tag">&gt;</span>.siblings()<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-m</span><span class="t-p">=</span><span class="t-s">&quot;next&quot;</span><span class="t-tag">&gt;</span>.next()<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-m</span><span class="t-p">=</span><span class="t-s">&quot;prev&quot;</span><span class="t-tag">&gt;</span>.prev()<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-m</span><span class="t-p">=</span><span class="t-s">&quot;parent&quot;</span><span class="t-tag">&gt;</span>.parent().closest('li')<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-m</span><span class="t-p">=</span><span class="t-s">&quot;parents&quot;</span><span class="t-tag">&gt;</span>.parents('.branch')<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-m</span><span class="t-p">=</span><span class="t-s">&quot;find&quot;</span><span class="t-tag">&gt;</span>$('#tree').find('.leaf')<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-m</span><span class="t-p">=</span><span class="t-s">&quot;filter&quot;</span><span class="t-tag">&gt;</span>.filter('.special')<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-m</span><span class="t-p">=</span><span class="t-s">&quot;notfn&quot;</span><span class="t-tag">&gt;</span>.not(fn)<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;pre</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;out&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;trav-out&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;polite&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/pre</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-20" aria-label="Copy JavaScript code">Copy</button><pre id="code-20" tabindex="0"><code><span class="t-k">const</span> $start = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#anchor-node'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-k">const</span> methods = <span class="t-p">{</span>
+  siblings: <span class="t-p">(</span><span class="t-p">)</span> =&gt; $start<span class="t-f">.siblings</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">,</span>
+  next:     <span class="t-p">(</span><span class="t-p">)</span> =&gt; $start<span class="t-f">.next</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">,</span>
+  prev:     <span class="t-p">(</span><span class="t-p">)</span> =&gt; $start<span class="t-f">.prev</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">,</span>
+  parent:   <span class="t-p">(</span><span class="t-p">)</span> =&gt; $start<span class="t-f">.parent</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-f">.closest</span><span class="t-p">(</span><span class="t-s">'li'</span><span class="t-p">)</span><span class="t-p">,</span>
+  parents:  <span class="t-p">(</span><span class="t-p">)</span> =&gt; $start<span class="t-f">.parents</span><span class="t-p">(</span><span class="t-s">'.branch'</span><span class="t-p">)</span><span class="t-p">,</span>
+  find:     <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tree'</span><span class="t-p">)</span><span class="t-f">.find</span><span class="t-p">(</span><span class="t-s">'.leaf'</span><span class="t-p">)</span><span class="t-p">,</span>
+  filter:   <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tree .leaf'</span><span class="t-p">)</span><span class="t-f">.filter</span><span class="t-p">(</span><span class="t-s">'.special'</span><span class="t-p">)</span><span class="t-p">,</span>
+  notfn:    <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tree .leaf'</span><span class="t-p">)</span><span class="t-f">.not</span><span class="t-p">(</span><span class="t-p">(</span>i<span class="t-p">,</span> el<span class="t-p">)</span> =&gt; el.textContent<span class="t-f">.includes</span><span class="t-p">(</span><span class="t-s">'B'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">,</span>
+<span class="t-p">}</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#trav-buttons'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-s">'button'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tree li'</span><span class="t-p">)</span><span class="t-f">.removeClass</span><span class="t-p">(</span><span class="t-s">'hit'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">const</span> $result = methods<span class="t-p">[</span><span class="t-k">this</span>.dataset.m<span class="t-p">]</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+  $result<span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'hit'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#trav-out'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-p">)</span> + <span class="t-s">' → '</span> + $result.length + <span class="t-s">' element(s)\n'</span> +
+    <span class="t-s">'start.is(&quot;.leaf&quot;) = '</span> + $start<span class="t-f">.is</span><span class="t-p">(</span><span class="t-s">'.leaf'</span><span class="t-p">)</span> + <span class="t-s">' · start.is(&quot;.special&quot;) = '</span> + $start<span class="t-f">.is</span><span class="t-p">(</span><span class="t-s">'.special'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Climb, then search</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-21" aria-label="Copy JavaScript code">Copy</button><pre id="code-21" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span>document<span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-s">'.remove'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.closest</span><span class="t-p">(</span><span class="t-s">'.cart-row'</span><span class="t-p">)</span><span class="t-f">.remove</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-k">const</span> $form = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#email'</span><span class="t-p">)</span><span class="t-f">.closest</span><span class="t-p">(</span><span class="t-s">'form'</span><span class="t-p">)</span><span class="t-p">;</span>
+$form<span class="t-f">.find</span><span class="t-p">(</span><span class="t-s">'[required]'</span><span class="t-p">)</span><span class="t-f">.filter</span><span class="t-p">(</span><span class="t-p">(</span>i<span class="t-p">,</span> el<span class="t-p">)</span> =&gt; !el.value<span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'missing'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">.find(selector) → KJ</span><p>All descendants matching a selector.</p><a href="/docs/#traversal-find" style="font-size:14px">Reference: .find() →</a></div><div class="api-item"><span class="sig">.filter(selector | fn) → KJ</span><p>Keep only matching elements. Accepts a selector or a predicate <code>(i, el) => boolean</code>.</p><a href="/docs/#traversal-filter" style="font-size:14px">Reference: .filter() →</a></div><div class="api-item"><span class="sig">.not(selector | fn(i, el) | element | collection) → KJ</span><p>Drop matching elements. Accepts a selector, an element or collection, or a predicate function.</p><a href="/docs/#traversal-not" style="font-size:14px">Reference: .not() →</a></div><div class="api-item"><span class="sig">.is(selector | fn(i, el) | element) → boolean</span><p>Test whether any element in the set matches a selector, element, collection or predicate.</p><a href="/docs/#traversal-is" style="font-size:14px">Reference: .is() →</a></div><div class="api-item"><span class="sig">.closest(selector) → KJ</span><p>Nearest matching ancestor (including the element itself). The backbone of event delegation.</p><a href="/docs/#traversal-closest" style="font-size:14px">Reference: .closest() →</a></div><div class="api-item"><span class="sig">.parent() · .parents([selector]) → KJ</span><p>Direct parent, or all ancestors (optionally filtered).</p><a href="/docs/#traversal-parent-parents" style="font-size:14px">Reference: .parent() / .parents() →</a></div><div class="api-item"><span class="sig">.children([selector]) → KJ</span><p>Direct children, optionally filtered.</p><a href="/docs/#traversal-children" style="font-size:14px">Reference: .children() →</a></div><div class="api-item"><span class="sig">.siblings([selector]) → KJ</span><p>All siblings, optionally filtered.</p><a href="/docs/#traversal-siblings" style="font-size:14px">Reference: .siblings() →</a></div><div class="api-item"><span class="sig">.next([selector]) · .prev([selector]) → KJ</span><p>Adjacent siblings, optionally required to match a selector.</p><a href="/docs/#traversal-next-prev" style="font-size:14px">Reference: .next() / .prev() →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from jQuery</strong>Core traversal matches jQuery. <code>.nextAll()</code>, <code>.prevAll()</code>, <code>.nextUntil()</code>, <code>.parentsUntil()</code>, <code>.has()</code>, <code>.contents()</code>, <code>.end()</code> and <code>.addBack()</code> are not included.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="core" href="/features/selectors/"><span class="label">Core</span><h3>Selectors &amp; collections</h3><p>Use $() exactly like jQuery — CSS selectors, context, HTML creation and DOM-ready — powered by native querySelectorAll, with collections that are real JavaScript arrays..</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="core" href="/features/event-delegation/"><span class="label">Core</span><h3>Event delegation</h3><p>Handle clicks on thousands of rows — including rows added later — with a single listener using .on(event, selector, handler).</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="core" href="/features/dom-manipulation/"><span class="label">Core</span><h3>DOM manipulation</h3><p>Insert, move, clone, wrap and remove elements with the jQuery API you know — .append(), .prepend(), .before(), .after(), .clone(), .empty() — on modern DOM primitives..</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/geometry-and-scroll/"><span class="dir">← Previous</span><strong>Geometry, scroll &amp; visibility</strong></a>
+    <a class="next" href="/features/events/"><span class="dir">Next →</span><strong>Events</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Core features">
+    <div class="aside-group"><h2>Core · jQuery-compatible</h2><ul><li><a href="/features/selectors/">Selectors &amp; collections</a></li><li><a href="/features/dom-manipulation/">DOM manipulation</a></li><li><a href="/features/attributes-and-data/">Attributes, properties &amp; data</a></li><li><a href="/features/classes-and-css/">Classes &amp; CSS</a></li><li><a href="/features/geometry-and-scroll/">Geometry, scroll &amp; visibility</a></li><li><a href="/features/traversal/" aria-current="page">DOM traversal</a></li><li><a href="/features/events/">Events</a></li><li><a href="/features/event-delegation/">Event delegation</a></li><li><a href="/features/custom-events/">Custom events</a></li><li><a href="/features/ajax/">AJAX with $.ajax</a></li><li><a href="/features/fetch-shorthands/">$.get, $.post &amp; $.getJSON</a></li><li><a href="/features/load-fragments/">Loading HTML fragments</a></li><li><a href="/features/forms-and-serialize/">Forms &amp; serialization</a></li><li><a href="/features/timeouts-and-errors/">Timeouts, aborts &amp; retries</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#motion">Motion · GSAP-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/jquery/">What's ported from jQuery</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+const $start = $('#anchor-node');
+const methods = {
+  siblings: () => $start.siblings(),
+  next:     () => $start.next(),
+  prev:     () => $start.prev(),
+  parent:   () => $start.parent().closest('li'),
+  parents:  () => $start.parents('.branch'),
+  find:     () => $('#tree').find('.leaf'),
+  filter:   () => $('#tree .leaf').filter('.special'),
+  notfn:    () => $('#tree .leaf').not((i, el) => el.textContent.includes('B')),
+};
+
+$('#trav-buttons').on('click', 'button', function () {
+  $('#tree li').removeClass('hit');
+  const $result = methods[this.dataset.m]();
+  $result.addClass('hit');
+  $('#trav-out').text($(this).text() + ' → ' + $result.length + ' element(s)\n' +
+    'start.is(".leaf") = ' + $start.is('.leaf') + ' · start.is(".special") = ' + $start.is('.special'));
+});
+</script>
+
+</body>
+</html>

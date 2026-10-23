@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Animate x, y, rotate, scale and skew without Clobbering Transforms — jsKjs</title>
+<meta name="description" content="Animate x, y, rotate, scale, scaleX, scaleY, skewX and skewY independently — jsKjs composes them into one transform per frame. Interactive transform playground.">
+<link rel="canonical" href="https://jskjs.org/features/transforms/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Transforms">
+<meta property="og:description" content="Animate x, y, rotate, scale, scaleX, scaleY, skewX and skewY independently — jsKjs composes them into one transform per frame. Interactive transform playground.">
+<meta property="og:url" content="https://jskjs.org/features/transforms/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-transforms.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Transforms — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Transforms">
+<meta name="twitter:description" content="Animate x, y, rotate, scale, scaleX, scaleY, skewX and skewY independently — jsKjs composes them into one transform per frame. Interactive transform playground.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-transforms.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+.tf-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; align-items:center; }
+.tf-stage { height:260px; border-radius:14px; background:var(--surface-2); display:grid; place-items:center; overflow:hidden; }
+#tf-card { width:120px; height:80px; border-radius:14px; background:var(--motion); display:grid; place-items:center; font:800 16px var(--display); font-stretch:115%; color:#13152B; }
+.tf-ctrls { display:grid; gap:8px; }
+@media (max-width:700px) { .tf-grid { grid-template-columns:1fr; } }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Transforms","description":"Animate x, y, rotate, scale, scaleX, scaleY, skewX and skewY independently — jsKjs composes them into one transform per frame. Interactive transform playground.","url":"https://jskjs.org/features/transforms/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Motion","item":"https://jskjs.org/features/#motion"},{"@type":"ListItem","position":4,"name":"Transforms","item":"https://jskjs.org/features/transforms/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="motion">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#motion">Motion</a></li><li><span aria-current="page">Transforms</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Motion · GSAP-style</p>
+  <h1>Transforms</h1>
+  <p class="lede">Move with <code>x</code>/<code>y</code>, spin with <code>rotate</code>, grow with <code>scale</code>, lean with <code>skewX</code> — each independently, composed into one GPU-friendly transform.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<p>Writing <code>style.transform</code> by hand means every animation must know every other: set a rotation and you lose the translation. jsKjs keeps each component per element and rebuilds <code>translate() rotate() scale() skew()</code> on every frame, so you can tween <code>y</code> on hover while a separate tween spins the same element.</p>
+<p>Transforms don't trigger layout, which is why they stay smooth on phones. Prefer them to <code>left</code>, <code>top</code>, <code>width</code> and <code>height</code> whenever you can.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Transform playground</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><div class="tf-grid">
+  <div class="tf-stage" aria-hidden="true"><div id="tf-card">$jsKjs</div></div>
+  <div class="tf-ctrls" id="tf-ctrls">
+    <div class="field"><label for="tf-x">x: <span>0</span></label><input id="tf-x" data-prop="x" type="range" min="-140" max="140" value="0"></div>
+    <div class="field"><label for="tf-y">y: <span>0</span></label><input id="tf-y" data-prop="y" type="range" min="-80" max="80" value="0"></div>
+    <div class="field"><label for="tf-rotate">rotate: <span>0</span></label><input id="tf-rotate" data-prop="rotate" type="range" min="-180" max="180" value="0"></div>
+    <div class="field"><label for="tf-scale">scale: <span>1</span></label><input id="tf-scale" data-prop="scale" type="range" min="0.4" max="1.8" step="0.05" value="1"></div>
+    <div class="field"><label for="tf-skewX">skewX: <span>0</span></label><input id="tf-skewX" data-prop="skewX" type="range" min="-30" max="30" value="0"></div>
+    <div class="row"><button type="button" id="tf-spin">Spin 360° (keeps the rest)</button><button type="button" id="tf-reset">Reset</button></div>
+  </div>
+</div>
+<pre class="out" id="tf-out"></pre></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-111" aria-label="Copy HTML code">Copy</button><pre id="code-111" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;tf-grid&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;tf-stage&quot;</span> <span class="t-at">aria-hidden</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tf-card&quot;</span><span class="t-tag">&gt;</span>$jsKjs<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;tf-ctrls&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tf-ctrls&quot;</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;field&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;tf-x&quot;</span><span class="t-tag">&gt;</span>x: <span class="t-tag">&lt;span</span><span class="t-tag">&gt;</span>0<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tf-x&quot;</span> <span class="t-at">data-prop</span><span class="t-p">=</span><span class="t-s">&quot;x&quot;</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;range&quot;</span> <span class="t-at">min</span><span class="t-p">=</span><span class="t-s">&quot;-140&quot;</span> <span class="t-at">max</span><span class="t-p">=</span><span class="t-s">&quot;140&quot;</span> <span class="t-at">value</span><span class="t-p">=</span><span class="t-s">&quot;0&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;field&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;tf-y&quot;</span><span class="t-tag">&gt;</span>y: <span class="t-tag">&lt;span</span><span class="t-tag">&gt;</span>0<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tf-y&quot;</span> <span class="t-at">data-prop</span><span class="t-p">=</span><span class="t-s">&quot;y&quot;</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;range&quot;</span> <span class="t-at">min</span><span class="t-p">=</span><span class="t-s">&quot;-80&quot;</span> <span class="t-at">max</span><span class="t-p">=</span><span class="t-s">&quot;80&quot;</span> <span class="t-at">value</span><span class="t-p">=</span><span class="t-s">&quot;0&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;field&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;tf-rotate&quot;</span><span class="t-tag">&gt;</span>rotate: <span class="t-tag">&lt;span</span><span class="t-tag">&gt;</span>0<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tf-rotate&quot;</span> <span class="t-at">data-prop</span><span class="t-p">=</span><span class="t-s">&quot;rotate&quot;</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;range&quot;</span> <span class="t-at">min</span><span class="t-p">=</span><span class="t-s">&quot;-180&quot;</span> <span class="t-at">max</span><span class="t-p">=</span><span class="t-s">&quot;180&quot;</span> <span class="t-at">value</span><span class="t-p">=</span><span class="t-s">&quot;0&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;field&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;tf-scale&quot;</span><span class="t-tag">&gt;</span>scale: <span class="t-tag">&lt;span</span><span class="t-tag">&gt;</span>1<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tf-scale&quot;</span> <span class="t-at">data-prop</span><span class="t-p">=</span><span class="t-s">&quot;scale&quot;</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;range&quot;</span> <span class="t-at">min</span><span class="t-p">=</span><span class="t-s">&quot;0.4&quot;</span> <span class="t-at">max</span><span class="t-p">=</span><span class="t-s">&quot;1.8&quot;</span> <span class="t-at">step</span><span class="t-p">=</span><span class="t-s">&quot;0.05&quot;</span> <span class="t-at">value</span><span class="t-p">=</span><span class="t-s">&quot;1&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;field&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;tf-skewX&quot;</span><span class="t-tag">&gt;</span>skewX: <span class="t-tag">&lt;span</span><span class="t-tag">&gt;</span>0<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tf-skewX&quot;</span> <span class="t-at">data-prop</span><span class="t-p">=</span><span class="t-s">&quot;skewX&quot;</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;range&quot;</span> <span class="t-at">min</span><span class="t-p">=</span><span class="t-s">&quot;-30&quot;</span> <span class="t-at">max</span><span class="t-p">=</span><span class="t-s">&quot;30&quot;</span> <span class="t-at">value</span><span class="t-p">=</span><span class="t-s">&quot;0&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tf-spin&quot;</span><span class="t-tag">&gt;</span>Spin 360° (keeps the rest)<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tf-reset&quot;</span><span class="t-tag">&gt;</span>Reset<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;pre</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;out&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tf-out&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/pre</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-112" aria-label="Copy JavaScript code">Copy</button><pre id="code-112" tabindex="0"><code><span class="t-k">const</span> state = <span class="t-p">{</span> x: <span class="t-n">0</span><span class="t-p">,</span> y: <span class="t-n">0</span><span class="t-p">,</span> rotate: <span class="t-n">0</span><span class="t-p">,</span> scale: <span class="t-n">1</span><span class="t-p">,</span> skewX: <span class="t-n">0</span> <span class="t-p">}</span><span class="t-p">;</span>
+<span class="t-k">const</span> show = <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tf-out'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-s">&quot;style.transform → '&quot;</span> + <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tf-card'</span><span class="t-p">)</span><span class="t-p">[</span><span class="t-n">0</span><span class="t-p">]</span>.style.transform + <span class="t-s">&quot;'&quot;</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tf-ctrls'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'input'</span><span class="t-p">,</span> <span class="t-s">'input[type=range]'</span><span class="t-p">,</span> <span class="t-k">async</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  state<span class="t-p">[</span><span class="t-k">this</span>.dataset.prop<span class="t-p">]</span> = +<span class="t-k">this</span>.value<span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.prev</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-f">.find</span><span class="t-p">(</span><span class="t-s">'span'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-k">this</span>.value<span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'#tf-card'</span><span class="t-p">,</span> <span class="t-p">{</span> ...state<span class="t-p">,</span> duration: .<span class="t-n">25</span><span class="t-p">,</span> ease: <span class="t-s">'power2.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+  show<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tf-spin'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">async</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+  <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'#tf-card'</span><span class="t-p">,</span> <span class="t-p">{</span> rotate: state.rotate + <span class="t-n">360</span><span class="t-p">,</span> duration: .<span class="t-n">8</span><span class="t-p">,</span> ease: <span class="t-s">'power2.inOut'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// only rotate changes</span>
+  <span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'#tf-card'</span><span class="t-p">,</span> <span class="t-p">{</span> rotate: state.rotate<span class="t-p">,</span> duration: <span class="t-n">0</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+  show<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tf-reset'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">async</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+  Object<span class="t-f">.assign</span><span class="t-p">(</span>state<span class="t-p">,</span> <span class="t-p">{</span> x: <span class="t-n">0</span><span class="t-p">,</span> y: <span class="t-n">0</span><span class="t-p">,</span> rotate: <span class="t-n">0</span><span class="t-p">,</span> scale: <span class="t-n">1</span><span class="t-p">,</span> skewX: <span class="t-n">0</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tf-ctrls input[type=range]'</span><span class="t-p">)</span><span class="t-f">.each</span><span class="t-p">(</span><span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+    <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.val</span><span class="t-p">(</span>state<span class="t-p">[</span><span class="t-k">this</span>.dataset.prop<span class="t-p">]</span><span class="t-p">)</span><span class="t-f">.prev</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-f">.find</span><span class="t-p">(</span><span class="t-s">'span'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span>state<span class="t-p">[</span><span class="t-k">this</span>.dataset.prop<span class="t-p">]</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'#tf-card'</span><span class="t-p">,</span> <span class="t-p">{</span> ...state<span class="t-p">,</span> duration: .<span class="t-n">5</span><span class="t-p">,</span> ease: <span class="t-s">'back.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+  show<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+show<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Hover lift that does not fight a spin</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-113" aria-label="Copy JavaScript code">Copy</button><pre id="code-113" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.hover</span><span class="t-p">(</span>
+  <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span> <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-p">{</span> y: -<span class="t-n">6</span><span class="t-p">,</span> scale: <span class="t-n">1.03</span><span class="t-p">,</span> duration: .<span class="t-n">15</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">,</span>
+  <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span> <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-p">{</span> y: <span class="t-n">0</span><span class="t-p">,</span> scale: <span class="t-n">1</span><span class="t-p">,</span> duration: .<span class="t-n">2</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'.card .icon'</span><span class="t-p">,</span> <span class="t-p">{</span> rotate: <span class="t-n">360</span><span class="t-p">,</span> duration: <span class="t-n">2</span><span class="t-p">,</span> ease: <span class="t-s">'linear'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">$.to(target, { …props, duration, delay, ease, stagger, onComplete }) → Promise</span><p>Tween to a state. <code>stagger</code> offsets each element’s start; <code>onComplete</code> fires after the last finishes. Also chainable on sets: <code>$(sel).to(props)</code>.</p><a href="/docs/#motion-to" style="font-size:14px">Reference: $.to() →</a></div><div class="api-item"><span class="sig">$.fromTo(target, fromProps, toProps) → Promise</span><p>Explicit start and end states.</p><a href="/docs/#motion-fromto" style="font-size:14px">Reference: $.fromTo() →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from GSAP</strong>Same shorthand names (<code>rotation</code> is accepted as an alias of <code>rotate</code>). <code>xPercent</code>, <code>yPercent</code>, <code>z</code>, 3D rotations and <code>transformOrigin</code> are not included — set <code>transform-origin</code> in CSS.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="motion" href="/features/tweens/"><span class="label">Motion</span><h3>Tweens</h3><p>Animate any numeric CSS property and transforms (x, y, rotate, scale) with $.to().</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="core" href="/features/classes-and-css/"><span class="label">Core</span><h3>Classes &amp; CSS</h3><p>Toggle classes and set styles with addClass(), toggleClass() and css() — including CSS custom properties, which jsKjs reads and writes without adding px..</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="motion" href="/features/easings/"><span class="label">Motion</span><h3>Easings</h3><p>Ten built-in easings — linear, ease-in/out, power2, back.out, elastic.out, bounce.out — plotted as curves and playable live.</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/easings/"><span class="dir">← Previous</span><strong>Easings</strong></a>
+    <a class="next" href="/features/classic-effects/"><span class="dir">Next →</span><strong>Classic effects</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Motion features">
+    <div class="aside-group"><h2>Motion · GSAP-style</h2><ul><li><a href="/features/tweens/">Tweens</a></li><li><a href="/features/from-and-fromto/">From &amp; fromTo</a></li><li><a href="/features/timelines/">Timelines</a></li><li><a href="/features/stagger/">Stagger</a></li><li><a href="/features/easings/">Easings</a></li><li><a href="/features/transforms/" aria-current="page">Transforms</a></li><li><a href="/features/classic-effects/">Classic effects</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#core">Core · jQuery-compatible</a></li><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/gsap/">What's ported from GSAP</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+const state = { x: 0, y: 0, rotate: 0, scale: 1, skewX: 0 };
+const show = () => $('#tf-out').text("style.transform → '" + $('#tf-card')[0].style.transform + "'");
+
+$('#tf-ctrls').on('input', 'input[type=range]', async function () {
+  state[this.dataset.prop] = +this.value;
+  $(this).prev().find('span').text(this.value);
+  await $.to('#tf-card', { ...state, duration: .25, ease: 'power2.out' });
+  show();
+});
+
+$('#tf-spin').on('click', async () => {
+  await $.to('#tf-card', { rotate: state.rotate + 360, duration: .8, ease: 'power2.inOut' });   // only rotate changes
+  $.to('#tf-card', { rotate: state.rotate, duration: 0 });
+  show();
+});
+
+$('#tf-reset').on('click', async () => {
+  Object.assign(state, { x: 0, y: 0, rotate: 0, scale: 1, skewX: 0 });
+  $('#tf-ctrls input[type=range]').each(function () {
+    $(this).val(state[this.dataset.prop]).prev().find('span').text(state[this.dataset.prop]);
+  });
+  await $.to('#tf-card', { ...state, duration: .5, ease: 'back.out' });
+  show();
+});
+show();
+</script>
+
+</body>
+</html>

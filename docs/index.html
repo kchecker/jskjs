@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jsKjs API Reference — Every Function, Attribute and Directive</title>
+<meta name="description" content="Complete jsKjs API reference: jQuery-compatible core, AJAX, kj-* Hyper attributes, Pulse directives (kj-data, kj-model, @click), Motion ($.to, timelines, easings), effects and utilities — with examples.">
+<link rel="canonical" href="https://jskjs.org/docs/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="API reference">
+<meta property="og:description" content="Complete jsKjs API reference: jQuery-compatible core, AJAX, kj-* Hyper attributes, Pulse directives (kj-data, kj-model, @click), Motion ($.to, timelines, easings), effects and utilities — with examples.">
+<meta property="og:url" content="https://jskjs.org/docs/">
+<meta property="og:image" content="https://jskjs.org/assets/og/docs.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="API reference — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="API reference">
+<meta name="twitter:description" content="Complete jsKjs API reference: jQuery-compatible core, AJAX, kj-* Hyper attributes, Pulse directives (kj-data, kj-model, @click), Motion ($.to, timelines, easings), effects and utilities — with examples.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/docs.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"API reference","description":"Complete jsKjs API reference: jQuery-compatible core, AJAX, kj-* Hyper attributes, Pulse directives (kj-data, kj-model, @click), Motion ($.to, timelines, easings), effects and utilities — with examples.","url":"https://jskjs.org/docs/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://jskjs.org/docs/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/" aria-current="page">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/" aria-current="page">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><span aria-current="page">Docs</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Documentation</p>
+  <h1>API reference</h1>
+  <p class="lede">Every function, attribute and directive in jsKjs 1.0.0, with signatures and examples. Each entry links to a live demo.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout" style="grid-template-columns:240px minmax(0,1fr)">
+  <aside class="aside" aria-label="API sections" style="max-height:calc(100vh - 110px);overflow:auto"><div class="aside-group"><h2>Core &amp; Selectors</h2><ul><li><a href="#core-">$()</a></li><li><a href="#core-each">.each()</a></li><li><a href="#core-get">.get()</a></li><li><a href="#core-eq">.eq()</a></li><li><a href="#core-first-last">.first() / .last()</a></li><li><a href="#core-index">.index()</a></li><li><a href="#core-add">.add()</a></li></ul></div><div class="aside-group"><h2>Content</h2><ul><li><a href="#content-html">.html()</a></li><li><a href="#content-text">.text()</a></li><li><a href="#content-val">.val()</a></li></ul></div><div class="aside-group"><h2>Attributes &amp; Data</h2><ul><li><a href="#attrs-attr">.attr()</a></li><li><a href="#attrs-removeattr">.removeAttr()</a></li><li><a href="#attrs-prop">.prop()</a></li><li><a href="#attrs-data">.data()</a></li><li><a href="#attrs-removedata">.removeData()</a></li></ul></div><div class="aside-group"><h2>Classes</h2><ul><li><a href="#classes-addclass">.addClass()</a></li><li><a href="#classes-removeclass">.removeClass()</a></li><li><a href="#classes-toggleclass">.toggleClass()</a></li><li><a href="#classes-hasclass">.hasClass()</a></li></ul></div><div class="aside-group"><h2>CSS &amp; Geometry</h2><ul><li><a href="#css-css">.css()</a></li><li><a href="#css-width-height">.width() / .height()</a></li><li><a href="#css-offset">.offset()</a></li><li><a href="#css-position">.position()</a></li><li><a href="#css-scrolltop-scrollleft">.scrollTop() / .scrollLeft()</a></li><li><a href="#css-show-hide-toggle">.show() / .hide() / .toggle()</a></li></ul></div><div class="aside-group"><h2>Insertion &amp; Removal</h2><ul><li><a href="#insert-append-prepend">.append() / .prepend()</a></li><li><a href="#insert-before-after">.before() / .after()</a></li><li><a href="#insert-appendto-prependto">.appendTo() / .prependTo()</a></li><li><a href="#insert-wrap">.wrap()</a></li><li><a href="#insert-remove">.remove()</a></li><li><a href="#insert-empty">.empty()</a></li><li><a href="#insert-clone">.clone()</a></li><li><a href="#insert-replacewith">.replaceWith()</a></li></ul></div><div class="aside-group"><h2>Traversal</h2><ul><li><a href="#traversal-find">.find()</a></li><li><a href="#traversal-filter">.filter()</a></li><li><a href="#traversal-not">.not()</a></li><li><a href="#traversal-is">.is()</a></li><li><a href="#traversal-closest">.closest()</a></li><li><a href="#traversal-parent-parents">.parent() / .parents()</a></li><li><a href="#traversal-children">.children()</a></li><li><a href="#traversal-siblings">.siblings()</a></li><li><a href="#traversal-next-prev">.next() / .prev()</a></li></ul></div><div class="aside-group"><h2>Events</h2><ul><li><a href="#events-on">.on()</a></li><li><a href="#events-one">.one()</a></li><li><a href="#events-off">.off()</a></li><li><a href="#events-trigger">.trigger()</a></li><li><a href="#events-hover">.hover()</a></li><li><a href="#events-shortcuts">Shortcuts</a></li><li><a href="#events-focus-blur">.focus() / .blur()</a></li></ul></div><div class="aside-group"><h2>AJAX</h2><ul><li><a href="#ajax-ajax">$.ajax()</a></li><li><a href="#ajax-get">$.get()</a></li><li><a href="#ajax-post">$.post()</a></li><li><a href="#ajax-getjson">$.getJSON()</a></li><li><a href="#ajax-load">.load()</a></li><li><a href="#ajax-serialize">.serialize()</a></li><li><a href="#ajax-serializeobject">.serializeObject()</a></li></ul></div><div class="aside-group"><h2>Hyper — Declarative AJAX</h2><ul><li><a href="#hyper-kj-get-kj-post-kj-put-kj-patch-kj-delete">kj-get / kj-post / kj-put / kj-patch / kj-delete</a></li><li><a href="#hyper-kj-target">kj-target</a></li><li><a href="#hyper-kj-swap">kj-swap</a></li><li><a href="#hyper-kj-trigger">kj-trigger</a></li><li><a href="#hyper-kj-confirm">kj-confirm</a></li><li><a href="#hyper-kj-indicator">kj-indicator</a></li><li><a href="#hyper-kj-include-kj-vals">kj-include / kj-vals</a></li><li><a href="#hyper-kj-push-url">kj-push-url</a></li><li><a href="#hyper-lifecycle-events">Lifecycle events</a></li></ul></div><div class="aside-group"><h2>Pulse — Reactivity</h2><ul><li><a href="#pulse-kj-data">kj-data</a></li><li><a href="#pulse-kj-text-kj-html">kj-text / kj-html</a></li><li><a href="#pulse-kj-show">kj-show</a></li><li><a href="#pulse-kj-model">kj-model</a></li><li><a href="#pulse-event-kj-on-event">@event / kj-on:event</a></li><li><a href="#pulse-attr-kj-bind-attr">:attr / kj-bind:attr</a></li><li><a href="#pulse-component">$.component()</a></li><li><a href="#pulse-store">$.store()</a></li><li><a href="#pulse-reactive">$.reactive()</a></li></ul></div><div class="aside-group"><h2>Motion — Animation</h2><ul><li><a href="#motion-to">$.to()</a></li><li><a href="#motion-from">$.from()</a></li><li><a href="#motion-fromto">$.fromTo()</a></li><li><a href="#motion-timeline">$.timeline()</a></li><li><a href="#motion-stagger">stagger</a></li><li><a href="#motion-easings">Easings</a></li></ul></div><div class="aside-group"><h2>jQuery Effect Shims</h2><ul><li><a href="#effects-fadein-fadeout-fadetoggle">.fadeIn() / .fadeOut() / .fadeToggle()</a></li><li><a href="#effects-slidedown-slideup-slidetoggle">.slideDown() / .slideUp() / .slideToggle()</a></li><li><a href="#effects-animate">.animate()</a></li></ul></div><div class="aside-group"><h2>Utilities</h2><ul><li><a href="#utilities-each">$.each()</a></li><li><a href="#utilities-map">$.map()</a></li><li><a href="#utilities-extend">$.extend()</a></li><li><a href="#utilities-debounce">$.debounce()</a></li><li><a href="#utilities-throttle">$.throttle()</a></li><li><a href="#utilities-param">$.param()</a></li><li><a href="#utilities-parsehtml">$.parseHTML()</a></li><li><a href="#utilities-escape">$.escape()</a></li><li><a href="#utilities-uuid">$.uuid()</a></li><li><a href="#utilities-type-checks">Type checks</a></li><li><a href="#utilities-noconflict">$.noConflict()</a></li><li><a href="#utilities-version">$.version</a></li></ul></div></aside>
+  <div>
+    <div class="note" data-mod="motion"><strong>Compatibility notes</strong>Collections are real Arrays, so native <code>.map()</code>/<code>.slice()</code> return plain arrays. <code>.val()</code> on a checkbox returns a boolean. AJAX returns native Promises. Handlers receive native events. Full list: <a href="/migrate/">migrating from jQuery</a> and <a href="/compare/">comparisons</a>.</div>
+    <section id="core" style="margin-top:56px" data-mod="core">
+    <p class="label">Core &amp; Selectors</p><h2 style="margin-top:12px">Core &amp; Selectors</h2><p class="muted" style="max-width:68ch;margin-top:8px">Everything starts with <code>$()</code>. A jsKjs set is a real Array subclass, so native methods (<code>map</code>, spread, <code>for...of</code>) work alongside the chainable API.</p>
+    <article id="core-" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$(selector [, context]) · $(element) · $(html) · $(fn)</p>
+        <p style="margin-top:8px;max-width:72ch">The heart of the library. Accepts a CSS selector (optionally scoped to a context), a DOM node, window, a NodeList/array, an HTML string (creates elements), or a function (runs on DOM ready).</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-123" aria-label="Copy JavaScript code">Copy</button><pre id="code-123" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span>                    <span class="t-c">// CSS selector</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'li'</span><span class="t-p">,</span> <span class="t-s">'#menu'</span><span class="t-p">)</span>              <span class="t-c">// scoped to context</span>
+<span class="t-d">$</span><span class="t-p">(</span>document.body<span class="t-p">)</span>              <span class="t-c">// wrap a node</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'&lt;div class=&quot;x&quot;&gt;Hi&lt;/div&gt;'</span><span class="t-p">)</span>  <span class="t-c">// create elements</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-p">(</span><span class="t-p">)</span> =&gt; console<span class="t-f">.log</span><span class="t-p">(</span><span class="t-s">'DOM ready'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/selectors/">See it live: Selectors &amp; collections →</a></p>
+      </article><article id="core-each" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.each()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.each((index, element) =&gt; {}) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Iterate the set jQuery-style. Inside the callback, <code>this</code> is the current element.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-124" aria-label="Copy JavaScript code">Copy</button><pre id="code-124" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.item'</span><span class="t-p">)</span><span class="t-f">.each</span><span class="t-p">(</span><span class="t-k">function</span> <span class="t-p">(</span>i<span class="t-p">,</span> el<span class="t-p">)</span> <span class="t-p">{</span>
+  console<span class="t-f">.log</span><span class="t-p">(</span>i<span class="t-p">,</span> el.id<span class="t-p">,</span> <span class="t-k">this</span> === el<span class="t-p">)</span><span class="t-p">;</span> <span class="t-c">// true</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/selectors/">See it live: Selectors &amp; collections →</a></p>
+      </article><article id="core-get" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.get()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.get([index]) → element | element[]</p>
+        <p style="margin-top:8px;max-width:72ch">Without arguments returns a plain array of all elements; with an index returns that raw element (negative indexes count from the end). Bracket access <code>$(x)[0]</code> also works.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-125" aria-label="Copy JavaScript code">Copy</button><pre id="code-125" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.item'</span><span class="t-p">)</span><span class="t-f">.get</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>    <span class="t-c">// [el, el, el]</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.item'</span><span class="t-p">)</span><span class="t-f">.get</span><span class="t-p">(</span>-<span class="t-n">1</span><span class="t-p">)</span><span class="t-p">;</span>  <span class="t-c">// last raw element</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/selectors/">See it live: Selectors &amp; collections →</a></p>
+      </article><article id="core-eq" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.eq()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.eq(index) → KJ</p>
+        <p style="margin-top:8px;max-width:72ch">Reduce the set to the element at the given index, returned as a new chainable set. Negative indexes count from the end.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-126" aria-label="Copy JavaScript code">Copy</button><pre id="code-126" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.item'</span><span class="t-p">)</span><span class="t-f">.eq</span><span class="t-p">(</span><span class="t-n">1</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'second'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.item'</span><span class="t-p">)</span><span class="t-f">.eq</span><span class="t-p">(</span>-<span class="t-n">1</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-s">'last'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/selectors/">See it live: Selectors &amp; collections →</a></p>
+      </article><article id="core-first-last" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.first() / .last()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.first() → KJ · .last() → KJ</p>
+        <p style="margin-top:8px;max-width:72ch">Shortcuts for <code>.eq(0)</code> and <code>.eq(-1)</code>.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-127" aria-label="Copy JavaScript code">Copy</button><pre id="code-127" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'li'</span><span class="t-p">)</span><span class="t-f">.first</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'head'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'li'</span><span class="t-p">)</span><span class="t-f">.last</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'tail'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/selectors/">See it live: Selectors &amp; collections →</a></p>
+      </article><article id="core-index" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.index()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.index([element]) → number</p>
+        <p style="margin-top:8px;max-width:72ch">Without arguments, the position of the first element among its siblings. With an element, its position within this set.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-128" aria-label="Copy JavaScript code">Copy</button><pre id="code-128" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.active'</span><span class="t-p">)</span><span class="t-f">.index</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>  <span class="t-c">// e.g. 2</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/selectors/">See it live: Selectors &amp; collections →</a></p>
+      </article><article id="core-add" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.add()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.add(selector | elements) → KJ</p>
+        <p style="margin-top:8px;max-width:72ch">Merge more elements into the set (deduplicated).</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-129" aria-label="Copy JavaScript code">Copy</button><pre id="code-129" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.add</span><span class="t-p">(</span><span class="t-s">'.banner'</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'highlight'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/selectors/">See it live: Selectors &amp; collections →</a></p>
+      </article>
+  </section><section id="content" style="margin-top:56px" data-mod="core">
+    <p class="label">Content</p><h2 style="margin-top:12px">Content</h2><p class="muted" style="max-width:68ch;margin-top:8px">Read and write element content and form values.</p>
+    <article id="content-html" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.html()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.html([value]) → string | self</p>
+        <p style="margin-top:8px;max-width:72ch">Get the first element’s <code>innerHTML</code>, or set it on every element in the set.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-130" aria-label="Copy JavaScript code">Copy</button><pre id="code-130" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#box'</span><span class="t-p">)</span><span class="t-f">.html</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>               <span class="t-c">// read</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#box'</span><span class="t-p">)</span><span class="t-f">.html</span><span class="t-p">(</span><span class="t-s">'&lt;b&gt;New&lt;/b&gt;'</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// write</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/dom-manipulation/">See it live: DOM manipulation →</a></p>
+      </article><article id="content-text" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.text()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.text([value]) → string | self</p>
+        <p style="margin-top:8px;max-width:72ch">Get or set <code>textContent</code>. Setting always escapes — it can never inject HTML.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-131" aria-label="Copy JavaScript code">Copy</button><pre id="code-131" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#title'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-s">'Safe &amp; sound'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/dom-manipulation/">See it live: DOM manipulation →</a></p>
+      </article><article id="content-val" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.val()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.val([value]) → any | self</p>
+        <p style="margin-top:8px;max-width:72ch">Get or set form values. Checkboxes read/write booleans; multi-selects read as arrays.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-132" aria-label="Copy JavaScript code">Copy</button><pre id="code-132" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#email'</span><span class="t-p">)</span><span class="t-f">.val</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>          <span class="t-c">// 'a@b.c'</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#agree'</span><span class="t-p">)</span><span class="t-f">.val</span><span class="t-p">(</span><span class="t-k">true</span><span class="t-p">)</span><span class="t-p">;</span>      <span class="t-c">// checks the box</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tags'</span><span class="t-p">)</span><span class="t-f">.val</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>           <span class="t-c">// ['js', 'css'] for multi-select</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/attributes-and-data/">See it live: Attributes, properties &amp; data →</a></p>
+      </article>
+  </section><section id="attrs" style="margin-top:56px" data-mod="core">
+    <p class="label">Attributes &amp; Data</p><h2 style="margin-top:12px">Attributes &amp; Data</h2><p class="muted" style="max-width:68ch;margin-top:8px">HTML attributes, DOM properties, and per-element data storage (backed by a WeakMap, so removed elements are garbage-collected automatically).</p>
+    <article id="attrs-attr" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.attr()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.attr(name [, value]) · .attr(object) → string | self</p>
+        <p style="margin-top:8px;max-width:72ch">Get an attribute from the first element, or set one or many on all elements.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-133" aria-label="Copy JavaScript code">Copy</button><pre id="code-133" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'img'</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'src'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'img'</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'alt'</span><span class="t-p">,</span> <span class="t-s">'Logo'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'a'</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-p">{</span> href: <span class="t-s">'/'</span><span class="t-p">,</span> title: <span class="t-s">'Home'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/attributes-and-data/">See it live: Attributes, properties &amp; data →</a></p>
+      </article><article id="attrs-removeattr" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.removeAttr()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.removeAttr(name) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Remove an attribute from every element in the set.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-134" aria-label="Copy JavaScript code">Copy</button><pre id="code-134" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'input'</span><span class="t-p">)</span><span class="t-f">.removeAttr</span><span class="t-p">(</span><span class="t-s">'disabled'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/attributes-and-data/">See it live: Attributes, properties &amp; data →</a></p>
+      </article><article id="attrs-prop" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.prop()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.prop(name [, value]) → any | self</p>
+        <p style="margin-top:8px;max-width:72ch">Get or set a DOM property (as opposed to an HTML attribute) — <code>checked</code>, <code>disabled</code>, <code>selectedIndex</code>, etc.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-135" aria-label="Copy JavaScript code">Copy</button><pre id="code-135" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#opt-in'</span><span class="t-p">)</span><span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'checked'</span><span class="t-p">)</span><span class="t-p">;</span>       <span class="t-c">// true/false</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'button'</span><span class="t-p">)</span><span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'disabled'</span><span class="t-p">,</span> <span class="t-k">true</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/attributes-and-data/">See it live: Attributes, properties &amp; data →</a></p>
+      </article><article id="attrs-data" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.data()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.data([key [, value]]) · .data(object) → any | self</p>
+        <p style="margin-top:8px;max-width:72ch">Read <code>data-*</code> attributes (JSON auto-parsed) or store arbitrary values against elements. Stored values live in a WeakMap — no memory leaks, no cleanup.</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-136" aria-label="Copy HTML code">Copy</button><pre id="code-136" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;u&quot;</span> <span class="t-at">data-config</span><span class="t-p">=</span><span class="t-s">'{&quot;admin&quot;:true}'</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+
+$('#u').data('config').admin;       // true (parsed)
+$('#u').data('profile', { id: 7 }); // store anything
+$('#u').data();                     // all data merged</code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/attributes-and-data/">See it live: Attributes, properties &amp; data →</a></p>
+      </article><article id="attrs-removedata" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.removeData()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.removeData(key) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Delete a stored data value.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-137" aria-label="Copy JavaScript code">Copy</button><pre id="code-137" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#u'</span><span class="t-p">)</span><span class="t-f">.removeData</span><span class="t-p">(</span><span class="t-s">'profile'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/attributes-and-data/">See it live: Attributes, properties &amp; data →</a></p>
+      </article>
+  </section><section id="classes" style="margin-top:56px" data-mod="core">
+    <p class="label">Classes</p><h2 style="margin-top:12px">Classes</h2><p class="muted" style="max-width:68ch;margin-top:8px">Space-separated multi-class strings are supported everywhere.</p>
+    <article id="classes-addclass" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.addClass()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.addClass(names) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Add one or more classes.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-138" aria-label="Copy JavaScript code">Copy</button><pre id="code-138" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'active highlight'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/classes-and-css/">See it live: Classes &amp; CSS →</a></p>
+      </article><article id="classes-removeclass" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.removeClass()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.removeClass([names]) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Remove classes; with no argument, removes all classes.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-139" aria-label="Copy JavaScript code">Copy</button><pre id="code-139" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.removeClass</span><span class="t-p">(</span><span class="t-s">'active'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.removeClass</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-c">// wipe class attribute</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/classes-and-css/">See it live: Classes &amp; CSS →</a></p>
+      </article><article id="classes-toggleclass" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.toggleClass()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.toggleClass(names [, force]) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Toggle classes, optionally forcing on/off with a boolean.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-140" aria-label="Copy JavaScript code">Copy</button><pre id="code-140" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.menu'</span><span class="t-p">)</span><span class="t-f">.toggleClass</span><span class="t-p">(</span><span class="t-s">'open'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.menu'</span><span class="t-p">)</span><span class="t-f">.toggleClass</span><span class="t-p">(</span><span class="t-s">'open'</span><span class="t-p">,</span> isOpen<span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/classes-and-css/">See it live: Classes &amp; CSS →</a></p>
+      </article><article id="classes-hasclass" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.hasClass()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.hasClass(name) → boolean</p>
+        <p style="margin-top:8px;max-width:72ch">True if any element in the set has the class.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-141" aria-label="Copy JavaScript code">Copy</button><pre id="code-141" tabindex="0"><code><span class="t-k">if</span> <span class="t-p">(</span><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#panel'</span><span class="t-p">)</span><span class="t-f">.hasClass</span><span class="t-p">(</span><span class="t-s">'open'</span><span class="t-p">)</span><span class="t-p">)</span> close<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/classes-and-css/">See it live: Classes &amp; CSS →</a></p>
+      </article>
+  </section><section id="css" style="margin-top:56px" data-mod="core">
+    <p class="label">CSS &amp; Geometry</p><h2 style="margin-top:12px">CSS &amp; Geometry</h2><p class="muted" style="max-width:68ch;margin-top:8px">Styles, sizes, positions, scrolling, visibility. Numbers get <code>px</code> automatically (except unitless properties like <code>opacity</code>); CSS custom properties (<code>--vars</code>) are supported.</p>
+    <article id="css-css" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.css()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.css(name [, value]) · .css(object) → string | self</p>
+        <p style="margin-top:8px;max-width:72ch">Get a computed style from the first element, or set styles on all. Numbers become px except for unitless properties. Custom properties (<code>--name</code>) are read with <code>getPropertyValue</code> and written without px.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-142" aria-label="Copy JavaScript code">Copy</button><pre id="code-142" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'color'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'margin-top'</span><span class="t-p">,</span> <span class="t-n">20</span><span class="t-p">)</span><span class="t-p">;</span>          <span class="t-c">// → 20px</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-p">{</span> opacity: .<span class="t-n">5</span><span class="t-p">,</span> <span class="t-s">'--accent'</span>: <span class="t-s">'tomato'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">':root'</span><span class="t-p">)</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'--hue'</span><span class="t-p">,</span> <span class="t-n">200</span><span class="t-p">)</span><span class="t-p">;</span>               <span class="t-c">// no px for custom properties</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/classes-and-css/">See it live: Classes &amp; CSS →</a></p>
+      </article><article id="css-width-height" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.width() / .height()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.width([value]) · .height([value]) → number | self</p>
+        <p style="margin-top:8px;max-width:72ch">Measured size (from <code>getBoundingClientRect</code>) or set the CSS size. On <code>$(window)</code>, returns the viewport size.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-143" aria-label="Copy JavaScript code">Copy</button><pre id="code-143" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.width</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>     <span class="t-c">// 320</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.height</span><span class="t-p">(</span><span class="t-n">200</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-c">// set</span>
+<span class="t-d">$</span><span class="t-p">(</span>window<span class="t-p">)</span><span class="t-f">.width</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>      <span class="t-c">// viewport</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/geometry-and-scroll/">See it live: Geometry, scroll &amp; visibility →</a></p>
+      </article><article id="css-offset" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.offset()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.offset() → { top, left }</p>
+        <p style="margin-top:8px;max-width:72ch">Position relative to the document, including scroll.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-144" aria-label="Copy JavaScript code">Copy</button><pre id="code-144" tabindex="0"><code><span class="t-k">const</span> <span class="t-p">{</span> top <span class="t-p">}</span> = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#hero'</span><span class="t-p">)</span><span class="t-f">.offset</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/geometry-and-scroll/">See it live: Geometry, scroll &amp; visibility →</a></p>
+      </article><article id="css-position" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.position()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.position() → { top, left }</p>
+        <p style="margin-top:8px;max-width:72ch">Position relative to the offset parent.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-145" aria-label="Copy JavaScript code">Copy</button><pre id="code-145" tabindex="0"><code><span class="t-k">const</span> p = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.tooltip'</span><span class="t-p">)</span><span class="t-f">.position</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/geometry-and-scroll/">See it live: Geometry, scroll &amp; visibility →</a></p>
+      </article><article id="css-scrolltop-scrollleft" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.scrollTop() / .scrollLeft()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.scrollTop([value]) · .scrollLeft([value]) → number | self</p>
+        <p style="margin-top:8px;max-width:72ch">Get or set scroll position. Works on elements and on <code>$(window)</code>.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-146" aria-label="Copy JavaScript code">Copy</button><pre id="code-146" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span>window<span class="t-p">)</span><span class="t-f">.scrollTop</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>      <span class="t-c">// read page scroll</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#panel'</span><span class="t-p">)</span><span class="t-f">.scrollTop</span><span class="t-p">(</span><span class="t-n">0</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// scroll to top</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/geometry-and-scroll/">See it live: Geometry, scroll &amp; visibility →</a></p>
+      </article><article id="css-show-hide-toggle" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.show() / .hide() / .toggle()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.show() · .hide() · .toggle([state]) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Instant visibility via <code>display</code>. <code>.hide()</code> remembers the previous display value so <code>.show()</code> restores it correctly.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-147" aria-label="Copy JavaScript code">Copy</button><pre id="code-147" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.modal'</span><span class="t-p">)</span><span class="t-f">.show</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.hint'</span><span class="t-p">)</span><span class="t-f">.toggle</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>        <span class="t-c">// flip</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.hint'</span><span class="t-p">)</span><span class="t-f">.toggle</span><span class="t-p">(</span>isAdmin<span class="t-p">)</span><span class="t-p">;</span> <span class="t-c">// force</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/geometry-and-scroll/">See it live: Geometry, scroll &amp; visibility →</a></p>
+      </article>
+  </section><section id="insert" style="margin-top:56px" data-mod="core">
+    <p class="label">Insertion &amp; Removal</p><h2 style="margin-top:12px">Insertion &amp; Removal</h2><p class="muted" style="max-width:68ch;margin-top:8px">All insertion methods accept HTML strings, elements, jsKjs sets, or plain text — and multiple arguments at once.</p>
+    <article id="insert-append-prepend" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.append() / .prepend()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.append(...content) · .prepend(...content) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Insert content inside each element, at the end or the start.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-148" aria-label="Copy JavaScript code">Copy</button><pre id="code-148" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#list'</span><span class="t-p">)</span><span class="t-f">.append</span><span class="t-p">(</span><span class="t-s">'&lt;li&gt;End&lt;/li&gt;'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#list'</span><span class="t-p">)</span><span class="t-f">.prepend</span><span class="t-p">(</span><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'&lt;li&gt;Start&lt;/li&gt;'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/dom-manipulation/">See it live: DOM manipulation →</a></p>
+      </article><article id="insert-before-after" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.before() / .after()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.before(...content) · .after(...content) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Insert content outside each element, as a previous or next sibling.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-149" aria-label="Copy JavaScript code">Copy</button><pre id="code-149" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.section'</span><span class="t-p">)</span><span class="t-f">.before</span><span class="t-p">(</span><span class="t-s">'&lt;hr&gt;'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/dom-manipulation/">See it live: DOM manipulation →</a></p>
+      </article><article id="insert-appendto-prependto" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.appendTo() / .prependTo()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.appendTo(target) · .prependTo(target) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Reversed form: insert this set into the target.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-150" aria-label="Copy JavaScript code">Copy</button><pre id="code-150" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'&lt;li&gt;New&lt;/li&gt;'</span><span class="t-p">)</span><span class="t-f">.appendTo</span><span class="t-p">(</span><span class="t-s">'#list'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/dom-manipulation/">See it live: DOM manipulation →</a></p>
+      </article><article id="insert-wrap" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.wrap()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.wrap(html) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Wrap each element in the given structure.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-151" aria-label="Copy JavaScript code">Copy</button><pre id="code-151" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'img'</span><span class="t-p">)</span><span class="t-f">.wrap</span><span class="t-p">(</span><span class="t-s">'&lt;figure class=&quot;frame&quot;&gt;'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/dom-manipulation/">See it live: DOM manipulation →</a></p>
+      </article><article id="insert-remove" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.remove()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.remove() → self</p>
+        <p style="margin-top:8px;max-width:72ch">Remove elements from the DOM. Data cleanup is automatic (WeakMap).</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-152" aria-label="Copy JavaScript code">Copy</button><pre id="code-152" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.toast'</span><span class="t-p">)</span><span class="t-f">.remove</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/dom-manipulation/">See it live: DOM manipulation →</a></p>
+      </article><article id="insert-empty" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.empty()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.empty() → self</p>
+        <p style="margin-top:8px;max-width:72ch">Remove all children of each element.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-153" aria-label="Copy JavaScript code">Copy</button><pre id="code-153" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#results'</span><span class="t-p">)</span><span class="t-f">.empty</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/dom-manipulation/">See it live: DOM manipulation →</a></p>
+      </article><article id="insert-clone" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.clone()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.clone([deep = true]) → KJ</p>
+        <p style="margin-top:8px;max-width:72ch">Deep-copy the elements.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-154" aria-label="Copy JavaScript code">Copy</button><pre id="code-154" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#template-row'</span><span class="t-p">)</span><span class="t-f">.clone</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-f">.appendTo</span><span class="t-p">(</span><span class="t-s">'#table'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/dom-manipulation/">See it live: DOM manipulation →</a></p>
+      </article><article id="insert-replacewith" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.replaceWith()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.replaceWith(content) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Replace each element with new content.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-155" aria-label="Copy JavaScript code">Copy</button><pre id="code-155" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.old-banner'</span><span class="t-p">)</span><span class="t-f">.replaceWith</span><span class="t-p">(</span><span class="t-s">'&lt;div class=&quot;new&quot;&gt;Hi&lt;/div&gt;'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/dom-manipulation/">See it live: DOM manipulation →</a></p>
+      </article>
+  </section><section id="traversal" style="margin-top:56px" data-mod="core">
+    <p class="label">Traversal</p><h2 style="margin-top:12px">Traversal</h2><p class="muted" style="max-width:68ch;margin-top:8px">Walk the tree. Every method returns a new chainable set; results are deduplicated.</p>
+    <article id="traversal-find" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.find()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.find(selector) → KJ</p>
+        <p style="margin-top:8px;max-width:72ch">All descendants matching a selector.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-156" aria-label="Copy JavaScript code">Copy</button><pre id="code-156" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#app'</span><span class="t-p">)</span><span class="t-f">.find</span><span class="t-p">(</span><span class="t-s">'.btn'</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'ready'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/traversal/">See it live: DOM traversal →</a></p>
+      </article><article id="traversal-filter" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.filter()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.filter(selector | fn) → KJ</p>
+        <p style="margin-top:8px;max-width:72ch">Keep only matching elements. Accepts a selector or a predicate <code>(i, el) => boolean</code>.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-157" aria-label="Copy JavaScript code">Copy</button><pre id="code-157" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.item'</span><span class="t-p">)</span><span class="t-f">.filter</span><span class="t-p">(</span><span class="t-s">'.active'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.item'</span><span class="t-p">)</span><span class="t-f">.filter</span><span class="t-p">(</span><span class="t-p">(</span>i<span class="t-p">,</span> el<span class="t-p">)</span> =&gt; el.dataset.price &gt; <span class="t-n">100</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/traversal/">See it live: DOM traversal →</a></p>
+      </article><article id="traversal-not" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.not()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.not(selector | fn(i, el) | element | collection) → KJ</p>
+        <p style="margin-top:8px;max-width:72ch">Drop matching elements. Accepts a selector, an element or collection, or a predicate function.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-158" aria-label="Copy JavaScript code">Copy</button><pre id="code-158" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.item'</span><span class="t-p">)</span><span class="t-f">.not</span><span class="t-p">(</span><span class="t-s">'.sold-out'</span><span class="t-p">)</span><span class="t-f">.show</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.item'</span><span class="t-p">)</span><span class="t-f">.not</span><span class="t-p">(</span><span class="t-p">(</span>i<span class="t-p">,</span> el<span class="t-p">)</span> =&gt; el.dataset.price &gt; <span class="t-n">100</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/traversal/">See it live: DOM traversal →</a></p>
+      </article><article id="traversal-is" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.is()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.is(selector | fn(i, el) | element) → boolean</p>
+        <p style="margin-top:8px;max-width:72ch">Test whether any element in the set matches a selector, element, collection or predicate.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-159" aria-label="Copy JavaScript code">Copy</button><pre id="code-159" tabindex="0"><code><span class="t-k">if</span> <span class="t-p">(</span><span class="t-d">$</span><span class="t-p">(</span>e.target<span class="t-p">)</span><span class="t-f">.is</span><span class="t-p">(</span><span class="t-s">'button'</span><span class="t-p">)</span><span class="t-p">)</span> <span class="t-p">{</span> … <span class="t-p">}</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/traversal/">See it live: DOM traversal →</a></p>
+      </article><article id="traversal-closest" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.closest()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.closest(selector) → KJ</p>
+        <p style="margin-top:8px;max-width:72ch">Nearest matching ancestor (including the element itself). The backbone of event delegation.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-160" aria-label="Copy JavaScript code">Copy</button><pre id="code-160" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span>e.target<span class="t-p">)</span><span class="t-f">.closest</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'selected'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/traversal/">See it live: DOM traversal →</a></p>
+      </article><article id="traversal-parent-parents" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.parent() / .parents()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.parent() · .parents([selector]) → KJ</p>
+        <p style="margin-top:8px;max-width:72ch">Direct parent, or all ancestors (optionally filtered).</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-161" aria-label="Copy JavaScript code">Copy</button><pre id="code-161" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.btn'</span><span class="t-p">)</span><span class="t-f">.parent</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.btn'</span><span class="t-p">)</span><span class="t-f">.parents</span><span class="t-p">(</span><span class="t-s">'.section'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/traversal/">See it live: DOM traversal →</a></p>
+      </article><article id="traversal-children" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.children()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.children([selector]) → KJ</p>
+        <p style="margin-top:8px;max-width:72ch">Direct children, optionally filtered.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-162" aria-label="Copy JavaScript code">Copy</button><pre id="code-162" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#list'</span><span class="t-p">)</span><span class="t-f">.children</span><span class="t-p">(</span><span class="t-s">'li.active'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/traversal/">See it live: DOM traversal →</a></p>
+      </article><article id="traversal-siblings" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.siblings()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.siblings([selector]) → KJ</p>
+        <p style="margin-top:8px;max-width:72ch">All siblings, optionally filtered.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-163" aria-label="Copy JavaScript code">Copy</button><pre id="code-163" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.tab.active'</span><span class="t-p">)</span><span class="t-f">.siblings</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-f">.removeClass</span><span class="t-p">(</span><span class="t-s">'active'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/traversal/">See it live: DOM traversal →</a></p>
+      </article><article id="traversal-next-prev" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.next() / .prev()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.next([selector]) · .prev([selector]) → KJ</p>
+        <p style="margin-top:8px;max-width:72ch">Adjacent siblings, optionally required to match a selector.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-164" aria-label="Copy JavaScript code">Copy</button><pre id="code-164" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.step.current'</span><span class="t-p">)</span><span class="t-f">.next</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'upcoming'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/traversal/">See it live: DOM traversal →</a></p>
+      </article>
+  </section><section id="events" style="margin-top:56px" data-mod="core">
+    <p class="label">Events</p><h2 style="margin-top:12px">Events</h2><p class="muted" style="max-width:68ch;margin-top:8px">Modern event handling with delegation, namespaces, once-only handlers, and custom events with payloads.</p>
+    <article id="events-on" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.on()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.on(types [, delegateSelector], handler) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Attach handlers. Multiple space-separated events and <code>.namespace</code> suffixes are supported. With a delegate selector, the handler fires for matching descendants — including ones added later — and <code>this</code> is the matched element.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-165" aria-label="Copy JavaScript code">Copy</button><pre id="code-165" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.btn'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> e =&gt; save<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.btn'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click.menu keydown.menu'</span><span class="t-p">,</span> handler<span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-c">// Delegation — survives DOM swaps</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#list'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-s">'.item'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span>e<span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.toggleClass</span><span class="t-p">(</span><span class="t-s">'selected'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/events/">See it live: Events →</a></p>
+      </article><article id="events-one" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.one()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.one(types [, delegateSelector], handler) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Like <code>.on()</code> but the handler runs at most once.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-166" aria-label="Copy JavaScript code">Copy</button><pre id="code-166" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#intro'</span><span class="t-p">)</span><span class="t-f">.one</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> dismiss<span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/events/">See it live: Events →</a></p>
+      </article><article id="events-off" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.off()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.off([types] [, handler]) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Remove handlers — all of them, by event type, by namespace, or by specific handler reference.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-167" aria-label="Copy JavaScript code">Copy</button><pre id="code-167" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.btn'</span><span class="t-p">)</span><span class="t-f">.off</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.btn'</span><span class="t-p">)</span><span class="t-f">.off</span><span class="t-p">(</span><span class="t-s">'.menu'</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// whole namespace</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.btn'</span><span class="t-p">)</span><span class="t-f">.off</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>          <span class="t-c">// everything</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/events/">See it live: Events →</a></p>
+      </article><article id="events-trigger" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.trigger()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.trigger(type [, detail]) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Dispatch an event (bubbling, cancelable). The optional payload arrives as the handler’s second argument.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-168" aria-label="Copy JavaScript code">Copy</button><pre id="code-168" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#app'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'cart:add'</span><span class="t-p">,</span> <span class="t-p">(</span>e<span class="t-p">,</span> item<span class="t-p">)</span> =&gt; render<span class="t-p">(</span>item<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#app'</span><span class="t-p">)</span><span class="t-f">.trigger</span><span class="t-p">(</span><span class="t-s">'cart:add'</span><span class="t-p">,</span> <span class="t-p">{</span> sku: <span class="t-s">'A-1'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/events/">See it live: Events →</a></p>
+      </article><article id="events-hover" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.hover()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.hover(enterFn [, leaveFn]) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Shorthand for mouseenter/mouseleave.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-169" aria-label="Copy JavaScript code">Copy</button><pre id="code-169" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">)</span><span class="t-f">.hover</span><span class="t-p">(</span>
+  <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span> <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'lift'</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">,</span>
+  <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span> <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.removeClass</span><span class="t-p">(</span><span class="t-s">'lift'</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/events/">See it live: Events →</a></p>
+      </article><article id="events-shortcuts" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">Shortcuts</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.click([fn]) .change([fn]) .submit([fn]) … → self</p>
+        <p style="margin-top:8px;max-width:72ch">With a handler: binds it. Without: triggers the event. Available for <code>click, dblclick, change, input, submit, keydown, keyup, keypress, mousedown, mouseup, mousemove, mouseenter, mouseleave, scroll, resize, touchstart, touchend, contextmenu</code>.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-170" aria-label="Copy JavaScript code">Copy</button><pre id="code-170" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#save'</span><span class="t-p">)</span><span class="t-f">.click</span><span class="t-p">(</span><span class="t-p">(</span><span class="t-p">)</span> =&gt; submit<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#save'</span><span class="t-p">)</span><span class="t-f">.click</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>     <span class="t-c">// programmatic click</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/events/">See it live: Events →</a></p>
+      </article><article id="events-focus-blur" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.focus() / .blur()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.focus([fn]) · .blur([fn]) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Bind a handler, or move focus when called without one.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-171" aria-label="Copy JavaScript code">Copy</button><pre id="code-171" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#search'</span><span class="t-p">)</span><span class="t-f">.focus</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>          <span class="t-c">// focus the field</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#search'</span><span class="t-p">)</span><span class="t-f">.focus</span><span class="t-p">(</span>onFocus<span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// bind</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/events/">See it live: Events →</a></p>
+      </article>
+  </section><section id="ajax" style="margin-top:56px" data-mod="core">
+    <p class="label">AJAX</p><h2 style="margin-top:12px">AJAX</h2><p class="muted" style="max-width:68ch;margin-top:8px">Powered by <code>fetch</code>. Every call returns a native Promise (so <code>await</code> just works) with jQuery-style <code>.done/.fail/.always</code> shims attached.</p>
+    <article id="ajax-ajax" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.ajax()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.ajax(url | options [, options]) → Promise</p>
+        <p style="margin-top:8px;max-width:72ch">Full-control requests. Options: <code>url, method</code> (or jQuery’s <code>type</code>), <code>data</code> (object → urlencoded or querystring; <code>FormData</code>; string), <code>json: true</code> (send JSON body), <code>dataType</code> (’json’ | ’auto’), <code>headers</code>, <code>timeout</code> (ms, auto-aborts), <code>credentials</code>, and callbacks <code>success(data, status, res)</code>, <code>error(err)</code>, <code>complete()</code>. The promise also has <code>.abort()</code>.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-172" aria-label="Copy JavaScript code">Copy</button><pre id="code-172" tabindex="0"><code><span class="t-k">const</span> p = <span class="t-d">$</span><span class="t-f">.ajax</span><span class="t-p">(</span><span class="t-p">{</span>
+  url: <span class="t-s">'/api/items'</span><span class="t-p">,</span> method: <span class="t-s">'POST'</span><span class="t-p">,</span>
+  data: <span class="t-p">{</span> title: <span class="t-s">'Hello'</span> <span class="t-p">}</span><span class="t-p">,</span> json: <span class="t-k">true</span><span class="t-p">,</span>
+  headers: <span class="t-p">{</span> <span class="t-s">'X-Token'</span>: <span class="t-s">'abc'</span> <span class="t-p">}</span><span class="t-p">,</span> timeout: <span class="t-n">5000</span><span class="t-p">,</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+p<span class="t-f">.done</span><span class="t-p">(</span>d =&gt; render<span class="t-p">(</span>d<span class="t-p">)</span><span class="t-p">)</span><span class="t-f">.fail</span><span class="t-p">(</span>err =&gt; alert<span class="t-p">(</span>err.status<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-c">// or simply:  const d = await p;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/ajax/">See it live: AJAX with $.ajax →</a></p>
+      </article><article id="ajax-get" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.get()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.get(url [, data] [, success]) → Promise</p>
+        <p style="margin-top:8px;max-width:72ch">GET shorthand; <code>data</code> becomes the query string.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-173" aria-label="Copy JavaScript code">Copy</button><pre id="code-173" tabindex="0"><code><span class="t-k">const</span> html = <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.get</span><span class="t-p">(</span><span class="t-s">'/partials/nav.html'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-f">.get</span><span class="t-p">(</span><span class="t-s">'/api/search'</span><span class="t-p">,</span> <span class="t-p">{</span> q: <span class="t-s">'cats'</span> <span class="t-p">}</span><span class="t-p">,</span> render<span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/fetch-shorthands/">See it live: $.get, $.post &amp; $.getJSON →</a></p>
+      </article><article id="ajax-post" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.post()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.post(url [, data] [, success]) → Promise</p>
+        <p style="margin-top:8px;max-width:72ch">POST shorthand (urlencoded body by default).</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-174" aria-label="Copy JavaScript code">Copy</button><pre id="code-174" tabindex="0"><code><span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.post</span><span class="t-p">(</span><span class="t-s">'/api/save'</span><span class="t-p">,</span> <span class="t-p">{</span> name: <span class="t-s">'Ada'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/fetch-shorthands/">See it live: $.get, $.post &amp; $.getJSON →</a></p>
+      </article><article id="ajax-getjson" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.getJSON()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.getJSON(url [, data] [, success]) → Promise</p>
+        <p style="margin-top:8px;max-width:72ch">GET with forced JSON parsing.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-175" aria-label="Copy JavaScript code">Copy</button><pre id="code-175" tabindex="0"><code><span class="t-k">const</span> users = <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.getJSON</span><span class="t-p">(</span><span class="t-s">'/api/users'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/fetch-shorthands/">See it live: $.get, $.post &amp; $.getJSON →</a></p>
+      </article><article id="ajax-load" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.load()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.load(url [ + ’ selector’] [, done]) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Fetch HTML into the element. Add a space + selector to insert only a fragment of the response.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-176" aria-label="Copy JavaScript code">Copy</button><pre id="code-176" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#panel'</span><span class="t-p">)</span><span class="t-f">.load</span><span class="t-p">(</span><span class="t-s">'/partials/news.html'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#panel'</span><span class="t-p">)</span><span class="t-f">.load</span><span class="t-p">(</span><span class="t-s">'/page.html #main'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/load-fragments/">See it live: Loading HTML fragments →</a></p>
+      </article><article id="ajax-serialize" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.serialize()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.serialize() → string</p>
+        <p style="margin-top:8px;max-width:72ch">URL-encode a form’s fields.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-177" aria-label="Copy JavaScript code">Copy</button><pre id="code-177" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#signup'</span><span class="t-p">)</span><span class="t-f">.serialize</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-c">// &quot;name=Ada&amp;plan=pro&quot;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/forms-and-serialize/">See it live: Forms &amp; serialization →</a></p>
+      </article><article id="ajax-serializeobject" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.serializeObject()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.serializeObject() → object</p>
+        <p style="margin-top:8px;max-width:72ch">A form’s fields as a plain object (jsKjs extra).</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-178" aria-label="Copy JavaScript code">Copy</button><pre id="code-178" tabindex="0"><code><span class="t-k">const</span> <span class="t-p">{</span> email <span class="t-p">}</span> = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#signup'</span><span class="t-p">)</span><span class="t-f">.serializeObject</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/forms-and-serialize/">See it live: Forms &amp; serialization →</a></p>
+      </article>
+  </section><section id="hyper" style="margin-top:56px" data-mod="hyper">
+    <p class="label">Hyper — Declarative AJAX</p><h2 style="margin-top:12px">Hyper — Declarative AJAX</h2><p class="muted" style="max-width:68ch;margin-top:8px">htmx-style: describe requests in HTML with <code>kj-*</code> attributes and never write the handler. A MutationObserver auto-binds content added later, including content swapped in by Hyper itself.</p>
+    <article id="hyper-kj-get-kj-post-kj-put-kj-patch-kj-delete" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">kj-get / kj-post / kj-put / kj-patch / kj-delete</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj-&lt;verb&gt;=&quot;/url&quot;</p>
+        <p style="margin-top:8px;max-width:72ch">The URL to request with that HTTP verb. Forms send their fields; named inputs, selects and textareas send their own value. Bodies are URL-encoded (multipart when a form contains file inputs). Default triggers: forms → <code>submit</code>, inputs/selects → <code>change</code>, everything else → <code>click</code>.</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-179" aria-label="Copy HTML code">Copy</button><pre id="code-179" tabindex="0"><code><span class="t-tag">&lt;button</span> <span class="t-kj">kj-get</span><span class="t-p">=</span><span class="t-s">&quot;/api/joke&quot;</span> <span class="t-kj">kj-target</span><span class="t-p">=</span><span class="t-s">&quot;#out&quot;</span><span class="t-tag">&gt;</span>Joke<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+
+<span class="t-tag">&lt;form</span> <span class="t-kj">kj-post</span><span class="t-p">=</span><span class="t-s">&quot;/api/subscribe&quot;</span> <span class="t-kj">kj-target</span><span class="t-p">=</span><span class="t-s">&quot;#msg&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;input</span> <span class="t-at">name</span><span class="t-p">=</span><span class="t-s">&quot;email&quot;</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;email&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span><span class="t-tag">&gt;</span>Subscribe<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/form</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/declarative-requests/">See it live: Declarative requests →</a></p>
+      </article><article id="hyper-kj-target" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">kj-target</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj-target=&quot;#selector&quot;</p>
+        <p style="margin-top:8px;max-width:72ch">Where the response HTML goes (default: the element itself).</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-180" aria-label="Copy HTML code">Copy</button><pre id="code-180" tabindex="0"><code><span class="t-tag">&lt;button</span> <span class="t-kj">kj-get</span><span class="t-p">=</span><span class="t-s">&quot;/api/stats&quot;</span> <span class="t-kj">kj-target</span><span class="t-p">=</span><span class="t-s">&quot;#stats&quot;</span><span class="t-tag">&gt;</span>Refresh<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/declarative-requests/">See it live: Declarative requests →</a></p>
+      </article><article id="hyper-kj-swap" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">kj-swap</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj-swap=&quot;innerHTML | outerHTML | textContent | beforebegin | afterbegin | beforeend | afterend | none&quot;</p>
+        <p style="margin-top:8px;max-width:72ch">How the response is inserted into the target. <code>outerHTML</code> replaces the target entirely; the four position values insert adjacent to it; <code>none</code> makes the request without touching the DOM.</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-181" aria-label="Copy HTML code">Copy</button><pre id="code-181" tabindex="0"><code><span class="t-tag">&lt;button</span> <span class="t-kj">kj-delete</span><span class="t-p">=</span><span class="t-s">&quot;/api/items/7&quot;</span> <span class="t-kj">kj-target</span><span class="t-p">=</span><span class="t-s">&quot;#row-7&quot;</span>
+        <span class="t-kj">kj-swap</span><span class="t-p">=</span><span class="t-s">&quot;outerHTML&quot;</span><span class="t-tag">&gt;</span>Delete<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/targets-and-swaps/">See it live: Targets &amp; swaps →</a></p>
+      </article><article id="hyper-kj-trigger" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">kj-trigger</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj-trigger=&quot;event [delay:Nms] | load | revealed | every Ns&quot;</p>
+        <p style="margin-top:8px;max-width:72ch">When to fire: any DOM event (with optional debounce), <code>load</code> (immediately), <code>revealed</code> (when scrolled into view, via IntersectionObserver), or <code>every Ns</code> (polling).</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-182" aria-label="Copy HTML code">Copy</button><pre id="code-182" tabindex="0"><code><span class="t-tag">&lt;input</span> <span class="t-at">name</span><span class="t-p">=</span><span class="t-s">&quot;q&quot;</span> <span class="t-kj">kj-get</span><span class="t-p">=</span><span class="t-s">&quot;/api/search&quot;</span>
+       <span class="t-kj">kj-trigger</span><span class="t-p">=</span><span class="t-s">&quot;keyup delay:300ms&quot;</span> <span class="t-kj">kj-target</span><span class="t-p">=</span><span class="t-s">&quot;#results&quot;</span><span class="t-tag">&gt;</span>
+
+<span class="t-tag">&lt;div</span> <span class="t-kj">kj-get</span><span class="t-p">=</span><span class="t-s">&quot;/api/comments&quot;</span> <span class="t-kj">kj-trigger</span><span class="t-p">=</span><span class="t-s">&quot;revealed&quot;</span><span class="t-tag">&gt;</span>…<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-kj">kj-get</span><span class="t-p">=</span><span class="t-s">&quot;/api/price&quot;</span> <span class="t-kj">kj-trigger</span><span class="t-p">=</span><span class="t-s">&quot;every 10s&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/triggers/">See it live: Triggers &amp; debouncing →</a></p>
+      </article><article id="hyper-kj-confirm" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">kj-confirm</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj-confirm=&quot;message&quot;</p>
+        <p style="margin-top:8px;max-width:72ch">Show a native confirm dialog before requesting.</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-183" aria-label="Copy HTML code">Copy</button><pre id="code-183" tabindex="0"><code><span class="t-tag">&lt;button</span> <span class="t-kj">kj-delete</span><span class="t-p">=</span><span class="t-s">&quot;/api/acct&quot;</span> <span class="t-kj">kj-confirm</span><span class="t-p">=</span><span class="t-s">&quot;Really delete?&quot;</span><span class="t-tag">&gt;</span>✕<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/confirm-and-indicators/">See it live: Confirmations &amp; loading indicators →</a></p>
+      </article><article id="hyper-kj-indicator" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">kj-indicator</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj-indicator=&quot;#selector&quot;</p>
+        <p style="margin-top:8px;max-width:72ch">Element to show while the request is in flight (the trigger also gets <code>aria-busy="true"</code>).</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-184" aria-label="Copy HTML code">Copy</button><pre id="code-184" tabindex="0"><code><span class="t-tag">&lt;button</span> <span class="t-kj">kj-get</span><span class="t-p">=</span><span class="t-s">&quot;/slow&quot;</span> <span class="t-kj">kj-indicator</span><span class="t-p">=</span><span class="t-s">&quot;#spinner&quot;</span><span class="t-tag">&gt;</span>Go<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;spinner&quot;</span> <span class="t-at">hidden</span><span class="t-tag">&gt;</span>Loading…<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/confirm-and-indicators/">See it live: Confirmations &amp; loading indicators →</a></p>
+      </article><article id="hyper-kj-include-kj-vals" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">kj-include / kj-vals</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj-include=&quot;#form&quot; · kj-vals=’{&quot;k&quot;:&quot;v&quot;}’</p>
+        <p style="margin-top:8px;max-width:72ch">Send extra data: the fields of another form, and/or literal JSON values.</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-185" aria-label="Copy HTML code">Copy</button><pre id="code-185" tabindex="0"><code><span class="t-tag">&lt;button</span> <span class="t-kj">kj-post</span><span class="t-p">=</span><span class="t-s">&quot;/api/filter&quot;</span> <span class="t-kj">kj-include</span><span class="t-p">=</span><span class="t-s">&quot;#filters&quot;</span>
+        <span class="t-kj">kj-vals</span><span class="t-p">=</span><span class="t-s">'{&quot;page&quot;: 2}'</span> <span class="t-kj">kj-target</span><span class="t-p">=</span><span class="t-s">&quot;#grid&quot;</span><span class="t-tag">&gt;</span>Next<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/include-and-vals/">See it live: Sending extra data →</a></p>
+      </article><article id="hyper-kj-push-url" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">kj-push-url</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj-push-url=&quot;true | /path&quot;</p>
+        <p style="margin-top:8px;max-width:72ch">Push the request URL (or a given path) into browser history after a successful swap.</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-186" aria-label="Copy HTML code">Copy</button><pre id="code-186" tabindex="0"><code><span class="t-tag">&lt;a</span> <span class="t-kj">kj-get</span><span class="t-p">=</span><span class="t-s">&quot;/products?page=2&quot;</span> <span class="t-kj">kj-target</span><span class="t-p">=</span><span class="t-s">&quot;#grid&quot;</span>
+   <span class="t-kj">kj-push-url</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span><span class="t-tag">&gt;</span>Page 2<span class="t-tag">&lt;/a</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/push-url/">See it live: History &amp; deep links →</a></p>
+      </article><article id="hyper-lifecycle-events" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">Lifecycle events</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj:before · kj:after · kj:error · kj:load</p>
+        <p style="margin-top:8px;max-width:72ch"><code>kj:before</code> (before the request), <code>kj:after</code> (response received, before the swap; <code>detail.html</code>) and <code>kj:error</code> (<code>detail.error.status</code>) fire on the requesting element. <code>kj:load</code> fires on the target after the swap — or on its former parent when <code>outerHTML</code> replaced it. All bubble.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-187" aria-label="Copy JavaScript code">Copy</button><pre id="code-187" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#btn'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'kj:error'</span><span class="t-p">,</span> <span class="t-p">(</span>e<span class="t-p">,</span> d<span class="t-p">)</span> =&gt;
+  toast<span class="t-p">(</span><span class="t-s">'Failed: '</span> + d.error.status<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#grid'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'kj:load'</span><span class="t-p">,</span> highlightNew<span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/polling/">See it live: Polling →</a></p>
+      </article>
+  </section><section id="pulse" style="margin-top:56px" data-mod="pulse">
+    <p class="label">Pulse — Reactivity</p><h2 style="margin-top:12px">Pulse — Reactivity</h2><p class="muted" style="max-width:68ch;margin-top:8px">Alpine-style: declare state on an element with <code>kj-data</code>; bind it with directives. Mutating state re-renders the component. No virtual DOM, no build step. Inside expressions, <code>$el</code> is the element and <code>$event</code> the event.</p>
+    <article id="pulse-kj-data" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">kj-data</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj-data=&quot;{ … }&quot; | kj-data=&quot;componentName&quot;</p>
+        <p style="margin-top:8px;max-width:72ch">Declares a component and its reactive scope. An <code>init()</code> method, if present, runs on mount. Pass a registered component name to reuse logic.</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-188" aria-label="Copy HTML code">Copy</button><pre id="code-188" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-kj">kj-data</span><span class="t-p">=</span><span class="t-s">&quot;{ count: 0, open: false }&quot;</span><span class="t-tag">&gt;</span>…<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-kj">kj-data</span><span class="t-p">=</span><span class="t-s">&quot;dropdown&quot;</span><span class="t-tag">&gt;</span>…<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>  <span class="t-c">&lt;!-- registered --&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/reactive-state/">See it live: Reactive state →</a></p>
+      </article><article id="pulse-kj-text-kj-html" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">kj-text / kj-html</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj-text=&quot;expr&quot; · kj-html=&quot;expr&quot;</p>
+        <p style="margin-top:8px;max-width:72ch">Bind <code>textContent</code> or <code>innerHTML</code> to an expression. Prefer <code>kj-text</code> for anything user-supplied.</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-189" aria-label="Copy HTML code">Copy</button><pre id="code-189" tabindex="0"><code><span class="t-tag">&lt;span</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;count&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;p</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;name ? 'Hi ' + name : 'Who?'&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/text-and-html-binding/">See it live: Text &amp; HTML binding →</a></p>
+      </article><article id="pulse-kj-show" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">kj-show</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj-show=&quot;expr&quot;</p>
+        <p style="margin-top:8px;max-width:72ch">Show/hide via <code>display</code> based on a truthy expression.</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-190" aria-label="Copy HTML code">Copy</button><pre id="code-190" tabindex="0"><code><span class="t-tag">&lt;ul</span> <span class="t-kj">kj-show</span><span class="t-p">=</span><span class="t-s">&quot;open&quot;</span><span class="t-tag">&gt;</span>…<span class="t-tag">&lt;/ul</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/conditional-display/">See it live: Conditional display →</a></p>
+      </article><article id="pulse-kj-model" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">kj-model</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">kj-model=&quot;property&quot;</p>
+        <p style="margin-top:8px;max-width:72ch">Two-way binding for text, number and range inputs, textareas, selects, checkboxes (booleans) and radio buttons (the checked radio’s value). The field being typed in is never rewritten mid-typing; programmatic changes update it immediately.</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-191" aria-label="Copy HTML code">Copy</button><pre id="code-191" tabindex="0"><code><span class="t-tag">&lt;input</span> <span class="t-kj">kj-model</span><span class="t-p">=</span><span class="t-s">&quot;email&quot;</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;input</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;checkbox&quot;</span> <span class="t-kj">kj-model</span><span class="t-p">=</span><span class="t-s">&quot;agreed&quot;</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/two-way-binding/">See it live: Two-way binding →</a></p>
+      </article><article id="pulse-event-kj-on-event" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">@event / kj-on:event</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">@click=&quot;expr&quot; · kj-on:input=&quot;expr&quot; · modifiers: .prevent .stop .enter .escape</p>
+        <p style="margin-top:8px;max-width:72ch">Run an expression on an event. Modifiers call preventDefault/stopPropagation or filter keys.</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-192" aria-label="Copy HTML code">Copy</button><pre id="code-192" tabindex="0"><code><span class="t-tag">&lt;button</span> <span class="t-kj">@click</span><span class="t-p">=</span><span class="t-s">&quot;count++&quot;</span><span class="t-tag">&gt;</span>+1<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;form</span> <span class="t-kj">@submit.prevent</span><span class="t-p">=</span><span class="t-s">&quot;save()&quot;</span><span class="t-tag">&gt;</span>…<span class="t-tag">&lt;/form</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;input</span> <span class="t-kj">@keyup.enter</span><span class="t-p">=</span><span class="t-s">&quot;search($el.value)&quot;</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/event-directives/">See it live: Event directives →</a></p>
+      </article><article id="pulse-attr-kj-bind-attr" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">:attr / kj-bind:attr</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">:src=&quot;expr&quot; · kj-bind:class=&quot;expr&quot;</p>
+        <p style="margin-top:8px;max-width:72ch">Bind any attribute to an expression. <code>:class</code> merges with the element’s static classes; <code>false</code>/<code>null</code> removes the attribute.</p>
+        <div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-193" aria-label="Copy HTML code">Copy</button><pre id="code-193" tabindex="0"><code><span class="t-tag">&lt;img</span> <span class="t-kj">:src</span><span class="t-p">=</span><span class="t-s">&quot;user.avatar&quot;</span> <span class="t-kj">:alt</span><span class="t-p">=</span><span class="t-s">&quot;user.name&quot;</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-kj">:disabled</span><span class="t-p">=</span><span class="t-s">&quot;saving&quot;</span><span class="t-tag">&gt;</span>Save<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-kj">:class</span><span class="t-p">=</span><span class="t-s">&quot;open ? 'expanded' : ''&quot;</span><span class="t-tag">&gt;</span>…<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/attribute-binding/">See it live: Attribute binding →</a></p>
+      </article><article id="pulse-component" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.component()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.component(name, (...args) =&gt; state)</p>
+        <p style="margin-top:8px;max-width:72ch">Register a reusable component factory, then use it with <code>kj-data="name"</code> or with arguments: <code>kj-data="name(4, 'Docs')"</code>. An <code>init(el)</code> method receives the root element.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-194" aria-label="Copy JavaScript code">Copy</button><pre id="code-194" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.component</span><span class="t-p">(</span><span class="t-s">'rating'</span><span class="t-p">,</span> <span class="t-p">(</span>initial = <span class="t-n">0</span><span class="t-p">)</span> =&gt; <span class="t-p">(</span><span class="t-p">{</span>
+  value: initial<span class="t-p">,</span>
+  rate<span class="t-p">(</span>n<span class="t-p">)</span> <span class="t-p">{</span> <span class="t-k">this</span>.value = n<span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">,</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-c">// &lt;div kj-data=&quot;rating(4)&quot;&gt;…&lt;/div&gt;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/components/">See it live: Reusable components →</a></p>
+      </article><article id="pulse-store" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.store()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.store(name [, initial]) → reactive object</p>
+        <p style="margin-top:8px;max-width:72ch">Create or retrieve a global reactive store. Any component reading it re-renders when it changes. Getters work as computed values.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-195" aria-label="Copy JavaScript code">Copy</button><pre id="code-195" tabindex="0"><code><span class="t-k">const</span> cart = <span class="t-d">$</span><span class="t-f">.store</span><span class="t-p">(</span><span class="t-s">'cart'</span><span class="t-p">,</span> <span class="t-p">{</span>
+  items: <span class="t-p">[</span><span class="t-p">]</span><span class="t-p">,</span>
+  get total<span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span> <span class="t-k">return</span> <span class="t-k">this</span>.items.length<span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">,</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+cart.items<span class="t-f">.push</span><span class="t-p">(</span><span class="t-p">{</span> sku: <span class="t-s">'A-1'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-c">// UI updates</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/global-store/">See it live: Global stores →</a></p>
+      </article><article id="pulse-reactive" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.reactive()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.reactive(object) → proxy</p>
+        <p style="margin-top:8px;max-width:72ch">A standalone reactive proxy without auto-rendering — for your own change-tracking logic.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-196" aria-label="Copy JavaScript code">Copy</button><pre id="code-196" tabindex="0"><code><span class="t-k">const</span> state = <span class="t-d">$</span><span class="t-f">.reactive</span><span class="t-p">(</span><span class="t-p">{</span> x: <span class="t-n">1</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/reactive-state/">See it live: Reactive state →</a></p>
+      </article>
+  </section><section id="motion" style="margin-top:56px" data-mod="motion">
+    <p class="label">Motion — Animation</p><h2 style="margin-top:12px">Motion — Animation</h2><p class="muted" style="max-width:68ch;margin-top:8px">GSAP-style tweening on requestAnimationFrame. Transform shorthands (<code>x, y, rotate, scale…</code>) plus any numeric CSS property. <strong>Durations in seconds.</strong> All tweens return Promises.</p>
+    <article id="motion-to" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.to()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.to(target, { …props, duration, delay, ease, stagger, onComplete }) → Promise</p>
+        <p style="margin-top:8px;max-width:72ch">Tween to a state. <code>stagger</code> offsets each element’s start; <code>onComplete</code> fires after the last finishes. Also chainable on sets: <code>$(sel).to(props)</code>.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-197" aria-label="Copy JavaScript code">Copy</button><pre id="code-197" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">,</span> <span class="t-p">{</span> x: <span class="t-n">200</span><span class="t-p">,</span> rotate: <span class="t-n">10</span><span class="t-p">,</span> opacity: .<span class="t-n">8</span><span class="t-p">,</span>
+                duration: .<span class="t-n">6</span><span class="t-p">,</span> ease: <span class="t-s">'back.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'#modal'</span><span class="t-p">,</span> <span class="t-p">{</span> opacity: <span class="t-n">0</span><span class="t-p">,</span> duration: .<span class="t-n">3</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#modal'</span><span class="t-p">)</span><span class="t-f">.hide</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/tweens/">See it live: Tweens →</a></p>
+      </article><article id="motion-from" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.from()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.from(target, props) → Promise</p>
+        <p style="margin-top:8px;max-width:72ch">Jump to the given state, then tween back to the original — the classic entrance pattern.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-198" aria-label="Copy JavaScript code">Copy</button><pre id="code-198" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.from</span><span class="t-p">(</span><span class="t-s">'.hero h1'</span><span class="t-p">,</span> <span class="t-p">{</span> y: <span class="t-n">40</span><span class="t-p">,</span> opacity: <span class="t-n">0</span><span class="t-p">,</span>
+  duration: .<span class="t-n">8</span><span class="t-p">,</span> ease: <span class="t-s">'power2.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/from-and-fromto/">See it live: From &amp; fromTo →</a></p>
+      </article><article id="motion-fromto" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.fromTo()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.fromTo(target, fromProps, toProps) → Promise</p>
+        <p style="margin-top:8px;max-width:72ch">Explicit start and end states.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-199" aria-label="Copy JavaScript code">Copy</button><pre id="code-199" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.fromTo</span><span class="t-p">(</span><span class="t-s">'.badge'</span><span class="t-p">,</span> <span class="t-p">{</span> scale: <span class="t-n">0</span> <span class="t-p">}</span><span class="t-p">,</span>
+  <span class="t-p">{</span> scale: <span class="t-n">1</span><span class="t-p">,</span> duration: .<span class="t-n">5</span><span class="t-p">,</span> ease: <span class="t-s">'elastic.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/from-and-fromto/">See it live: From &amp; fromTo →</a></p>
+      </article><article id="motion-timeline" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.timeline()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.timeline({ paused?, onComplete?, ...defaults }) → timeline</p>
+        <p style="margin-top:8px;max-width:72ch">Sequence tweens. Steps run in order; position <code>'<'</code> starts a step with the previous one; <code>'+=0.3'</code> waits 0.3 s first. Methods: <code>.to()</code>, <code>.from()</code>, <code>.fromTo()</code>, <code>.add(fn)</code> (waits if fn returns a Promise), <code>.play()</code> → Promise. Auto-plays unless <code>paused: true</code>.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-200" aria-label="Copy JavaScript code">Copy</button><pre id="code-200" tabindex="0"><code><span class="t-k">const</span> tl = <span class="t-d">$</span><span class="t-f">.timeline</span><span class="t-p">(</span><span class="t-p">{</span> paused: <span class="t-k">true</span><span class="t-p">,</span> duration: .<span class="t-n">5</span><span class="t-p">,</span> ease: <span class="t-s">'power2.out'</span> <span class="t-p">}</span><span class="t-p">)</span>
+  <span class="t-f">.from</span><span class="t-p">(</span><span class="t-s">'.hero'</span><span class="t-p">,</span> <span class="t-p">{</span> opacity: <span class="t-n">0</span> <span class="t-p">}</span><span class="t-p">)</span>
+  <span class="t-f">.from</span><span class="t-p">(</span><span class="t-s">'.hero h1'</span><span class="t-p">,</span> <span class="t-p">{</span> y: <span class="t-n">30</span> <span class="t-p">}</span><span class="t-p">)</span>
+  <span class="t-f">.from</span><span class="t-p">(</span><span class="t-s">'.hero p'</span><span class="t-p">,</span> <span class="t-p">{</span> y: <span class="t-n">30</span> <span class="t-p">}</span><span class="t-p">,</span> <span class="t-s">'&lt;'</span><span class="t-p">)</span>    <span class="t-c">// together with the h1</span>
+  <span class="t-f">.from</span><span class="t-p">(</span><span class="t-s">'.cta'</span><span class="t-p">,</span> <span class="t-p">{</span> scale: .<span class="t-n">8</span> <span class="t-p">}</span><span class="t-p">,</span> <span class="t-s">'+=0.2'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-k">await</span> tl<span class="t-f">.play</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/timelines/">See it live: Timelines →</a></p>
+      </article><article id="motion-stagger" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">stagger</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">stagger: seconds</p>
+        <p style="margin-top:8px;max-width:72ch">Offset each element in a multi-element tween — the signature "cascade" effect.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-201" aria-label="Copy JavaScript code">Copy</button><pre id="code-201" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'.item'</span><span class="t-p">,</span> <span class="t-p">{</span> y: <span class="t-n">0</span><span class="t-p">,</span> opacity: <span class="t-n">1</span><span class="t-p">,</span>
+  duration: .<span class="t-n">4</span><span class="t-p">,</span> stagger: .<span class="t-n">08</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/stagger/">See it live: Stagger →</a></p>
+      </article><article id="motion-easings" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">Easings</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">ease: name | (t) =&gt; number</p>
+        <p style="margin-top:8px;max-width:72ch">Built in: <code>linear, ease-in, ease-out, ease-in-out, power2.in, power2.out, power2.inOut, back.out, elastic.out, bounce.out</code> — exposed as <code>$.easings</code> — or pass any function mapping 0→1 progress.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-202" aria-label="Copy JavaScript code">Copy</button><pre id="code-202" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'.ball'</span><span class="t-p">,</span> <span class="t-p">{</span> y: <span class="t-n">200</span><span class="t-p">,</span> ease: <span class="t-s">'bounce.out'</span><span class="t-p">,</span> duration: <span class="t-n">1</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'.dot'</span><span class="t-p">,</span>  <span class="t-p">{</span> x: <span class="t-n">100</span><span class="t-p">,</span> ease: t =&gt; t * t <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/tweens/">See it live: Tweens →</a></p>
+      </article>
+  </section><section id="effects" style="margin-top:56px" data-mod="motion">
+    <p class="label">jQuery Effect Shims</p><h2 style="margin-top:12px">jQuery Effect Shims</h2><p class="muted" style="max-width:68ch;margin-top:8px">The classics, rebuilt on the Motion engine. <strong>Durations in milliseconds</strong>, exactly as jQuery developers expect.</p>
+    <article id="effects-fadein-fadeout-fadetoggle" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.fadeIn() / .fadeOut() / .fadeToggle()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.fadeIn([ms = 400] [, complete]) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Fade elements in (from hidden) or out (hiding when done).</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-203" aria-label="Copy JavaScript code">Copy</button><pre id="code-203" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.toast'</span><span class="t-p">)</span><span class="t-f">.fadeIn</span><span class="t-p">(</span><span class="t-n">300</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.toast'</span><span class="t-p">)</span><span class="t-f">.fadeOut</span><span class="t-p">(</span><span class="t-n">300</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span> <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.remove</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/classic-effects/">See it live: Classic effects →</a></p>
+      </article><article id="effects-slidedown-slideup-slidetoggle" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.slideDown() / .slideUp() / .slideToggle()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.slideDown([ms = 400] [, complete]) → self</p>
+        <p style="margin-top:8px;max-width:72ch">Animate height to reveal or collapse.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-204" aria-label="Copy JavaScript code">Copy</button><pre id="code-204" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#faq-answer'</span><span class="t-p">)</span><span class="t-f">.slideToggle</span><span class="t-p">(</span><span class="t-n">250</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/classic-effects/">See it live: Classic effects →</a></p>
+      </article><article id="effects-animate" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">.animate()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">.animate(props [, ms = 400] [, ease] [, complete]) → self</p>
+        <p style="margin-top:8px;max-width:72ch">jQuery-signature tween of numeric CSS properties.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-205" aria-label="Copy JavaScript code">Copy</button><pre id="code-205" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.box'</span><span class="t-p">)</span><span class="t-f">.animate</span><span class="t-p">(</span><span class="t-p">{</span> marginLeft: <span class="t-n">100</span><span class="t-p">,</span> opacity: .<span class="t-n">5</span> <span class="t-p">}</span><span class="t-p">,</span> <span class="t-n">600</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/classic-effects/">See it live: Classic effects →</a></p>
+      </article>
+  </section><section id="utilities" style="margin-top:56px" data-mod="util">
+    <p class="label">Utilities</p><h2 style="margin-top:12px">Utilities</h2><p class="muted" style="max-width:68ch;margin-top:8px">Small helpers on the <code>$</code> namespace.</p>
+    <article id="utilities-each" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.each()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.each(arrayOrObject, (keyOrIndex, value) =&gt; {})</p>
+        <p style="margin-top:8px;max-width:72ch">Iterate arrays, array-likes, or plain objects.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-206" aria-label="Copy JavaScript code">Copy</button><pre id="code-206" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.each</span><span class="t-p">(</span><span class="t-p">{</span> a: <span class="t-n">1</span><span class="t-p">,</span> b: <span class="t-n">2</span> <span class="t-p">}</span><span class="t-p">,</span> <span class="t-p">(</span>k<span class="t-p">,</span> v<span class="t-p">)</span> =&gt; console<span class="t-f">.log</span><span class="t-p">(</span>k<span class="t-p">,</span> v<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/utilities/">See it live: Utilities →</a></p>
+      </article><article id="utilities-map" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.map()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.map(collection, fn) → array</p>
+        <p style="margin-top:8px;max-width:72ch">Map + flatten one level.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-207" aria-label="Copy JavaScript code">Copy</button><pre id="code-207" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.map</span><span class="t-p">(</span><span class="t-p">[</span><span class="t-n">1</span><span class="t-p">,</span> <span class="t-n">2</span><span class="t-p">]</span><span class="t-p">,</span> n =&gt; <span class="t-p">[</span>n<span class="t-p">,</span> n * <span class="t-n">10</span><span class="t-p">]</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-c">// [1,10,2,20]</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/utilities/">See it live: Utilities →</a></p>
+      </article><article id="utilities-extend" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.extend()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.extend([deep], target, …sources) → target</p>
+        <p style="margin-top:8px;max-width:72ch">Merge objects; pass <code>true</code> first for deep merge.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-208" aria-label="Copy JavaScript code">Copy</button><pre id="code-208" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.extend</span><span class="t-p">(</span>defaults<span class="t-p">,</span> options<span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-f">.extend</span><span class="t-p">(</span><span class="t-k">true</span><span class="t-p">,</span> config<span class="t-p">,</span> <span class="t-p">{</span> api: <span class="t-p">{</span> retries: <span class="t-n">3</span> <span class="t-p">}</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/utilities/">See it live: Utilities →</a></p>
+      </article><article id="utilities-debounce" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.debounce()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.debounce(fn [, wait = 300]) → fn</p>
+        <p style="margin-top:8px;max-width:72ch">Returns a function that fires only after calls stop for <code>wait</code> ms.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-209" aria-label="Copy JavaScript code">Copy</button><pre id="code-209" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#q'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'input'</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-f">.debounce</span><span class="t-p">(</span>search<span class="t-p">,</span> <span class="t-n">300</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/debounce-and-throttle/">See it live: Debounce &amp; throttle →</a></p>
+      </article><article id="utilities-throttle" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.throttle()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.throttle(fn [, wait = 300]) → fn</p>
+        <p style="margin-top:8px;max-width:72ch">Returns a function that fires at most once per <code>wait</code> ms.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-210" aria-label="Copy JavaScript code">Copy</button><pre id="code-210" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span>window<span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'scroll'</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-f">.throttle</span><span class="t-p">(</span>onScroll<span class="t-p">,</span> <span class="t-n">100</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/debounce-and-throttle/">See it live: Debounce &amp; throttle →</a></p>
+      </article><article id="utilities-param" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.param()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.param(object) → string</p>
+        <p style="margin-top:8px;max-width:72ch">Serialize an object to a query string.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-211" aria-label="Copy JavaScript code">Copy</button><pre id="code-211" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.param</span><span class="t-p">(</span><span class="t-p">{</span> a: <span class="t-n">1</span><span class="t-p">,</span> b: <span class="t-s">'x y'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-c">// &quot;a=1&amp;b=x+y&quot;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/utilities/">See it live: Utilities →</a></p>
+      </article><article id="utilities-parsehtml" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.parseHTML()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.parseHTML(html) → element[]</p>
+        <p style="margin-top:8px;max-width:72ch">Parse an HTML string into an array of nodes.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-212" aria-label="Copy JavaScript code">Copy</button><pre id="code-212" tabindex="0"><code><span class="t-k">const</span> <span class="t-p">[</span>li<span class="t-p">]</span> = <span class="t-d">$</span><span class="t-f">.parseHTML</span><span class="t-p">(</span><span class="t-s">'&lt;li&gt;Hi&lt;/li&gt;'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/utilities/">See it live: Utilities →</a></p>
+      </article><article id="utilities-escape" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.escape()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.escape(string) → string</p>
+        <p style="margin-top:8px;max-width:72ch">HTML-escape text — use it whenever you string-build HTML from user data.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-213" aria-label="Copy JavaScript code">Copy</button><pre id="code-213" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#out'</span><span class="t-p">)</span><span class="t-f">.html</span><span class="t-p">(</span><span class="t-s">'&lt;b&gt;'</span> + <span class="t-d">$</span><span class="t-f">.escape</span><span class="t-p">(</span>userInput<span class="t-p">)</span> + <span class="t-s">'&lt;/b&gt;'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/utilities/">See it live: Utilities →</a></p>
+      </article><article id="utilities-uuid" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.uuid()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.uuid() → string</p>
+        <p style="margin-top:8px;max-width:72ch">A cryptographically strong UUID (v4).</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-214" aria-label="Copy JavaScript code">Copy</button><pre id="code-214" tabindex="0"><code><span class="t-k">const</span> id = <span class="t-d">$</span><span class="t-f">.uuid</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/utilities/">See it live: Utilities →</a></p>
+      </article><article id="utilities-type-checks" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">Type checks</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.isArray(x) · $.isFunction(x) · $.isPlainObject(x) · $.trim(s)</p>
+        <p style="margin-top:8px;max-width:72ch">Small predicates and string trim, kept for jQuery compatibility.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-215" aria-label="Copy JavaScript code">Copy</button><pre id="code-215" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.isPlainObject</span><span class="t-p">(</span><span class="t-p">{</span><span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// true</span>
+<span class="t-d">$</span><span class="t-f">.isArray</span><span class="t-p">(</span><span class="t-s">'nope'</span><span class="t-p">)</span><span class="t-p">;</span>     <span class="t-c">// false</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/utilities/">See it live: Utilities →</a></p>
+      </article><article id="utilities-noconflict" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.noConflict()</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.noConflict() → $</p>
+        <p style="margin-top:8px;max-width:72ch">Restore the previous <code>window.$</code> and return jsKjs (also always available as <code>kj</code> and <code>jsKjs</code>).</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-216" aria-label="Copy JavaScript code">Copy</button><pre id="code-216" tabindex="0"><code><span class="t-k">const</span> j = <span class="t-d">$</span><span class="t-f">.noConflict</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+j<span class="t-p">(</span><span class="t-s">'#app'</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'ready'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/utilities/">See it live: Utilities →</a></p>
+      </article><article id="utilities-version" style="margin-top:30px;padding-top:22px;border-top:1px dashed var(--line)">
+        <h3 style="font-family:var(--mono);font-stretch:90%;font-size:1.05rem">$.version</h3>
+        <p class="sig" style="font:600 13px/1.5 var(--mono);color:var(--mod-ink);margin-top:6px;overflow-wrap:anywhere">$.version → string</p>
+        <p style="margin-top:8px;max-width:72ch">The library version.</p>
+        <div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-217" aria-label="Copy JavaScript code">Copy</button><pre id="code-217" tabindex="0"><code>console<span class="t-f">.log</span><span class="t-p">(</span><span class="t-d">$</span>.version<span class="t-p">)</span><span class="t-p">;</span> <span class="t-c">// &quot;1.0.0&quot;</span></code></pre></div>
+        <p style="font-size:14.5px"><a href="/features/utilities/">See it live: Utilities →</a></p>
+      </article>
+  </section>
+    <section style="margin-top:56px"><h2>Browser support</h2><p style="margin-top:10px;max-width:70ch">Evergreen browsers: Chrome and Edge 90+, Firefox 90+, Safari 15+. Internet Explorer and pre-2021 browsers are unsupported by design — that is where the small size comes from.</p></section>
+  </div>
+</div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+
+
+</body>
+</html>

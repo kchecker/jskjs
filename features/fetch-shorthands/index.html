@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$.get, $.post and $.getJSON Shorthands with async/await — jsKjs</title>
+<meta name="description" content="One-line GET, POST and JSON requests that return Promises: await $.getJSON(url), $.get(url, data), $.post(url, data) — live examples against real endpoints.">
+<link rel="canonical" href="https://jskjs.org/features/fetch-shorthands/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="$.get, $.post &amp; $.getJSON">
+<meta property="og:description" content="One-line GET, POST and JSON requests that return Promises: await $.getJSON(url), $.get(url, data), $.post(url, data) — live examples against real endpoints.">
+<meta property="og:url" content="https://jskjs.org/features/fetch-shorthands/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-fetch-shorthands.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="$.get, $.post &amp; $.getJSON — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="$.get, $.post &amp; $.getJSON">
+<meta name="twitter:description" content="One-line GET, POST and JSON requests that return Promises: await $.getJSON(url), $.get(url, data), $.post(url, data) — live examples against real endpoints.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-fetch-shorthands.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+.team { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:10px; margin-top:14px; }
+.team .p { border:1px solid var(--line); border-radius:12px; padding:12px; background:var(--surface-2); }
+.team .p b { display:block; } .team .p small { color:var(--muted); font-family:var(--mono); }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"$.get, $.post & $.getJSON","description":"One-line GET, POST and JSON requests that return Promises: await $.getJSON(url), $.get(url, data), $.post(url, data) — live examples against real endpoints.","url":"https://jskjs.org/features/fetch-shorthands/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Core","item":"https://jskjs.org/features/#core"},{"@type":"ListItem","position":4,"name":"$.get, $.post & $.getJSON","item":"https://jskjs.org/features/fetch-shorthands/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="core">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#core">Core</a></li><li><span aria-current="page">$.get, $.post &amp; $.getJSON</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Core · jQuery-compatible</p>
+  <h1>$.get, $.post &amp; $.getJSON</h1>
+  <p class="lede">The one-liners. <code>await $.getJSON('/api/users.json')</code> and you have data; <code>$.post()</code> sends a form-encoded body; <code>$.get()</code> returns text or JSON based on the response.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<p>Each shorthand returns the same Promise as <code>$.ajax()</code>. For <code>$.get()</code> and <code>$.getJSON()</code>, an object in the second argument becomes the query string; for <code>$.post()</code> it becomes an <code>application/x-www-form-urlencoded</code> body. A callback in the last position still works for older code.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Team directory + quote of the day</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><div class="row">
+  <button type="button" id="fs-load">Load team ($.getJSON)</button>
+  <button type="button" id="fs-sort">Sort by commits</button>
+  <button type="button" id="fs-quote">New quote ($.get)</button>
+</div>
+<div class="team" id="fs-team" aria-live="polite"></div>
+<p id="fs-q" style="margin-top:14px;min-height:1.6em" aria-live="polite"></p></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-35" aria-label="Copy HTML code">Copy</button><pre id="code-35" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fs-load&quot;</span><span class="t-tag">&gt;</span>Load team ($.getJSON)<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fs-sort&quot;</span><span class="t-tag">&gt;</span>Sort by commits<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fs-quote&quot;</span><span class="t-tag">&gt;</span>New quote ($.get)<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;team&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fs-team&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;polite&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;p</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fs-q&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin-top:14px;min-height:1.6em&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;polite&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-36" aria-label="Copy JavaScript code">Copy</button><pre id="code-36" tabindex="0"><code><span class="t-k">let</span> team = <span class="t-p">[</span><span class="t-p">]</span><span class="t-p">;</span>
+<span class="t-k">const</span> render = <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fs-team'</span><span class="t-p">)</span><span class="t-f">.html</span><span class="t-p">(</span>team<span class="t-f">.map</span><span class="t-p">(</span>u =&gt;
+  <span class="t-s">'&lt;div class=&quot;p&quot;&gt;&lt;b&gt;'</span> + <span class="t-d">$</span><span class="t-f">.escape</span><span class="t-p">(</span>u.name<span class="t-p">)</span> + <span class="t-s">'&lt;/b&gt;&lt;small&gt;'</span> + <span class="t-d">$</span><span class="t-f">.escape</span><span class="t-p">(</span>u.role<span class="t-p">)</span> + <span class="t-s">' · '</span> + u.commits + <span class="t-s">' commits&lt;/small&gt;&lt;/div&gt;'</span><span class="t-p">)</span><span class="t-f">.join</span><span class="t-p">(</span><span class="t-s">''</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fs-load'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">async</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+  team = <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.getJSON</span><span class="t-p">(</span><span class="t-s">'/api/users.json'</span><span class="t-p">)</span><span class="t-p">;</span>
+  render<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-f">.from</span><span class="t-p">(</span><span class="t-s">'#fs-team .p'</span><span class="t-p">,</span> <span class="t-p">{</span> y: <span class="t-n">14</span><span class="t-p">,</span> opacity: <span class="t-n">0</span><span class="t-p">,</span> duration: .<span class="t-n">3</span><span class="t-p">,</span> stagger: .<span class="t-n">06</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fs-sort'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+  team<span class="t-f">.sort</span><span class="t-p">(</span><span class="t-p">(</span>a<span class="t-p">,</span> b<span class="t-p">)</span> =&gt; b.commits - a.commits<span class="t-p">)</span><span class="t-p">;</span>
+  render<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fs-quote'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">async</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+  <span class="t-k">const</span> n = <span class="t-n">1</span> + Math<span class="t-f">.floor</span><span class="t-p">(</span>Math<span class="t-f">.random</span><span class="t-p">(</span><span class="t-p">)</span> * <span class="t-n">5</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fs-q'</span><span class="t-p">)</span><span class="t-f">.html</span><span class="t-p">(</span><span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.get</span><span class="t-p">(</span><span class="t-s">'/api/quotes/'</span> + n + <span class="t-s">'.html'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Shorthands</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-37" aria-label="Copy JavaScript code">Copy</button><pre id="code-37" tabindex="0"><code><span class="t-k">const</span> users = <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.getJSON</span><span class="t-p">(</span><span class="t-s">'/api/users'</span><span class="t-p">,</span> <span class="t-p">{</span> team: <span class="t-s">'core'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// ?team=core</span>
+<span class="t-k">const</span> html  = <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.get</span><span class="t-p">(</span><span class="t-s">'/partials/sidebar.html'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.post</span><span class="t-p">(</span><span class="t-s">'/api/subscribe'</span><span class="t-p">,</span> <span class="t-p">{</span> email <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-f">.get</span><span class="t-p">(</span><span class="t-s">'/api/ping'</span><span class="t-p">,</span> data =&gt; console<span class="t-f">.log</span><span class="t-p">(</span>data<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>                    <span class="t-c">// callback style</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">$.get(url [, data] [, success]) → Promise</span><p>GET shorthand; <code>data</code> becomes the query string.</p><a href="/docs/#ajax-get" style="font-size:14px">Reference: $.get() →</a></div><div class="api-item"><span class="sig">$.post(url [, data] [, success]) → Promise</span><p>POST shorthand (urlencoded body by default).</p><a href="/docs/#ajax-post" style="font-size:14px">Reference: $.post() →</a></div><div class="api-item"><span class="sig">$.getJSON(url [, data] [, success]) → Promise</span><p>GET with forced JSON parsing.</p><a href="/docs/#ajax-getjson" style="font-size:14px">Reference: $.getJSON() →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from jQuery</strong>Same signatures. <code>$.getScript()</code> is not included — use a dynamic <code>import()</code> or a script element.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="core" href="/features/ajax/"><span class="label">Core</span><h3>AJAX with $.ajax</h3><p>jQuery's $.ajax rebuilt on fetch: native Promises and async/await, JSON bodies, headers, timeouts with auto-abort, plus success/error callbacks and .done/.fail for migration..</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="core" href="/features/load-fragments/"><span class="label">Core</span><h3>Loading HTML fragments</h3><p>Fetch a page and insert only the fragment you need with $(el).load("/page.html #section") — the classic jQuery partial-loading pattern on fetch..</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="core" href="/features/forms-and-serialize/"><span class="label">Core</span><h3>Forms &amp; serialization</h3><p>Turn forms into query strings or plain objects with serialize() and serializeObject(), then submit them with $.post — or declaratively with kj-post..</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/ajax/"><span class="dir">← Previous</span><strong>AJAX with $.ajax</strong></a>
+    <a class="next" href="/features/load-fragments/"><span class="dir">Next →</span><strong>Loading HTML fragments</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Core features">
+    <div class="aside-group"><h2>Core · jQuery-compatible</h2><ul><li><a href="/features/selectors/">Selectors &amp; collections</a></li><li><a href="/features/dom-manipulation/">DOM manipulation</a></li><li><a href="/features/attributes-and-data/">Attributes, properties &amp; data</a></li><li><a href="/features/classes-and-css/">Classes &amp; CSS</a></li><li><a href="/features/geometry-and-scroll/">Geometry, scroll &amp; visibility</a></li><li><a href="/features/traversal/">DOM traversal</a></li><li><a href="/features/events/">Events</a></li><li><a href="/features/event-delegation/">Event delegation</a></li><li><a href="/features/custom-events/">Custom events</a></li><li><a href="/features/ajax/">AJAX with $.ajax</a></li><li><a href="/features/fetch-shorthands/" aria-current="page">$.get, $.post &amp; $.getJSON</a></li><li><a href="/features/load-fragments/">Loading HTML fragments</a></li><li><a href="/features/forms-and-serialize/">Forms &amp; serialization</a></li><li><a href="/features/timeouts-and-errors/">Timeouts, aborts &amp; retries</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#motion">Motion · GSAP-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/jquery/">What's ported from jQuery</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+let team = [];
+const render = () => $('#fs-team').html(team.map(u =>
+  '<div class="p"><b>' + $.escape(u.name) + '</b><small>' + $.escape(u.role) + ' · ' + u.commits + ' commits</small></div>').join(''));
+
+$('#fs-load').on('click', async () => {
+  team = await $.getJSON('/api/users.json');
+  render();
+  $.from('#fs-team .p', { y: 14, opacity: 0, duration: .3, stagger: .06 });
+});
+
+$('#fs-sort').on('click', () => {
+  team.sort((a, b) => b.commits - a.commits);
+  render();
+});
+
+$('#fs-quote').on('click', async () => {
+  const n = 1 + Math.floor(Math.random() * 5);
+  $('#fs-q').html(await $.get('/api/quotes/' + n + '.html'));
+});
+</script>
+
+</body>
+</html>

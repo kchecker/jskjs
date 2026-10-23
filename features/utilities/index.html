@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$.each, $.extend, $.escape, $.uuid and More jQuery-style Utilities — jsKjs</title>
+<meta name="description" content="The $ helper belt: $.each, $.map, $.extend (deep, prototype-pollution safe), $.param, $.parseHTML, $.escape, $.uuid, type checks and $.noConflict — run them live.">
+<link rel="canonical" href="https://jskjs.org/features/utilities/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Utilities">
+<meta property="og:description" content="The $ helper belt: $.each, $.map, $.extend (deep, prototype-pollution safe), $.param, $.parseHTML, $.escape, $.uuid, type checks and $.noConflict — run them live.">
+<meta property="og:url" content="https://jskjs.org/features/utilities/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-utilities.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Utilities — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Utilities">
+<meta name="twitter:description" content="The $ helper belt: $.each, $.map, $.extend (deep, prototype-pollution safe), $.param, $.parseHTML, $.escape, $.uuid, type checks and $.noConflict — run them live.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-utilities.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+#util-console .k { color:#FFC977; }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Utilities","description":"The $ helper belt: $.each, $.map, $.extend (deep, prototype-pollution safe), $.param, $.parseHTML, $.escape, $.uuid, type checks and $.noConflict — run them live.","url":"https://jskjs.org/features/utilities/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Utilities","item":"https://jskjs.org/features/#util"},{"@type":"ListItem","position":4,"name":"Utilities","item":"https://jskjs.org/features/utilities/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="util">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#util">Utilities</a></li><li><span aria-current="page">Utilities</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Utilities</p>
+  <h1>Utilities</h1>
+  <p class="lede">The small helpers that make everyday code shorter — all executed live below, so you can see exactly what they return.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<p>Most of these are jQuery classics kept for compatibility (<code>$.each</code>, <code>$.extend</code>, <code>$.param</code>, <code>$.trim</code>, the <code>$.is*</code> checks). jsKjs adds a few modern essentials: <code>$.escape()</code> for safe HTML strings, <code>$.uuid()</code> backed by <code>crypto.randomUUID()</code>, and <code>$.easings</code>.</p>
+<p><code>$.extend(true, …)</code> deep-merges <em>and</em> refuses <code>__proto__</code>, <code>constructor</code> and <code>prototype</code> keys, so merging untrusted JSON can't pollute <code>Object.prototype</code> — the class of bug behind jQuery's CVE-2019-11358.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Utilities console</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><div class="row"><button type="button" id="run-utils">Run every utility</button></div>
+<pre class="out" id="util-console" aria-live="polite">Click the button — each line is real output.</pre></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-120" aria-label="Copy HTML code">Copy</button><pre id="code-120" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;run-utils&quot;</span><span class="t-tag">&gt;</span>Run every utility<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;pre</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;out&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;util-console&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;polite&quot;</span><span class="t-tag">&gt;</span>Click the button — each line is real output.<span class="t-tag">&lt;/pre</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-121" aria-label="Copy JavaScript code">Copy</button><pre id="code-121" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#run-utils'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+  <span class="t-k">const</span> lines = <span class="t-p">[</span><span class="t-p">]</span><span class="t-p">;</span>
+  <span class="t-k">const</span> p = <span class="t-p">(</span>call<span class="t-p">,</span> value<span class="t-p">)</span> =&gt; lines<span class="t-f">.push</span><span class="t-p">(</span><span class="t-s">'&lt;span class=&quot;k&quot;&gt;'</span> + <span class="t-d">$</span><span class="t-f">.escape</span><span class="t-p">(</span>call<span class="t-p">)</span> + <span class="t-s">'&lt;/span&gt;\n  → '</span> + <span class="t-d">$</span><span class="t-f">.escape</span><span class="t-p">(</span>String<span class="t-p">(</span>value<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  p<span class="t-p">(</span><span class="t-s">'$.version'</span><span class="t-p">,</span> <span class="t-d">$</span>.version<span class="t-p">)</span><span class="t-p">;</span>
+  p<span class="t-p">(</span><span class="t-s">&quot;$.param({ a: 1, b: 'x y' })&quot;</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-f">.param</span><span class="t-p">(</span><span class="t-p">{</span> a: <span class="t-n">1</span><span class="t-p">,</span> b: <span class="t-s">'x y'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  p<span class="t-p">(</span><span class="t-s">&quot;$.escape('&lt;img onerror=alert(1)&gt;')&quot;</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-f">.escape</span><span class="t-p">(</span><span class="t-s">'&lt;img onerror=alert(1)&gt;'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  p<span class="t-p">(</span><span class="t-s">'$.uuid()'</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-f">.uuid</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  p<span class="t-p">(</span><span class="t-s">&quot;$.trim('  padded  ')&quot;</span><span class="t-p">,</span> <span class="t-s">&quot;'&quot;</span> + <span class="t-d">$</span><span class="t-f">.trim</span><span class="t-p">(</span><span class="t-s">'  padded  '</span><span class="t-p">)</span> + <span class="t-s">&quot;'&quot;</span><span class="t-p">)</span><span class="t-p">;</span>
+  p<span class="t-p">(</span><span class="t-s">'$.isArray([]) · $.isFunction($) · $.isPlainObject({})'</span><span class="t-p">,</span> <span class="t-p">[</span><span class="t-d">$</span><span class="t-f">.isArray</span><span class="t-p">(</span><span class="t-p">[</span><span class="t-p">]</span><span class="t-p">)</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-f">.isFunction</span><span class="t-p">(</span><span class="t-d">$</span><span class="t-p">)</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-f">.isPlainObject</span><span class="t-p">(</span><span class="t-p">{</span><span class="t-p">}</span><span class="t-p">)</span><span class="t-p">]</span><span class="t-f">.join</span><span class="t-p">(</span><span class="t-s">' · '</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  p<span class="t-p">(</span><span class="t-s">'$.map([1, 2], n =&gt; [n, n * 10])'</span><span class="t-p">,</span> JSON<span class="t-f">.stringify</span><span class="t-p">(</span><span class="t-d">$</span><span class="t-f">.map</span><span class="t-p">(</span><span class="t-p">[</span><span class="t-n">1</span><span class="t-p">,</span> <span class="t-n">2</span><span class="t-p">]</span><span class="t-p">,</span> n =&gt; <span class="t-p">[</span>n<span class="t-p">,</span> n * <span class="t-n">10</span><span class="t-p">]</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">const</span> seen = <span class="t-p">[</span><span class="t-p">]</span><span class="t-p">;</span> <span class="t-d">$</span><span class="t-f">.each</span><span class="t-p">(</span><span class="t-p">{</span> a: <span class="t-n">1</span><span class="t-p">,</span> b: <span class="t-n">2</span> <span class="t-p">}</span><span class="t-p">,</span> <span class="t-p">(</span>k<span class="t-p">,</span> v<span class="t-p">)</span> =&gt; seen<span class="t-f">.push</span><span class="t-p">(</span>k + <span class="t-s">'='</span> + v<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  p<span class="t-p">(</span><span class="t-s">'$.each({ a: 1, b: 2 }, fn)'</span><span class="t-p">,</span> seen<span class="t-f">.join</span><span class="t-p">(</span><span class="t-s">', '</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  p<span class="t-p">(</span><span class="t-s">'$.extend(true, { a: { b: 1 } }, { a: { c: 2 } })'</span><span class="t-p">,</span> JSON<span class="t-f">.stringify</span><span class="t-p">(</span><span class="t-d">$</span><span class="t-f">.extend</span><span class="t-p">(</span><span class="t-k">true</span><span class="t-p">,</span> <span class="t-p">{</span> a: <span class="t-p">{</span> b: <span class="t-n">1</span> <span class="t-p">}</span> <span class="t-p">}</span><span class="t-p">,</span> <span class="t-p">{</span> a: <span class="t-p">{</span> c: <span class="t-n">2</span> <span class="t-p">}</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-f">.extend</span><span class="t-p">(</span><span class="t-k">true</span><span class="t-p">,</span> <span class="t-p">{</span><span class="t-p">}</span><span class="t-p">,</span> JSON<span class="t-f">.parse</span><span class="t-p">(</span><span class="t-s">'{&quot;__proto__&quot;: {&quot;hacked&quot;: true}}'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  p<span class="t-p">(</span><span class="t-s">'prototype pollution attempt → ({}).hacked'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">{</span><span class="t-p">}</span><span class="t-p">)</span>.hacked<span class="t-p">)</span><span class="t-p">;</span>
+  p<span class="t-p">(</span><span class="t-s">&quot;$.parseHTML('&lt;li&gt;Hi&lt;/li&gt;')[0].tagName&quot;</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-f">.parseHTML</span><span class="t-p">(</span><span class="t-s">'&lt;li&gt;Hi&lt;/li&gt;'</span><span class="t-p">)</span><span class="t-p">[</span><span class="t-n">0</span><span class="t-p">]</span>.tagName<span class="t-p">)</span><span class="t-p">;</span>
+  p<span class="t-p">(</span><span class="t-s">&quot;Object.keys($.easings).length&quot;</span><span class="t-p">,</span> Object<span class="t-f">.keys</span><span class="t-p">(</span><span class="t-d">$</span>.easings<span class="t-p">)</span>.length<span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#util-console'</span><span class="t-p">)</span><span class="t-f">.html</span><span class="t-p">(</span>lines<span class="t-f">.join</span><span class="t-p">(</span><span class="t-s">'\n'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>noConflict</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-122" aria-label="Copy JavaScript code">Copy</button><pre id="code-122" tabindex="0"><code><span class="t-c">// Another library owns $? Keep both.</span>
+<span class="t-k">const</span> <span class="t-d">kj</span> = <span class="t-d">$</span><span class="t-f">.noConflict</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>      <span class="t-c">// window.$ goes back to the old value</span>
+<span class="t-d">kj</span><span class="t-p">(</span><span class="t-s">'#app'</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'ready'</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// jsKjs is also always available as window.kj and window.jsKjs</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">$.each(arrayOrObject, (keyOrIndex, value) =&gt; {})</span><p>Iterate arrays, array-likes, or plain objects.</p><a href="/docs/#utilities-each" style="font-size:14px">Reference: $.each() →</a></div><div class="api-item"><span class="sig">$.map(collection, fn) → array</span><p>Map + flatten one level.</p><a href="/docs/#utilities-map" style="font-size:14px">Reference: $.map() →</a></div><div class="api-item"><span class="sig">$.extend([deep], target, …sources) → target</span><p>Merge objects; pass <code>true</code> first for deep merge.</p><a href="/docs/#utilities-extend" style="font-size:14px">Reference: $.extend() →</a></div><div class="api-item"><span class="sig">$.param(object) → string</span><p>Serialize an object to a query string.</p><a href="/docs/#utilities-param" style="font-size:14px">Reference: $.param() →</a></div><div class="api-item"><span class="sig">$.parseHTML(html) → element[]</span><p>Parse an HTML string into an array of nodes.</p><a href="/docs/#utilities-parsehtml" style="font-size:14px">Reference: $.parseHTML() →</a></div><div class="api-item"><span class="sig">$.escape(string) → string</span><p>HTML-escape text — use it whenever you string-build HTML from user data.</p><a href="/docs/#utilities-escape" style="font-size:14px">Reference: $.escape() →</a></div><div class="api-item"><span class="sig">$.uuid() → string</span><p>A cryptographically strong UUID (v4).</p><a href="/docs/#utilities-uuid" style="font-size:14px">Reference: $.uuid() →</a></div><div class="api-item"><span class="sig">$.isArray(x) · $.isFunction(x) · $.isPlainObject(x) · $.trim(s)</span><p>Small predicates and string trim, kept for jQuery compatibility.</p><a href="/docs/#utilities-type-checks" style="font-size:14px">Reference: Type checks →</a></div><div class="api-item"><span class="sig">$.noConflict() → $</span><p>Restore the previous <code>window.$</code> and return jsKjs (also always available as <code>kj</code> and <code>jsKjs</code>).</p><a href="/docs/#utilities-noconflict" style="font-size:14px">Reference: $.noConflict() →</a></div><div class="api-item"><span class="sig">$.version → string</span><p>The library version.</p><a href="/docs/#utilities-version" style="font-size:14px">Reference: $.version →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from jQuery</strong>jQuery 4 removed <code>$.trim</code>, <code>$.isArray</code> and <code>$.isFunction</code>; jsKjs keeps them so older code runs. <code>$.Deferred</code>, <code>$.Callbacks</code>, <code>$.when</code> and <code>$.grep</code> are not included — use Promises and <code>Array.prototype.filter</code>.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="util" href="/features/debounce-and-throttle/"><span class="label">Utilities</span><h3>Debounce &amp; throttle</h3><p>See the difference between debounce and throttle in real time: raw, throttled and debounced event lanes driven by your pointer.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="core" href="/features/attributes-and-data/"><span class="label">Core</span><h3>Attributes, properties &amp; data</h3><p>Read and write HTML attributes, live DOM properties and per-element data.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="core" href="/features/selectors/"><span class="label">Core</span><h3>Selectors &amp; collections</h3><p>Use $() exactly like jQuery — CSS selectors, context, HTML creation and DOM-ready — powered by native querySelectorAll, with collections that are real JavaScript arrays..</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/debounce-and-throttle/"><span class="dir">← Previous</span><strong>Debounce &amp; throttle</strong></a>
+    
+  </nav>
+</article><aside class="aside" aria-label="Utilities features">
+    <div class="aside-group"><h2>Utilities</h2><ul><li><a href="/features/debounce-and-throttle/">Debounce &amp; throttle</a></li><li><a href="/features/utilities/" aria-current="page">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#core">Core · jQuery-compatible</a></li><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#motion">Motion · GSAP-style</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/jquery/">What's ported from jQuery</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+$('#run-utils').on('click', () => {
+  const lines = [];
+  const p = (call, value) => lines.push('<span class="k">' + $.escape(call) + '</span>\n  → ' + $.escape(String(value)));
+  p('$.version', $.version);
+  p("$.param({ a: 1, b: 'x y' })", $.param({ a: 1, b: 'x y' }));
+  p("$.escape('<img onerror=alert(1)>')", $.escape('<img onerror=alert(1)>'));
+  p('$.uuid()', $.uuid());
+  p("$.trim('  padded  ')", "'" + $.trim('  padded  ') + "'");
+  p('$.isArray([]) · $.isFunction($) · $.isPlainObject({})', [$.isArray([]), $.isFunction($), $.isPlainObject({})].join(' · '));
+  p('$.map([1, 2], n => [n, n * 10])', JSON.stringify($.map([1, 2], n => [n, n * 10])));
+  const seen = []; $.each({ a: 1, b: 2 }, (k, v) => seen.push(k + '=' + v));
+  p('$.each({ a: 1, b: 2 }, fn)', seen.join(', '));
+  p('$.extend(true, { a: { b: 1 } }, { a: { c: 2 } })', JSON.stringify($.extend(true, { a: { b: 1 } }, { a: { c: 2 } })));
+  $.extend(true, {}, JSON.parse('{"__proto__": {"hacked": true}}'));
+  p('prototype pollution attempt → ({}).hacked', ({}).hacked);
+  p("$.parseHTML('<li>Hi</li>')[0].tagName", $.parseHTML('<li>Hi</li>')[0].tagName);
+  p("Object.keys($.easings).length", Object.keys($.easings).length);
+  $('#util-console').html(lines.join('\n'));
+});
+</script>
+
+</body>
+</html>

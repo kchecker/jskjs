@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>attr(), prop() and data() with Leak-free WeakMap Storage — jsKjs</title>
+<meta name="description" content="Read and write HTML attributes, live DOM properties and per-element data. jsKjs parses data-* JSON automatically and stores values in a WeakMap, so nothing leaks.">
+<link rel="canonical" href="https://jskjs.org/features/attributes-and-data/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Attributes, properties &amp; data">
+<meta property="og:description" content="Read and write HTML attributes, live DOM properties and per-element data. jsKjs parses data-* JSON automatically and stores values in a WeakMap, so nothing leaks.">
+<meta property="og:url" content="https://jskjs.org/features/attributes-and-data/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-attributes-and-data.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Attributes, properties &amp; data — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Attributes, properties &amp; data">
+<meta name="twitter:description" content="Read and write HTML attributes, live DOM properties and per-element data. jsKjs parses data-* JSON automatically and stores values in a WeakMap, so nothing leaks.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-attributes-and-data.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Attributes, properties & data","description":"Read and write HTML attributes, live DOM properties and per-element data. jsKjs parses data-* JSON automatically and stores values in a WeakMap, so nothing leaks.","url":"https://jskjs.org/features/attributes-and-data/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Core","item":"https://jskjs.org/features/#core"},{"@type":"ListItem","position":4,"name":"Attributes, properties & data","item":"https://jskjs.org/features/attributes-and-data/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="core">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#core">Core</a></li><li><span aria-current="page">Attributes, properties &amp; data</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Core · jQuery-compatible</p>
+  <h1>Attributes, properties &amp; data</h1>
+  <p class="lede">Three different things, three methods: <code>.attr()</code> for HTML attributes, <code>.prop()</code> for live DOM properties, <code>.data()</code> for values you attach to elements.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<h2>Which one do I use?</h2>
+<ul>
+<li><strong><code>.attr()</code></strong> reads and writes what is in the HTML: <code>href</code>, <code>aria-*</code>, <code>role</code>. Screen readers and CSS selectors see these.</li>
+<li><strong><code>.prop()</code></strong> touches the live DOM object: <code>checked</code>, <code>disabled</code>, <code>value</code>, <code>scrollHeight</code>. Use it for state that changes after load.</li>
+<li><strong><code>.data()</code></strong> reads <code>data-*</code> attributes (JSON is parsed for you) and stores anything — objects, dates, functions — against an element.</li>
+</ul>
+<h2>Leak-free by construction</h2>
+<p>Stored data lives in a <code>WeakMap</code> keyed by the element. When the element is gone, so is its data. Nothing is written onto your nodes, and there is no global cache to clean up.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Account card inspector</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><article id="user-card" class="plate" data-user='{"name":"Ada","plan":"pro","seats":5}' style="box-shadow:none">
+  <h4 style="margin:0">Ada Lovelace</h4>
+  <p class="plan muted" style="margin:4px 0 12px">pro · 5 seats</p>
+  <fieldset id="plan-fields" style="border:0;padding:0;display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+    <legend class="sr-only">Plan settings</legend>
+    <label>Seats <input type="number" value="5" min="1" style="width:90px"></label>
+    <label><input type="checkbox" checked> Billing emails</label>
+  </fieldset>
+</article>
+<div class="row" style="margin-top:14px">
+  <button type="button" id="read">Read data</button>
+  <button type="button" id="upgrade">Upgrade plan</button>
+  <button type="button" id="lock">Lock fields</button>
+  <button type="button" id="fav" aria-pressed="false">☆ Favourite</button>
+</div>
+<pre class="out" id="attr-out" aria-live="polite"></pre></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-9" aria-label="Copy HTML code">Copy</button><pre id="code-9" tabindex="0"><code><span class="t-tag">&lt;article</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;user-card&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;plate&quot;</span> <span class="t-at">data-user</span><span class="t-p">=</span><span class="t-s">'{&quot;name&quot;:&quot;Ada&quot;,&quot;plan&quot;:&quot;pro&quot;,&quot;seats&quot;:5}'</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;box-shadow:none&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;h4</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin:0&quot;</span><span class="t-tag">&gt;</span>Ada Lovelace<span class="t-tag">&lt;/h4</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;p</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;plan muted&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin:4px 0 12px&quot;</span><span class="t-tag">&gt;</span>pro · 5 seats<span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;fieldset</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;plan-fields&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;border:0;padding:0;display:flex;gap:16px;flex-wrap:wrap;align-items:center&quot;</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;legend</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;sr-only&quot;</span><span class="t-tag">&gt;</span>Plan settings<span class="t-tag">&lt;/legend</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;label</span><span class="t-tag">&gt;</span>Seats <span class="t-tag">&lt;input</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;number&quot;</span> <span class="t-at">value</span><span class="t-p">=</span><span class="t-s">&quot;5&quot;</span> <span class="t-at">min</span><span class="t-p">=</span><span class="t-s">&quot;1&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;width:90px&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;checkbox&quot;</span> <span class="t-at">checked</span><span class="t-tag">&gt;</span> Billing emails<span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;/fieldset</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/article</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin-top:14px&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;read&quot;</span><span class="t-tag">&gt;</span>Read data<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;upgrade&quot;</span><span class="t-tag">&gt;</span>Upgrade plan<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;lock&quot;</span><span class="t-tag">&gt;</span>Lock fields<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fav&quot;</span> <span class="t-at">aria-pressed</span><span class="t-p">=</span><span class="t-s">&quot;false&quot;</span><span class="t-tag">&gt;</span>☆ Favourite<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;pre</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;out&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;attr-out&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;polite&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/pre</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-10" aria-label="Copy JavaScript code">Copy</button><pre id="code-10" tabindex="0"><code><span class="t-k">const</span> $card = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#user-card'</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-k">function</span> inspect<span class="t-p">(</span>note<span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#attr-out'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span>note + <span class="t-s">'\n\n'</span> +
+    <span class="t-s">&quot;.data('user')         → &quot;</span> + JSON<span class="t-f">.stringify</span><span class="t-p">(</span>$card<span class="t-f">.data</span><span class="t-p">(</span><span class="t-s">'user'</span><span class="t-p">)</span><span class="t-p">)</span> + <span class="t-s">'\n'</span> +
+    <span class="t-s">&quot;.attr('data-user')    → &quot;</span> + $card<span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'data-user'</span><span class="t-p">)</span> + <span class="t-s">'\n'</span> +
+    <span class="t-s">&quot;.prop('disabled')     → &quot;</span> + <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#plan-fields'</span><span class="t-p">)</span><span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'disabled'</span><span class="t-p">)</span> + <span class="t-s">'\n'</span> +
+    <span class="t-s">&quot;.attr('aria-pressed') → &quot;</span> + <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fav'</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'aria-pressed'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#read'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; inspect<span class="t-p">(</span><span class="t-s">'data-* JSON is parsed into an object for you.'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#upgrade'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+  <span class="t-k">const</span> user = $card<span class="t-f">.data</span><span class="t-p">(</span><span class="t-s">'user'</span><span class="t-p">)</span><span class="t-p">;</span>
+  $card<span class="t-f">.data</span><span class="t-p">(</span><span class="t-s">'user'</span><span class="t-p">,</span> <span class="t-p">{</span> ...user<span class="t-p">,</span> plan: <span class="t-s">'team'</span><span class="t-p">,</span> seats: user.seats + <span class="t-n">5</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// stored in a WeakMap</span>
+  $card<span class="t-f">.find</span><span class="t-p">(</span><span class="t-s">'.plan'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-s">'team · '</span> + $card<span class="t-f">.data</span><span class="t-p">(</span><span class="t-s">'user'</span><span class="t-p">)</span>.seats + <span class="t-s">' seats'</span><span class="t-p">)</span><span class="t-p">;</span>
+  inspect<span class="t-p">(</span><span class="t-s">'.data() stored a new object — the HTML attribute is untouched.'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#lock'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">const</span> locked = !<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#plan-fields'</span><span class="t-p">)</span><span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'disabled'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#plan-fields'</span><span class="t-p">)</span><span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'disabled'</span><span class="t-p">,</span> locked<span class="t-p">)</span><span class="t-p">;</span>          <span class="t-c">// live DOM property</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span>locked ? <span class="t-s">'Unlock fields'</span> : <span class="t-s">'Lock fields'</span><span class="t-p">)</span><span class="t-p">;</span>
+  inspect<span class="t-p">(</span><span class="t-s">'.prop() flipped the live disabled property.'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fav'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">const</span> on = <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'aria-pressed'</span><span class="t-p">)</span> !== <span class="t-s">'true'</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'aria-pressed'</span><span class="t-p">,</span> String<span class="t-p">(</span>on<span class="t-p">)</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span>on ? <span class="t-s">'★ Favourite'</span> : <span class="t-s">'☆ Favourite'</span><span class="t-p">)</span><span class="t-p">;</span>
+  inspect<span class="t-p">(</span><span class="t-s">'.attr() wrote aria-pressed — screen readers announce the new state.'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+inspect<span class="t-p">(</span><span class="t-s">'Ready. Try the buttons.'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Everyday calls</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-11" aria-label="Copy JavaScript code">Copy</button><pre id="code-11" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'a.external'</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-p">{</span> target: <span class="t-s">'_blank'</span><span class="t-p">,</span> rel: <span class="t-s">'noopener'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#agree'</span><span class="t-p">)</span><span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'checked'</span><span class="t-p">)</span><span class="t-p">;</span>                 <span class="t-c">// true / false</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#save'</span><span class="t-p">)</span><span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'disabled'</span><span class="t-p">,</span> <span class="t-k">true</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#chart'</span><span class="t-p">)</span><span class="t-f">.data</span><span class="t-p">(</span><span class="t-s">'series'</span><span class="t-p">,</span> bigArrayOfPoints<span class="t-p">)</span><span class="t-p">;</span> <span class="t-c">// any value, no serialization</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#chart'</span><span class="t-p">)</span><span class="t-f">.removeData</span><span class="t-p">(</span><span class="t-s">'series'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">.attr(name [, value]) · .attr(object) → string | self</span><p>Get an attribute from the first element, or set one or many on all elements.</p><a href="/docs/#attrs-attr" style="font-size:14px">Reference: .attr() →</a></div><div class="api-item"><span class="sig">.removeAttr(name) → self</span><p>Remove an attribute from every element in the set.</p><a href="/docs/#attrs-removeattr" style="font-size:14px">Reference: .removeAttr() →</a></div><div class="api-item"><span class="sig">.prop(name [, value]) → any | self</span><p>Get or set a DOM property (as opposed to an HTML attribute) — <code>checked</code>, <code>disabled</code>, <code>selectedIndex</code>, etc.</p><a href="/docs/#attrs-prop" style="font-size:14px">Reference: .prop() →</a></div><div class="api-item"><span class="sig">.data([key [, value]]) · .data(object) → any | self</span><p>Read <code>data-*</code> attributes (JSON auto-parsed) or store arbitrary values against elements. Stored values live in a WeakMap — no memory leaks, no cleanup.</p><a href="/docs/#attrs-data" style="font-size:14px">Reference: .data() →</a></div><div class="api-item"><span class="sig">.removeData(key) → self</span><p>Delete a stored data value.</p><a href="/docs/#attrs-removedata" style="font-size:14px">Reference: .removeData() →</a></div><div class="api-item"><span class="sig">.val([value]) → any | self</span><p>Get or set form values. Checkboxes read/write booleans; multi-selects read as arrays.</p><a href="/docs/#content-val" style="font-size:14px">Reference: .val() →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from jQuery</strong><code>.data()</code> behaves the same (JSON parsing, object stores). One deliberate difference: <code>.val()</code> on a checkbox returns <code>true/false</code> rather than its <code>value</code> attribute — use <code>.attr("value")</code> if you need that.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="core" href="/features/classes-and-css/"><span class="label">Core</span><h3>Classes &amp; CSS</h3><p>Toggle classes and set styles with addClass(), toggleClass() and css() — including CSS custom properties, which jsKjs reads and writes without adding px..</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="core" href="/features/forms-and-serialize/"><span class="label">Core</span><h3>Forms &amp; serialization</h3><p>Turn forms into query strings or plain objects with serialize() and serializeObject(), then submit them with $.post — or declaratively with kj-post..</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="pulse" href="/features/reactive-state/"><span class="label">Pulse</span><h3>Reactive state</h3><p>Declare state on an element with kj-data and every binding inside updates when it changes.</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/dom-manipulation/"><span class="dir">← Previous</span><strong>DOM manipulation</strong></a>
+    <a class="next" href="/features/classes-and-css/"><span class="dir">Next →</span><strong>Classes &amp; CSS</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Core features">
+    <div class="aside-group"><h2>Core · jQuery-compatible</h2><ul><li><a href="/features/selectors/">Selectors &amp; collections</a></li><li><a href="/features/dom-manipulation/">DOM manipulation</a></li><li><a href="/features/attributes-and-data/" aria-current="page">Attributes, properties &amp; data</a></li><li><a href="/features/classes-and-css/">Classes &amp; CSS</a></li><li><a href="/features/geometry-and-scroll/">Geometry, scroll &amp; visibility</a></li><li><a href="/features/traversal/">DOM traversal</a></li><li><a href="/features/events/">Events</a></li><li><a href="/features/event-delegation/">Event delegation</a></li><li><a href="/features/custom-events/">Custom events</a></li><li><a href="/features/ajax/">AJAX with $.ajax</a></li><li><a href="/features/fetch-shorthands/">$.get, $.post &amp; $.getJSON</a></li><li><a href="/features/load-fragments/">Loading HTML fragments</a></li><li><a href="/features/forms-and-serialize/">Forms &amp; serialization</a></li><li><a href="/features/timeouts-and-errors/">Timeouts, aborts &amp; retries</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#motion">Motion · GSAP-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/jquery/">What's ported from jQuery</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+const $card = $('#user-card');
+
+function inspect(note) {
+  $('#attr-out').text(note + '\n\n' +
+    ".data('user')         → " + JSON.stringify($card.data('user')) + '\n' +
+    ".attr('data-user')    → " + $card.attr('data-user') + '\n' +
+    ".prop('disabled')     → " + $('#plan-fields').prop('disabled') + '\n' +
+    ".attr('aria-pressed') → " + $('#fav').attr('aria-pressed'));
+}
+
+$('#read').on('click', () => inspect('data-* JSON is parsed into an object for you.'));
+
+$('#upgrade').on('click', () => {
+  const user = $card.data('user');
+  $card.data('user', { ...user, plan: 'team', seats: user.seats + 5 });   // stored in a WeakMap
+  $card.find('.plan').text('team · ' + $card.data('user').seats + ' seats');
+  inspect('.data() stored a new object — the HTML attribute is untouched.');
+});
+
+$('#lock').on('click', function () {
+  const locked = !$('#plan-fields').prop('disabled');
+  $('#plan-fields').prop('disabled', locked);          // live DOM property
+  $(this).text(locked ? 'Unlock fields' : 'Lock fields');
+  inspect('.prop() flipped the live disabled property.');
+});
+
+$('#fav').on('click', function () {
+  const on = $(this).attr('aria-pressed') !== 'true';
+  $(this).attr('aria-pressed', String(on)).text(on ? '★ Favourite' : '☆ Favourite');
+  inspect('.attr() wrote aria-pressed — screen readers announce the new state.');
+});
+
+inspect('Ready. Try the buttons.');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jsKjs Live Demo: 37 Interactive Examples on One 7.8 KB Script</title>
+<meta name="description" content="The complete jsKjs feature tour: a mini-shop, a game, split-text animation, modals, toasts and 29 focused demos of every module — wired to real PHP endpoints. View source on any of it.">
+<link rel="canonical" href="https://jskjs.org/demo/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="The full feature tour">
+<meta property="og:description" content="The complete jsKjs feature tour: a mini-shop, a game, split-text animation, modals, toasts and 29 focused demos of every module — wired to real PHP endpoints. View source on any of it.">
+<meta property="og:url" content="https://jskjs.org/demo/">
+<meta property="og:image" content="https://jskjs.org/assets/og/demo.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The full feature tour — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The full feature tour">
+<meta name="twitter:description" content="The complete jsKjs feature tour: a mini-shop, a game, split-text animation, modals, toasts and 29 focused demos of every module — wired to real PHP endpoints. View source on any of it.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/demo.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+  .demo-note { font: 600 12px var(--mono); color: var(--muted); margin-top: 10px; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .count { font: 800 2rem/1 var(--mono); min-width: 2ch; text-align: center; }
+  .menu-list { list-style: none; padding: 10px 0 0; margin: 0; }
+  .menu-list li { padding: 6px 2px; border-bottom: 1px dashed var(--grid); }
+  .boxes { display: flex; gap: 14px; margin: 6px 0 16px; }
+  .box { width: 52px; height: 52px; border-radius: 10px; }
+  .box:nth-child(1) { background: var(--amber); } .box:nth-child(2) { background: var(--violet); }
+  .box:nth-child(3) { background: var(--teal); }  .box:nth-child(4) { background: var(--ink); }
+  .spin { display: none; color: var(--muted); font-size: 13px; }
+  .tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+  .cartline { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed var(--grid); font-size: 14.5px; }
+  .easing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin-top: 12px; }
+  .easing-grid button { font-size: 12.5px; padding: 8px 6px; }
+  .track { position: relative; height: 40px; margin-top: 14px; border: 1px dashed var(--grid); border-radius: 8px; }
+  .runner { position: absolute; top: 5px; left: 5px; width: 30px; height: 30px; border-radius: 8px; background: var(--violet); }
+  #quote, #quote2 { min-height: 2.6em; padding-top: 8px; }
+  #results li, #comments li, #feed li { font: 14px var(--mono); padding: 4px 0; list-style: none; }
+  #todo li { cursor: pointer; }
+  #todo li.done { text-decoration: line-through; color: var(--muted); }
+  .toc { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  .toc a { font: 600 13px var(--mono); text-decoration: none; border: 1.5px solid var(--grid); background: var(--card); border-radius: 20px; padding: 7px 13px; color: var(--ink); }
+  .toc a:hover { border-color: var(--violet); color: var(--violet); }
+  h3.demo-title { margin-top: 0; display: flex; align-items: baseline; gap: 8px; }
+  h3.demo-title .num { font: 700 12px var(--mono); color: var(--violet); }
+  /* traversal playground */
+  .tree, .tree ul { list-style: none; padding-left: 20px; margin: 4px 0; }
+  .tree { padding-left: 0; }
+  .tree li { padding: 3px 6px; border-radius: 5px; font: 14px var(--mono); }
+  .tree li.hit { background: var(--amber); }
+  .tree li.anchor { outline: 2px solid var(--violet); }
+  /* sandbox */
+  #sandbox { min-height: 60px; }
+  #sandbox .sb { padding: 5px 8px; border: 1px dashed var(--grid); border-radius: 6px; margin: 4px 0; font: 13.5px var(--mono); background: var(--paper); }
+  .frame { border: 2px solid var(--violet); border-radius: 8px; padding: 4px; }
+  /* console */
+  .console { font: 12.5px/1.7 var(--mono); background: var(--code-bg); color: var(--code-fg); border-radius: 8px; padding: 14px 16px; margin-top: 12px; max-height: 300px; overflow: auto; }
+  .console .k { color: var(--amber); }
+  .hovercard { transition: none; }
+  #evt-log { max-height: 130px; }
+  .badge { display: inline-block; background: var(--teal); color: var(--surface); font: 700 12px var(--mono); border-radius: 20px; padding: 6px 12px; }
+  /* showcase */
+  #game-grid .cell { height: 56px; border: 1.5px dashed var(--grid); border-radius: 10px; position: relative; background: var(--paper); }
+  .mole { position: absolute; inset: 8px; border-radius: 8px; background: var(--amber); cursor: pointer; }
+  .shop-card { border: 1px solid var(--grid); border-radius: 10px; padding: 12px; background: var(--paper); }
+  .shop-card .swatch { height: 44px; border-radius: 8px; margin-bottom: 8px; }
+  .shop-card h4 { margin: 0 0 2px; font-size: 14.5px; }
+  .shop-card .price { font: 700 13px var(--mono); color: var(--violet); }
+  .toast { background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; font: 600 13.5px var(--mono); }
+  #split-hero span { display: inline-block; white-space: pre; }
+  
+
+.legacy-demo .panel { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:22px; box-shadow:var(--shadow); }
+.legacy-demo .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:18px; margin-top:18px; }
+.legacy-demo .tag { display:inline-block; font:600 11.5px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; padding:6px 10px; border-radius:6px; background:var(--ink); color:var(--bg); margin-bottom:12px; }
+.legacy-demo .tag.teal { background:var(--pulse); color:#13152B; } .legacy-demo .tag.violet { background:var(--hyper); color:#13152B; } .legacy-demo .tag.amber { background:var(--motion); color:#13152B; }
+.legacy-demo .narrow { max-width:900px; }
+.legacy-demo > section { margin-top:72px; }
+.legacy-demo h2 { margin-bottom:6px; }
+.legacy-demo button { font:700 14px/1 var(--body); color:var(--ink); background:var(--surface); border:1.5px solid var(--ink); border-radius:9px; padding:10px 14px; cursor:pointer; }
+.legacy-demo button:hover { background:var(--ink); color:var(--bg); }
+.legacy-demo button:disabled { opacity:.45; cursor:not-allowed; }
+.legacy-demo pre { font:12.5px/1.65 var(--mono); background:var(--code-bg); color:var(--code-fg); border-radius:10px; padding:14px 16px; overflow:auto; margin-top:12px; }
+.toc a { background:var(--chrome-2) !important; color:var(--chrome-ink) !important; border-color:var(--chrome-line) !important; }
+</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"The full feature tour","description":"The complete jsKjs feature tour: a mini-shop, a game, split-text animation, modals, toasts and 29 focused demos of every module — wired to real PHP endpoints. View source on any of it.","url":"https://jskjs.org/demo/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Demo","item":"https://jskjs.org/demo/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/" aria-current="page">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/" aria-current="page">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><span aria-current="page">Demo</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Demo</p>
+  <h1>The full feature tour</h1>
+  <p class="lede">Thirty-seven demos on one page — eight mini-apps that combine modules, then twenty-nine focused examples. Requests go to real PHP endpoints under <code>/api/</code>: open the network tab and watch.</p>
+  <div class="toc">
+    <a href="#showcase">✦ Showcase</a>
+    <a href="#pulse">Pulse · Reactivity</a>
+    <a href="#hyper">Hyper · Declarative AJAX</a>
+    <a href="#ajaxlab">AJAX Lab</a>
+    <a href="#motion">Motion · Animation</a>
+    <a href="#domlab">DOM &amp; Traversal Lab</a>
+    <a href="#utilities">Utilities Console</a>
+  </div>
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div><div class="wrap legacy-demo">
+
+
+
+<div id="scroll-progress" aria-hidden="true" style="position:fixed; top:64px; left:0; height:3px; width:0; background:var(--violet); z-index:60"></div>
+
+<!-- ================= SHOWCASE ================= -->
+<section id="showcase">
+  <span class="tag" style="background:linear-gradient(90deg,var(--violet),var(--teal)); color:#fff">✦ Showcase · everything combined</span>
+  <h2>Mini-apps, not snippets</h2>
+  <p class="muted" style="max-width:62ch">Each showcase combines several subsystems — the way you'd actually build things.</p>
+
+  <div class="grid2">
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">S1</span>Split-text hero <span class="muted" style="font-size:.7em">Motion</span></h3>
+      <h2 id="split-hero" style="letter-spacing:-.02em">Animate everything.</h2>
+      <div class="row"><button id="btn-split">Replay</button></div>
+      <p class="demo-note">Text split into spans with $.map · $.fromTo per character · stagger · back.out</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">S2</span>Whack-a-box <span class="muted" style="font-size:.7em">Motion + Store + Events</span></h3>
+      <div class="row" style="justify-content:space-between">
+        <button id="game-start">Start (15s)</button>
+        <span style="font:700 14px var(--mono)" id="game-hud">score 0 · 15s</span>
+      </div>
+      <div id="game-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px">
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+      </div>
+      <p class="demo-note">$.store scoreboard · delegated clicks · $.fromTo pop-ins · $.timeline().add(fn) finale</p>
+    </div>
+
+    <div class="panel" style="grid-column: 1 / -1">
+      <h3 class="demo-title"><span class="num">S3</span>Mini-shop with fly-to-cart <span class="muted" style="font-size:.7em">AJAX + Store + Motion + Traversal — real static /api/products.json</span></h3>
+      <div class="row" style="justify-content:space-between">
+        <div class="row">
+          <button id="shop-load">Load products</button>
+          <select id="shop-sort" style="width:auto"><option value="">sort: featured</option><option value="asc">price ↑</option><option value="desc">price ↓</option></select>
+          <input type="text" id="shop-filter" placeholder="filter… try 'kitchen'" style="width:180px">
+        </div>
+        <span class="badge" id="cart-badge">🛒 cart: 0</span>
+      </div>
+      <div id="shop-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:12px; margin-top:14px"></div>
+      <p class="demo-note">$.getJSON · sort by re-appending DOM · .filter()/.not() live filtering with debounce · clone flies to the badge via .offset() + $.to · shared $.store</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">S4</span>Animated modal <span class="muted" style="font-size:.7em">Motion + Events</span></h3>
+      <div class="row"><button id="modal-open">Open modal</button></div>
+      <div id="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(22,33,43,.5); z-index:70; align-items:center; justify-content:center">
+        <div id="modal-card" class="panel" style="max-width:340px; margin:auto; position:relative; top:20vh" role="dialog" aria-modal="true">
+          <h3 style="margin-top:0">Hello 👋</h3>
+          <p class="muted">Entrance via $.fromTo. Close me with the button, the backdrop, or the Escape key — the key handler is bound with a <code>.modal</code> namespace and removed with <code>off('.modal')</code> on close.</p>
+          <button id="modal-close">Close</button>
+        </div>
+      </div>
+      <p class="demo-note">show/hide · $.fromTo scale+opacity · namespaced document keyup · backdrop delegation</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">S5</span>Toast notifications <span class="muted" style="font-size:.7em">Custom events + Motion</span></h3>
+      <div class="row">
+        <button data-toast="✅ Saved successfully">Success toast</button>
+        <button data-toast="⚠️ Something needs attention">Warning toast</button>
+      </div>
+      <div id="toasts" style="position:fixed; bottom:18px; right:18px; z-index:80; display:flex; flex-direction:column; gap:8px" aria-live="polite"></div>
+      <p class="demo-note">$(document).trigger('toast:show', payload) · listener builds + animates · auto-dismiss with fadeOut</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">S6</span>FAQ accordion <span class="muted" style="font-size:.7em">Effects + Traversal</span></h3>
+      <div id="faq">
+        <div class="acc"><button class="acc-head" style="width:100%; text-align:left">Is it really jQuery-compatible? ▾</button>
+          <div class="acc-body" style="display:none; padding:10px 4px" class="muted">Yes — the documented jQuery surface behaves as you expect. Change the script tag and go.</div></div>
+        <div class="acc" style="margin-top:8px"><button class="acc-head" style="width:100%; text-align:left">How big is it? ▾</button>
+          <div class="acc-body" style="display:none; padding:10px 4px">~7.7 KB gzipped — roughly a twelfth of the four libraries it replaces.</div></div>
+        <div class="acc" style="margin-top:8px"><button class="acc-head" style="width:100%; text-align:left">Do I need a build step? ▾</button>
+          <div class="acc-body" style="display:none; padding:10px 4px">No. One script tag. That's the whole point.</div></div>
+      </div>
+      <p class="demo-note">slideToggle · .parent().siblings() · .children() · only one panel open at a time</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">S7</span>Swap-strategy visualizer <span class="muted" style="font-size:.7em">Hyper — real static files</span></h3>
+      <div class="row" style="margin-bottom:10px">
+        <button kj-get="/api/swaps/innerHTML.html"   kj-target="#swap-anchor" kj-swap="innerHTML"   kj-push-url="?swap=innerHTML">innerHTML</button>
+        <button kj-get="/api/swaps/beforebegin.html" kj-target="#swap-anchor" kj-swap="beforebegin">beforebegin</button>
+        <button kj-get="/api/swaps/afterbegin.html"  kj-target="#swap-anchor" kj-swap="afterbegin">afterbegin</button>
+        <button kj-get="/api/swaps/beforeend.html"   kj-target="#swap-anchor" kj-swap="beforeend">beforeend</button>
+        <button kj-get="/api/swaps/afterend.html"    kj-target="#swap-anchor" kj-swap="afterend">afterend</button>
+        <button kj-get="/api/swaps/outerHTML.html"   kj-target="#swap-anchor" kj-swap="outerHTML">outerHTML</button>
+        <button id="swap-reset">Reset</button>
+      </div>
+      <div id="swap-zone">
+        <div class="sb" id="swap-anchor" style="background:#6c5ce722">■ target — watch where each response lands</div>
+      </div>
+      <p class="demo-note">All kj-swap modes against one target · innerHTML button also demos kj-push-url (check the URL bar)</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">S8</span>Theme switcher + back-to-top <span class="muted" style="font-size:.7em">CSS variables + scrollTop</span></h3>
+      <div class="row">
+        <button id="demo-theme">Toggle dark mode</button>
+        <button id="back-top">Back to top ↑</button>
+      </div>
+      <p class="demo-note">flips the site theme (data-theme + CSS variables) · $(window).scrollTop(0) · the top progress bar is $(window).on('scroll', $.throttle(…))</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PULSE ================= -->
+<section id="pulse">
+  <span class="tag teal">Pulse · Reactivity</span>
+  <h2>State that lives in your HTML</h2>
+  <div class="grid2">
+
+    <div class="panel" kj-data="{ count: 0 }">
+      <h3 class="demo-title"><span class="num">01</span>Counter</h3>
+      <div class="row">
+        <button @click="count--">−</button>
+        <span class="count" kj-text="count"></span>
+        <button @click="count++">+</button>
+        <button @click="count = 0" :disabled="count === 0">Reset</button>
+      </div>
+      <p class="demo-note">kj-data · @click · kj-text · :disabled binding</p>
+    </div>
+
+    <div class="panel" kj-data="{ open: false }">
+      <h3 class="demo-title"><span class="num">02</span>Dropdown</h3>
+      <button @click="open = !open" :aria-expanded="open">Menu ▾</button>
+      <ul class="menu-list" kj-show="open" @keyup.escape="open = false">
+        <li>Profile</li><li>Settings</li><li>Sign out</li>
+      </ul>
+      <p class="demo-note">kj-show · :aria-expanded · @keyup.escape</p>
+    </div>
+
+    <div class="panel" kj-data="{ name: '', vip: false }">
+      <h3 class="demo-title"><span class="num">03</span>Two-way binding</h3>
+      <input type="text" kj-model="name" placeholder="Type your name…">
+      <label style="display:block; margin-top:8px"><input type="checkbox" kj-model="vip" style="width:auto"> VIP member</label>
+      <p kj-text="name ? 'Hello, ' + name + (vip ? ' ⭐' : '') : ''" style="font-weight:600; margin-top:8px"></p>
+      <p class="demo-note">kj-model on text input + checkbox</p>
+    </div>
+
+    <div class="panel" kj-data="tabs">
+      <h3 class="demo-title"><span class="num">04</span>Tabs — registered component</h3>
+      <div class="row tabs">
+        <button @click="active = 'html'" :aria-selected="active === 'html'">HTML</button>
+        <button @click="active = 'css'"  :aria-selected="active === 'css'">CSS</button>
+        <button @click="active = 'js'"   :aria-selected="active === 'js'">JS</button>
+      </div>
+      <p style="margin-top:12px" kj-text="content[active]"></p>
+      <p style="margin-top:6px" class="muted" kj-text="'Mounted at ' + mountedAt + ' via init()'"></p>
+      <p class="demo-note">$.component('tabs', …) · init() lifecycle · kj-data="tabs"</p>
+    </div>
+
+    <div class="panel" kj-data="{ items: ['Ship v1'], draft: '' }">
+      <h3 class="demo-title"><span class="num">05</span>List rendering</h3>
+      <div class="row">
+        <input type="text" kj-model="draft" placeholder="Add a task…" @keyup.enter="if (draft) { items.push(draft); draft = '' }" style="flex:1">
+        <button @click="if (draft) { items.push(draft); draft = '' }">Add</button>
+      </div>
+      <ul class="menu-list" kj-html="items.map(i => '<li>' + $.escape(i) + '</li>').join('')"></ul>
+      <p class="demo-note">@keyup.enter · kj-html + $.escape (XSS-safe)</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">06</span>Global store — shared state</h3>
+      <div kj-data="{}">
+        <div class="row">
+          <button @click="$.store('cart').items.push({ name: 'Widget ' + ($.store('cart').items.length + 1), price: 9 })">Add to cart</button>
+          <button @click="$.store('cart').items.pop()">Remove</button>
+        </div>
+      </div>
+      <div kj-data="{}" style="margin-top:12px">
+        <div kj-html="$.store('cart').items.map(i => '<div class=cartline><span>' + i.name + '</span><span>$' + i.price + '</span></div>').join('')"></div>
+        <p style="font-weight:700; margin-top:8px" kj-text="'Total: $' + $.store('cart').items.reduce((s, i) => s + i.price, 0)"></p>
+      </div>
+      <p class="demo-note">Two independent components sharing one $.store</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HYPER ================= -->
+<section id="hyper">
+  <span class="tag violet">Hyper · Declarative AJAX</span>
+  <h2>Requests described in attributes</h2>
+  <div class="grid2">
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">07</span>Click to fetch <span class="muted" style="font-size:.7em">real static file</span></h3>
+      <div class="row">
+        <button kj-get="/api/quote.html" kj-target="#quote" kj-indicator="#spin1">Fetch /api/quote.html</button>
+        <span class="spin" id="spin1">requesting…</span>
+      </div>
+      <p id="quote"></p>
+      <p class="demo-note">kj-get · kj-target · kj-indicator (+ automatic aria-busy)</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">08</span>Load on page load <span class="muted" style="font-size:.7em">real static file</span></h3>
+      <p>Server status: <span kj-get="/api/status.html" kj-trigger="load">checking…</span></p>
+      <p class="demo-note">kj-trigger="load" fired this request before you scrolled here</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">09</span>Live search <span class="muted" style="font-size:.7em">real PHP endpoint</span></h3>
+      <input type="text" name="q" placeholder="Try 'a' or 'anim'…"
+             kj-get="/api/search.php" kj-trigger="keyup delay:300ms" kj-target="#results">
+      <ul id="results" style="padding:8px 0 0; margin:0"></ul>
+      <p class="demo-note">kj-trigger="keyup delay:300ms" — /api/search.php filters packages.json in PHP</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">10</span>Form POST <span class="muted" style="font-size:.7em">real PHP endpoint</span></h3>
+      <form kj-post="/api/subscribe.php" kj-target="#sub-msg">
+        <div class="row">
+          <input type="email" name="email" placeholder="you@example.com" required style="flex:1">
+          <button>Subscribe</button>
+        </div>
+      </form>
+      <p id="sub-msg" style="margin-top:8px"></p>
+      <p class="demo-note">Form auto-serializes; default trigger is submit</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">11</span>Polling + lifecycle events <span class="muted" style="font-size:.7em">real static file</span></h3>
+      <p><span id="heartbeat" kj-get="/api/status.html" kj-trigger="every 3s">…</span></p>
+      <p class="muted" id="poll-meta" style="font-size:13.5px">waiting for first poll…</p>
+      <p class="demo-note">kj-trigger="every 3s" · kj:after event updates the counter below it</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">12</span>Delete with confirm <span class="muted" style="font-size:.7em">real PHP endpoint</span></h3>
+      <ul class="menu-list" id="rows">
+        <li id="row-1" class="row" style="justify-content:space-between">Alpha
+          <button kj-delete="/api/items.php?id=1" kj-target="#row-1" kj-swap="outerHTML" kj-confirm="Delete Alpha?">✕</button></li>
+        <li id="row-2" class="row" style="justify-content:space-between">Beta
+          <button kj-delete="/api/items.php?id=2" kj-target="#row-2" kj-swap="outerHTML" kj-confirm="Delete Beta?">✕</button></li>
+      </ul>
+      <p class="demo-note">kj-delete · kj-swap="outerHTML" · kj-confirm</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">13</span>Lazy load on reveal <span class="muted" style="font-size:.7em">real static file</span></h3>
+      <p class="muted">These comments loaded only when this panel scrolled into view.</p>
+      <ul id="comments" kj-get="/api/comments.html" kj-trigger="revealed" style="padding:8px 0 0; margin:0">Loading when revealed…</ul>
+      <p class="demo-note">kj-trigger="revealed" (IntersectionObserver)</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">14</span>Feed with append swap <span class="muted" style="font-size:.7em">real static files</span></h3>
+      <ul id="feed" kj-get="/api/feed/page-1.html" kj-trigger="load" kj-swap="beforeend" style="padding:0; margin:0"></ul>
+      <div class="row" style="margin-top:10px">
+        <button id="load-more">Load more</button>
+        <span class="muted" id="feed-page" style="font-size:13px">page 1 of 3</span>
+      </div>
+      <p class="demo-note">Page 1 via kj-swap="beforeend" on load · “Load more” uses $.get + .append()</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">15</span>kj-include + kj-vals <span class="muted" style="font-size:.7em">real PHP endpoint</span></h3>
+      <form id="filters" onsubmit="return false">
+        <div class="row">
+          <input type="text" name="category" value="tools" style="flex:1">
+          <select name="sort" style="width:auto"><option>newest</option><option>popular</option></select>
+        </div>
+      </form>
+      <div class="row" style="margin-top:10px">
+        <button kj-post="/api/echo.php" kj-include="#filters" kj-vals='{"page": 2}' kj-target="#filter-echo">Apply filters</button>
+      </div>
+      <div id="filter-echo" style="margin-top:10px" aria-live="polite"></div>
+      <p class="demo-note">Sends another form's fields + literal JSON values; the echo shows what arrived</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= AJAX LAB ================= -->
+<section id="ajaxlab">
+  <span class="tag violet">AJAX Lab · Programmatic</span>
+  <h2>The same power from JavaScript</h2>
+  <div class="grid2">
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">16</span>$.get — random static quote</h3>
+      <div class="row"><button id="btn-quote2">Random quote</button></div>
+      <p id="quote2"></p>
+      <p class="demo-note">$.get('/api/quotes/' + n + '.html') — five real files, picked at random</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">17</span>$.getJSON — render a table</h3>
+      <div class="row"><button id="btn-users">Load /api/users.json</button></div>
+      <div id="users-out"></div>
+      <p class="demo-note">await $.getJSON · $.map · $.escape</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">18</span>.load() — fragment extraction</h3>
+      <div class="row"><button id="btn-load">.load('/api/news.html #headlines')</button></div>
+      <div id="news-out"></div>
+      <p class="demo-note">Fetches a full page, inserts only the #headlines fragment</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">19</span>Error handling — a real 404</h3>
+      <div class="row"><button id="btn-404">GET /api/does-not-exist</button></div>
+      <p id="err-out" style="margin-top:8px"></p>
+      <p class="demo-note">$.ajax(...).fail(err => …) — err.status from a genuine static-host 404</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">20</span>timeout &amp; abort <span class="muted" style="font-size:.7em">real PHP endpoint</span></h3>
+      <div class="row">
+        <button id="btn-timeout">timeout: 800ms vs 3s server</button>
+        <button id="btn-abort">manual .abort()</button>
+      </div>
+      <p id="timeout-out" style="margin-top:8px; font:600 13.5px var(--mono)"></p>
+      <p class="demo-note">$.ajax({ timeout }) auto-aborts · the returned promise exposes .abort()</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">21</span>serialize / serializeObject</h3>
+      <form id="ser-form" onsubmit="return false">
+        <div class="row">
+          <input type="text" name="user" value="ada" style="flex:1">
+          <input type="text" name="plan" value="pro" style="flex:1">
+        </div>
+      </form>
+      <div class="row" style="margin-top:10px"><button id="btn-ser">Serialize</button></div>
+      <pre id="ser-out" style="min-height:3em; margin-top:10px"></pre>
+      <p class="demo-note">.serialize() → query string · .serializeObject() → plain object</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MOTION ================= -->
+<section id="motion">
+  <span class="tag amber">Motion · Animation</span>
+  <h2>A real tween engine</h2>
+  <div class="grid2">
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">22</span>Stagger, elastic &amp; timelines</h3>
+      <div class="boxes">
+        <div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div>
+      </div>
+      <div class="row">
+        <button id="play-stagger">Stagger</button>
+        <button id="play-elastic">Elastic</button>
+        <button id="play-timeline">Timeline</button>
+      </div>
+      <p class="demo-note">$.to · stagger · $.timeline with '&lt;' positioning</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">23</span>Easing gallery</h3>
+      <div class="track"><div class="runner"></div></div>
+      <div class="easing-grid" id="easings"></div>
+      <p class="demo-note">All 10 built-in easings + one custom function (last button)</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">24</span>$.fromTo + chainable .to()</h3>
+      <div class="row">
+        <span class="badge" id="pop-badge">v1.0.0</span>
+        <button id="btn-pop">Pop the badge</button>
+      </div>
+      <div class="hovercard panel" style="margin-top:14px; padding:14px" id="hover-card">
+        Hover me — $(el).hover() + chainable $(this).to({ scale })
+      </div>
+      <p class="demo-note">$.fromTo(badge, { scale: 0 }, { scale: 1, ease: 'elastic.out' })</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">25</span>Classic effects</h3>
+      <div class="row">
+        <button id="fx-fade">fadeToggle</button>
+        <button id="fx-slide">slideToggle</button>
+        <button id="fx-animate">.animate()</button>
+      </div>
+      <div id="fx-box" class="panel" style="margin-top:14px; padding:14px; background:var(--paper)">
+        The classic jQuery effects, rebuilt on the Motion engine (milliseconds).
+      </div>
+      <p class="demo-note">fadeToggle(400) · slideToggle(300) · animate({ marginLeft }, 500)</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DOM & TRAVERSAL LAB ================= -->
+<section id="domlab">
+  <span class="tag ink">Core · DOM &amp; Traversal Lab</span>
+  <h2>Your muscle memory still works</h2>
+  <div class="grid2">
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">26</span>Traversal playground</h3>
+      <p class="muted" style="font-size:13.5px">The <span style="outline:2px solid var(--violet); padding:0 4px">outlined</span> node is the anchor; each button highlights what the method returns.</p>
+      <ul class="tree" id="tree">
+        <li>root
+          <ul>
+            <li class="branch">branch A
+              <ul><li class="leaf">leaf A1</li><li class="leaf anchor" id="anchor-node">leaf A2 (anchor)</li><li class="leaf">leaf A3</li></ul>
+            </li>
+            <li class="branch">branch B
+              <ul><li class="leaf">leaf B1</li><li class="leaf special">leaf B2 (.special)</li></ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="row" id="trav-buttons" style="margin-top:10px">
+        <button data-m="siblings">.siblings()</button>
+        <button data-m="next">.next()</button>
+        <button data-m="prev">.prev()</button>
+        <button data-m="parent">.parent()</button>
+        <button data-m="parents">.parents('.branch')</button>
+        <button data-m="closest">.closest('.tree')</button>
+        <button data-m="find">$('#tree').find('.leaf')</button>
+        <button data-m="filternot">.filter('.special') / .not()</button>
+      </div>
+      <p class="demo-note" id="trav-readout">is · find · filter · not · closest · parents · siblings · next · prev · children</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">27</span>Insertion toolkit</h3>
+      <div class="row" style="margin-bottom:10px">
+        <button data-op="append">append</button>
+        <button data-op="prepend">prepend</button>
+        <button data-op="before">before</button>
+        <button data-op="after">after</button>
+        <button data-op="wrap">wrap</button>
+        <button data-op="clone">clone</button>
+        <button data-op="replaceWith">replaceWith</button>
+        <button data-op="empty">empty</button>
+      </div>
+      <div id="sandbox">
+        <div class="sb" id="sb-target">■ target element</div>
+      </div>
+      <p class="demo-note">appendTo/prependTo work too — clone uses $('#sb-target').clone().appendTo()</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">28</span>Attributes, props &amp; data</h3>
+      <div class="row">
+        <input type="text" id="attr-input" data-config='{"theme":"dark","retries":3}' placeholder="I have data-config…" style="flex:1">
+        <button id="btn-lock">Toggle disabled</button>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button id="btn-attr">attr / removeAttr</button>
+        <button id="btn-data">read data-* JSON</button>
+        <button id="btn-wmap">WeakMap .data()</button>
+      </div>
+      <pre id="attr-out" style="min-height:3em; margin-top:10px"></pre>
+      <p class="demo-note">.prop('disabled') · .attr() · .removeAttr() · .data() · .removeData() · .hasClass()</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="demo-title"><span class="num">29</span>Events lab + todo</h3>
+      <div class="row">
+        <button id="btn-once">.one() — fires once</button>
+        <button id="btn-ns">bind click.tmp</button>
+        <button id="btn-ns-off">off('.tmp')</button>
+        <button id="btn-custom">trigger custom + payload</button>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button id="add-item">Add todo</button>
+        <button id="fade-all">Fade list</button>
+      </div>
+      <ul id="todo" class="menu-list"></ul>
+      <pre id="evt-log" class="console" aria-live="polite">event log…</pre>
+      <p class="demo-note">.one() · namespaces · .off('.ns') · .trigger(type, payload) · delegation · .hover()</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= UTILITIES ================= -->
+<section id="utilities" class="narrow">
+  <span class="tag ink">Utilities Console</span>
+  <h2>Every helper, executed live</h2>
+  <div class="panel">
+    <div class="row">
+      <button id="run-utils">Run all utilities</button>
+      <button id="btn-raw">Spam me</button>
+      <button id="btn-deb">Debounced (300ms)</button>
+      <button id="btn-thr">Throttled (500ms)</button>
+      <span class="muted" style="font:12.5px var(--mono)" id="rate-out">raw: 0 · debounced: 0 · throttled: 0</span>
+    </div>
+    <pre class="console" id="util-console">click “Run all utilities” — each line is real output from $.…</pre>
+    <p class="demo-note">$.each · $.map · $.extend · $.param · $.parseHTML · $.trim · $.isArray/isFunction/isPlainObject · $.uuid · $.escape · $.debounce · $.throttle · $.version · width/offset</p>
+  </div>
+</section>
+
+<div style="height:16vh" aria-hidden="true"></div>
+
+</div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+/* ---- Components & stores ---- */
+$.component('tabs', () => ({
+  active: 'html',
+  mountedAt: '',
+  content: {
+    html: 'Structure. jsKjs reads it, binds it, and swaps it — declaratively.',
+    css: 'Style. jsKjs animates numeric properties and transforms at 60fps.',
+    js: 'Behavior. And when attributes are not enough, the full $ API is right there.',
+  },
+  init() { this.mountedAt = new Date().toLocaleTimeString(); },
+}));
+$.store('cart', { items: [] });
+
+$(function () {
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- 11: polling lifecycle events ---- */
+  let polls = 0;
+  $('#heartbeat').on('kj:after', () => {
+    polls++;
+    $('#poll-meta').text('kj:after fired — polled ' + polls + '× · last at ' + new Date().toLocaleTimeString());
+  });
+
+  /* ---- 14: feed load-more ---- */
+  let page = 1;
+  $('#load-more').click(async function () {
+    if (page >= 3) return;
+    page++;
+    const html = await $.get('/api/feed/page-' + page + '.html');
+    $('#feed').append(...$.parseHTML(html));
+    $('#feed-page').text('page ' + page + ' of 3');
+    if (page === 3) $(this).prop('disabled', true).text('All loaded');
+  });
+
+  /* ---- 16: random static quote ---- */
+  $('#btn-quote2').click(async () => {
+    const n = 1 + Math.floor(Math.random() * 5);
+    const html = await $.get('/api/quotes/' + n + '.html');
+    $('#quote2').html(html + ' <span class="muted">— /api/quotes/' + n + '.html</span>');
+  });
+
+  /* ---- 17: $.getJSON table ---- */
+  $('#btn-users').click(async () => {
+    const users = await $.getJSON('/api/users.json');
+    $('#users-out').html('<table><tr><th>Name</th><th>Role</th><th>Commits</th></tr>' +
+      $.map(users, u => '<tr><td>' + $.escape(u.name) + '</td><td>' + $.escape(u.role) + '</td><td>' + u.commits + '</td></tr>').join('') +
+      '</table>');
+  });
+
+  /* ---- 18: .load() fragment ---- */
+  $('#btn-load').click(() => $('#news-out').load('/api/news.html #headlines'));
+
+  /* ---- 19: real 404 ---- */
+  $('#btn-404').click(() => {
+    $.ajax({ url: '/api/does-not-exist.html' })
+      .fail(err => $('#err-out').html('<b style="color:#c0392b">.fail()</b> caught it — status <b>' + err.status + '</b> (a real response from the host)'));
+  });
+
+  /* ---- 20: serialize ---- */
+  $('#btn-ser').click(() => {
+    $('#ser-out').text('.serialize()       → "' + $('#ser-form').serialize() + '"\n' +
+                       '.serializeObject() → ' + JSON.stringify($('#ser-form').serializeObject()));
+  });
+
+  /* ---- 21: motion playground ---- */
+  $('#play-stagger').click(async () => {
+    await $.to('.box', { y: -24, duration: .3, stagger: .08, ease: 'power2.out' });
+    $.to('.box', { y: 0, duration: .5, stagger: .08, ease: 'bounce.out' });
+  });
+  $('#play-elastic').click(async () => {
+    await $.to('.box', { rotate: 360, scale: 1.2, duration: .9, ease: 'elastic.out' });
+    $.to('.box', { rotate: 0, scale: 1, duration: .4 });
+  });
+  $('#play-timeline').click(() => {
+    $.timeline({ duration: .35, ease: 'power2.inOut' })
+      .to('.box:nth-child(1)', { x: 66 })
+      .to('.box:nth-child(2)', { x: 66 }, '<')
+      .to('.box:nth-child(3)', { x: -66 })
+      .to('.box:nth-child(4)', { x: -66 }, '<')
+      .to('.box', { x: 0, rotate: 180 })
+      .to('.box', { rotate: 0 });
+  });
+
+  /* ---- 22: easing gallery (10 built-ins + custom fn) ---- */
+  const eases = ['linear', 'ease-in', 'ease-out', 'ease-in-out', 'power2.in',
+                 'power2.out', 'power2.inOut', 'back.out', 'elastic.out', 'bounce.out'];
+  const run = async ease => {
+    const max = $('.track').width() - 40;
+    await $.to('.runner', { x: max, duration: .9, ease });
+    $.to('.runner', { x: 0, duration: .4, ease: 'power2.inOut' });
+  };
+  eases.forEach(name => $('<button>').text(name).appendTo('#easings').click(() => run(name)));
+  $('<button>').text('custom t³ fn').appendTo('#easings').click(() => run(t => t * t * t));
+
+  /* ---- 23: fromTo + chainable hover ---- */
+  $('#btn-pop').click(() =>
+    $.fromTo('#pop-badge', { scale: 0, rotate: -20 }, { scale: 1, rotate: 0, duration: .6, ease: 'elastic.out' }));
+  $('#hover-card').hover(
+    function () { $(this).to({ scale: 1.04, duration: .15 }); },
+    function () { $(this).to({ scale: 1, duration: .2 }); });
+
+  /* ---- 24: classic effects ---- */
+  $('#fx-fade').click(() => $('#fx-box').fadeToggle(400));
+  $('#fx-slide').click(() => $('#fx-box').slideToggle(300));
+  $('#fx-animate').click(() => {
+    $('#fx-box').animate({ marginLeft: 40, opacity: .6 }, 400, function () {
+      $(this).animate({ marginLeft: 0, opacity: 1 }, 400);
+    });
+  });
+
+  /* ---- 25: traversal playground ---- */
+  const $a = $('#anchor-node');
+  $('#trav-buttons').on('click', 'button', function () {
+    $('#tree li').removeClass('hit');
+    const m = $(this).data('m');
+    let $res, label = $(this).text();
+    if (m === 'siblings') $res = $a.siblings();
+    if (m === 'next') $res = $a.next();
+    if (m === 'prev') $res = $a.prev();
+    if (m === 'parent') $res = $a.parent().closest('li');
+    if (m === 'parents') $res = $a.parents('.branch');
+    if (m === 'closest') $res = $a.closest('.tree');
+    if (m === 'find') $res = $('#tree').find('.leaf');
+    if (m === 'filternot') {
+      $res = $('.leaf').filter('.special');
+      label += ' → filter matched ' + $res.length + ', .not(".special") leaves ' + $('.leaf').not('.special').length;
+    }
+    $res.addClass('hit');
+    $('#trav-readout').text(label + ' → ' + $res.length + ' element(s) · anchor .is(".leaf") = ' + $a.is('.leaf'));
+  });
+
+  /* ---- 26: insertion toolkit ---- */
+  let n = 0;
+  const stamp = () => $('<div class="sb">').text('#' + (++n) + ' inserted');
+  $('#domlab').on('click', 'button[data-op]', function () {
+    const op = $(this).data('op');
+    const $t = $('#sb-target');
+    if (op === 'append') $t.append(stamp());
+    if (op === 'prepend') $t.prepend(stamp());
+    if (op === 'before') $t.before(stamp());
+    if (op === 'after') $t.after(stamp());
+    if (op === 'wrap') $t.wrap('<div class="frame">');
+    if (op === 'clone') $t.clone().removeAttr('id').appendTo('#sandbox');
+    if (op === 'replaceWith') $('#sandbox .sb').last().replaceWith('<div class="sb">↻ replaced via replaceWith()</div>');
+    if (op === 'empty') { $('#sandbox').empty().append('<div class="sb" id="sb-target">■ target element</div>'); n = 0; }
+  });
+
+  /* ---- 27: attributes, props & data ---- */
+  const $in = $('#attr-input');
+  $('#btn-lock').click(() => $in.prop('disabled', !$in.prop('disabled')));
+  $('#btn-attr').click(() => {
+    if ($in.attr('placeholder')) { $in.attr('data-marked', 'yes').removeAttr('placeholder');
+      $('#attr-out').text('removed placeholder, set data-marked="yes"'); }
+    else { $in.attr('placeholder', 'I have data-config…');
+      $('#attr-out').text('placeholder restored via .attr()'); }
+  });
+  $('#btn-data').click(() =>
+    $('#attr-out').text('.data("config") → ' + JSON.stringify($in.data('config')) + '  (JSON auto-parsed from data-config attribute)'));
+  $('#btn-wmap').click(() => {
+    $in.data('session', { id: $.uuid().slice(0, 8), t: Date.now() });
+    $('#attr-out').text('.data("session") → ' + JSON.stringify($in.data('session')) + '\n(stored in a WeakMap — leak-free)');
+  });
+
+  /* ---- 28: events lab ---- */
+  const log = m => { const el = $('#evt-log'); el.text((el.text() + '\n' + m).split('\n').slice(-6).join('\n')); };
+  $('#btn-once').one('click', () => log('.one() handler ran — click again: nothing happens'));
+  $('#btn-ns').click(function () {
+    $('#todo').on('click.tmp', () => log('click.tmp fired on #todo'));
+    log('bound click.tmp on the todo list');
+  });
+  $('#btn-ns-off').click(() => { $('#todo').off('.tmp'); log("off('.tmp') — namespace removed"); });
+  $(document).on('demo:ping', (e, data) => log('custom demo:ping received → ' + JSON.stringify(data)));
+  $('#btn-custom').click(() => $(document).trigger('demo:ping', { at: Date.now() % 100000 }));
+
+  $('#add-item').click(() =>
+    $('<li>').text('Item ' + ($('#todo li').length + 1) + ' — click to complete').appendTo('#todo'));
+  $('#todo').on('click', 'li', function () {
+    $(this).toggleClass('done');
+    if ($(this).hasClass('done')) $(this).fadeOut(700, function () { $(this).remove(); });
+  });
+  $('#fade-all').click(() => $('#todo li').fadeOut(500));
+
+  /* ---- utilities console ---- */
+  $('#run-utils').click(() => {
+    const L = [];
+    const p = (k, v) => L.push('<span class="k">' + k + '</span> → ' + $.escape(String(v)));
+    p('$.version', $.version);
+    p("$.param({ a: 1, b: 'x y' })", $.param({ a: 1, b: 'x y' }));
+    p("$.escape('<b>&\"')", $.escape('<b>&"'));
+    p('$.uuid()', $.uuid());
+    p("$.trim('  hi  ')", "'" + $.trim('  hi  ') + "'");
+    p('$.isArray([]) / $.isFunction($) / $.isPlainObject({})', [$.isArray([]), $.isFunction($), $.isPlainObject({})].join(' / '));
+    p('$.map([1,2], n => [n, n*10])', JSON.stringify($.map([1, 2], x => [x, x * 10])));
+    let acc = []; $.each({ a: 1, b: 2 }, (k, v) => acc.push(k + '=' + v));
+    p('$.each({a:1,b:2}, …)', acc.join(', '));
+    p('$.extend(true, {a:{b:1}}, {a:{c:2}})', JSON.stringify($.extend(true, { a: { b: 1 } }, { a: { c: 2 } })));
+    p("$.parseHTML('<li>Hi</li>')[0].tagName", $.parseHTML('<li>Hi</li>')[0].tagName);
+    p("$('#utilities').width() / .offset().top", Math.round($('#utilities').width()) + 'px / ' + Math.round($('#utilities').offset().top) + 'px');
+    $('#util-console').html(L.join('\n'));
+  });
+
+  /* ---- debounce / throttle race ---- */
+  let raw = 0, deb = 0, thr = 0;
+  const paint = () => $('#rate-out').text('raw: ' + raw + ' · debounced: ' + deb + ' · throttled: ' + thr);
+  const bump = $.debounce(() => { deb++; paint(); }, 300);
+  const tick = $.throttle(() => { thr++; paint(); }, 500);
+  $('#btn-raw, #btn-deb, #btn-thr').on('click', () => { raw++; paint(); bump(); tick(); });
+
+  /* ================= SHOWCASE ================= */
+
+  /* ---- S1: split-text hero ---- */
+  const splitPlay = () => {
+    const $h = $('#split-hero');
+    if (!$h.data('split')) {
+      const chars = $.map($h.text().split(''), c => '<span>' + $.escape(c) + '</span>');
+      $h.html(chars.join('')).data('split', true);
+    }
+    $.fromTo('#split-hero span',
+      { y: 26, opacity: 0, rotate: 8 },
+      { y: 0, opacity: 1, rotate: 0, duration: .55, stagger: .035, ease: 'back.out' });
+  };
+  $('#btn-split').click(splitPlay);
+  if (!reduced) splitPlay();
+
+  /* ---- S2: whack-a-box ---- */
+  $.store('game', { score: 0, time: 15 });
+  const hud = () => $('#game-hud').text('score ' + $.store('game').score + ' · ' + $.store('game').time + 's');
+  let spawnTimer, clockTimer;
+  function spawn() {
+    $('.mole').remove();
+    const cells = $('#game-grid .cell');
+    const $cell = cells.eq(Math.floor(Math.random() * cells.length));
+    const mole = $('<div class="mole" title="whack!">').appendTo($cell);
+    $.fromTo(mole, { scale: 0, rotate: -15 }, { scale: 1, rotate: 0, duration: .22, ease: 'back.out' });
+  }
+  $('#game-grid').on('click', '.mole', async function () {
+    $.store('game').score++; hud();
+    await $.to(this, { scale: 1.35, opacity: 0, duration: .18 });
+    $(this).remove();
+  });
+  $('#game-start').click(function () {
+    clearInterval(spawnTimer); clearInterval(clockTimer);
+    Object.assign($.store('game'), { score: 0, time: 15 }); hud();
+    $(this).prop('disabled', true);
+    spawn();
+    spawnTimer = setInterval(spawn, 700);
+    clockTimer = setInterval(() => {
+      $.store('game').time--; hud();
+      if ($.store('game').time <= 0) {
+        clearInterval(spawnTimer); clearInterval(clockTimer);
+        $('.mole').remove();
+        $('#game-start').prop('disabled', false);
+        $('#game-hud').text('final score: ' + $.store('game').score + ' 🏆');
+        $.timeline({ duration: .3 })                       // finale flourish
+          .to('#game-grid', { scale: 1.03, ease: 'back.out' })
+          .add(() => $('#game-grid .cell').toggleClass('hit'))
+          .to('#game-grid', { scale: 1 })
+          .add(() => $('#game-grid .cell').toggleClass('hit'));
+      }
+    }, 1000);
+  });
+
+  /* ---- S3: mini-shop ---- */
+  $.store('shop', { count: 0 });
+  const swatches = ['var(--amber)', 'var(--violet)', 'var(--teal)', '#0769ad', '#e17055', '#00b894'];
+  $('#shop-load').click(async function () {
+    const products = await $.getJSON('/api/products.json');
+    $('#shop-grid').html($.map(products, (p, i) =>
+      '<div class="shop-card" data-name="' + $.escape(p.name.toLowerCase()) + '" data-tag="' + p.tag + '" data-price="' + p.price + '">' +
+        '<div class="swatch" style="background:' + swatches[i % 6] + '"></div>' +
+        '<h4>' + $.escape(p.name) + '</h4>' +
+        '<div class="row" style="justify-content:space-between"><span class="price">$' + p.price + '</span>' +
+        '<button class="add-cart" style="padding:6px 10px; font-size:12.5px">Add</button></div></div>').join(''));
+    if (!reduced) $.from('.shop-card', { y: 18, opacity: 0, duration: .35, stagger: .06, ease: 'power2.out' });
+    $(this).text('Reload products');
+  });
+  // fly-to-cart: clone a dot from the card to the badge using .offset()
+  $('#shop-grid').on('click', '.add-cart', function () {
+    const from = $(this).closest('.shop-card').find('.swatch').offset();
+    const to = $('#cart-badge').offset();
+    if (from && to) {
+      const dot = $('<div>').css({
+        position: 'absolute', top: from.top, left: from.left, width: 16, height: 16,
+        borderRadius: '50%', background: 'var(--violet)', zIndex: 90, pointerEvents: 'none',
+      }).appendTo(document.body);
+      $.to(dot, { x: to.left - from.left, y: to.top - from.top, scale: .5, opacity: .3, duration: .55, ease: 'power2.inOut' })
+        .then(() => dot.remove());
+    }
+    $.store('shop').count++;
+    $('#cart-badge').text('🛒 cart: ' + $.store('shop').count);
+    $.fromTo('#cart-badge', { scale: 1.25 }, { scale: 1, duration: .3, ease: 'back.out' });
+  });
+  // sort by re-appending in order
+  $('#shop-sort').change(function () {
+    const dir = $(this).val();
+    if (!dir) return;
+    const cards = [...$('.shop-card')].sort((a, b) =>
+      (a.dataset.price - b.dataset.price) * (dir === 'asc' ? 1 : -1));
+    $('#shop-grid').append(...cards);                      // moving nodes re-orders them
+  });
+  // live filter with .filter()/.not()
+  $('#shop-filter').on('input', $.debounce(function () {
+    const q = $.trim(this.value.toLowerCase());
+    const $all = $('.shop-card');
+    if (!q) return $all.show();
+    $all.filter((i, el) => (el.dataset.name + ' ' + el.dataset.tag).includes(q)).show();
+    $all.not((i, el) => (el.dataset.name + ' ' + el.dataset.tag).includes(q)).hide();
+  }, 200));
+
+  /* ---- S4: animated modal ---- */
+  const openModal = () => {
+    $('#modal-overlay').css('display', 'flex');
+    $.fromTo('#modal-card', { scale: .85, opacity: 0, y: 14 }, { scale: 1, opacity: 1, y: 0, duration: .3, ease: 'back.out' });
+    $(document).on('keyup.modal', e => { if (e.key === 'Escape') closeModal(); });
+  };
+  const closeModal = async () => {
+    await $.to('#modal-card', { scale: .9, opacity: 0, duration: .18 });
+    $('#modal-overlay').hide();
+    $(document).off('.modal');                             // namespaced cleanup
+  };
+  $('#modal-open').click(openModal);
+  $('#modal-close').click(closeModal);
+  $('#modal-overlay').on('click', function (e) { if (e.target === this) closeModal(); });
+
+  /* ---- S5: toast system via custom events ---- */
+  $(document).on('toast:show', (e, data) => {
+    const t = $('<div class="toast">').text(data.message).appendTo('#toasts');
+    $.fromTo(t, { x: 60, opacity: 0 }, { x: 0, opacity: 1, duration: .3, ease: 'power2.out' });
+    setTimeout(() => t.fadeOut(350, function () { $(this).remove(); }), data.ttl || 2600);
+  });
+  $('#showcase').on('click', 'button[data-toast]', function () {
+    $(document).trigger('toast:show', { message: $(this).data('toast') });
+  });
+
+  /* ---- S6: accordion ---- */
+  $('#faq').on('click', '.acc-head', function () {
+    const $body = $(this).next();
+    $(this).parent().siblings().children('.acc-body').slideUp(220);
+    $body.slideToggle(220);
+  });
+
+  /* ---- S7: swap visualizer reset ---- */
+  $('#swap-reset').click(() =>
+    $('#swap-zone').html('<div class="sb" id="swap-anchor" style="background:#6c5ce722">■ target — watch where each response lands</div>'));
+
+  /* ---- S8: theme switcher + back-to-top + progress ---- */
+  $('#demo-theme').click(function () {
+    $('#theme-toggle').click();                // drives the site's own theme switch
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    $(this).text(dark ? 'Toggle light mode' : 'Toggle dark mode');
+  });
+  $('#back-top').click(() => $(window).scrollTop(0));
+  $(window).on('scroll', $.throttle(() => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    $('#scroll-progress').css('width', (max ? (window.scrollY / max) * 100 : 0) + '%');
+  }, 50));
+
+  /* ---- 20: timeout & abort ---- */
+  $('#btn-timeout').click(() => {
+    $('#timeout-out').text('requesting /api/slow with timeout: 800ms …');
+    $.ajax({ url: '/api/slow.php?ms=3000', timeout: 800 })
+      .fail(() => $('#timeout-out').text('⏱ timed out after 800ms — request auto-aborted (server needed 3s)'));
+  });
+  $('#btn-abort').click(() => {
+    $('#timeout-out').text('requesting /api/slow — aborting manually in 400ms …');
+    const req = $.ajax({ url: '/api/slow.php?ms=3000' })
+      .fail(() => $('#timeout-out').text('🛑 .abort() called — the promise rejected as expected'));
+    setTimeout(() => req.abort(), 400);
+  });
+
+  /* ---- entrance ---- */
+  if (!reduced) $.from('main > section', { y: 24, opacity: 0, duration: .5, stagger: .08, ease: 'power2.out' });
+});
+</script>
+
+</body>
+</html>

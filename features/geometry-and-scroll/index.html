@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>width(), offset(), scrollTop() and show/hide in jsKjs — jsKjs</title>
+<meta name="description" content="Measure and position elements with width(), height(), offset() and position(), control scrolling with scrollTop(), and show or hide elements without losing their display value.">
+<link rel="canonical" href="https://jskjs.org/features/geometry-and-scroll/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Geometry, scroll &amp; visibility">
+<meta property="og:description" content="Measure and position elements with width(), height(), offset() and position(), control scrolling with scrollTop(), and show or hide elements without losing their display value.">
+<meta property="og:url" content="https://jskjs.org/features/geometry-and-scroll/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-geometry-and-scroll.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Geometry, scroll &amp; visibility — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Geometry, scroll &amp; visibility">
+<meta name="twitter:description" content="Measure and position elements with width(), height(), offset() and position(), control scrolling with scrollTop(), and show or hide elements without losing their display value.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-geometry-and-scroll.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+.geo-bar { height:6px; background:var(--surface-2); border-radius:6px; margin:14px 0 10px; overflow:hidden; }
+#geo-progress { height:100%; width:0; background:var(--core); }
+.geo-panel { height:230px; overflow:auto; position:relative; border:1px solid var(--line); border-radius:12px; padding:0 18px; }
+.geo-panel section { padding:16px 0 70px; }
+.geo-panel h4 { margin:0 0 6px; }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Geometry, scroll & visibility","description":"Measure and position elements with width(), height(), offset() and position(), control scrolling with scrollTop(), and show or hide elements without losing their display value.","url":"https://jskjs.org/features/geometry-and-scroll/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Core","item":"https://jskjs.org/features/#core"},{"@type":"ListItem","position":4,"name":"Geometry, scroll & visibility","item":"https://jskjs.org/features/geometry-and-scroll/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="core">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#core">Core</a></li><li><span aria-current="page">Geometry, scroll &amp; visibility</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Core · jQuery-compatible</p>
+  <h1>Geometry, scroll &amp; visibility</h1>
+  <p class="lede">Measure anything, scroll anything, show and hide anything — with the same calls you used in jQuery, built on <code>getBoundingClientRect</code> and the native scroll APIs.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<h2>Measurements you can trust</h2>
+<p><code>.width()</code> and <code>.height()</code> return the rendered size from <code>getBoundingClientRect()</code>, including transforms; on <code>$(window)</code> they return the viewport. <code>.offset()</code> gives page coordinates (scroll included) — perfect for positioning popovers — while <code>.position()</code> is relative to the nearest positioned ancestor.</p>
+<h2>Scrolling</h2>
+<p><code>.scrollTop()</code> and <code>.scrollLeft()</code> read and write scroll position on elements and on <code>$(window)</code>. Pair them with <code>$.throttle()</code> for scroll-driven UI such as progress bars and scroll-spy.</p>
+<h2>Visibility</h2>
+<p><code>.hide()</code> remembers the element's previous <code>display</code> value, so <code>.show()</code> restores <code>flex</code> or <code>grid</code> instead of forcing <code>block</code>.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Scroll spy with progress</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><div class="row" id="geo-nav">
+  <button type="button" data-to="0">Intro</button>
+  <button type="button" data-to="1">Specs</button>
+  <button type="button" data-to="2">Reviews</button>
+  <button type="button" id="geo-toggle" aria-expanded="true" aria-controls="geo-panel">Hide panel</button>
+</div>
+<div class="geo-bar" aria-hidden="true"><div id="geo-progress"></div></div>
+<div id="geo-panel" class="geo-panel" tabindex="0" role="region" aria-label="Product details (scrollable)">
+  <section><h4>Intro</h4><p>The jsKjs patch cable connects any module to any other. It is the part of your rack you never think about until it is missing.</p></section>
+  <section><h4>Specs</h4><p>30 cm braided sleeve, gold contacts, rated for ten thousand insertions. Weighs less than the jQuery Color plugin.</p></section>
+  <section><h4>Reviews</h4><p>“Finally, a cable that does not need a build step.” — a reviewer who should know better.</p></section>
+</div>
+<pre class="out" id="geo-out" aria-live="off"></pre></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-15" aria-label="Copy HTML code">Copy</button><pre id="code-15" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;geo-nav&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-to</span><span class="t-p">=</span><span class="t-s">&quot;0&quot;</span><span class="t-tag">&gt;</span>Intro<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-to</span><span class="t-p">=</span><span class="t-s">&quot;1&quot;</span><span class="t-tag">&gt;</span>Specs<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-to</span><span class="t-p">=</span><span class="t-s">&quot;2&quot;</span><span class="t-tag">&gt;</span>Reviews<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;geo-toggle&quot;</span> <span class="t-at">aria-expanded</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span> <span class="t-at">aria-controls</span><span class="t-p">=</span><span class="t-s">&quot;geo-panel&quot;</span><span class="t-tag">&gt;</span>Hide panel<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;geo-bar&quot;</span> <span class="t-at">aria-hidden</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;geo-progress&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;geo-panel&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;geo-panel&quot;</span> <span class="t-at">tabindex</span><span class="t-p">=</span><span class="t-s">&quot;0&quot;</span> <span class="t-at">role</span><span class="t-p">=</span><span class="t-s">&quot;region&quot;</span> <span class="t-at">aria-label</span><span class="t-p">=</span><span class="t-s">&quot;Product details (scrollable)&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;section</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;h4</span><span class="t-tag">&gt;</span>Intro<span class="t-tag">&lt;/h4</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;p</span><span class="t-tag">&gt;</span>The jsKjs patch cable connects any module to any other. It is the part of your rack you never think about until it is missing.<span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/section</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;section</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;h4</span><span class="t-tag">&gt;</span>Specs<span class="t-tag">&lt;/h4</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;p</span><span class="t-tag">&gt;</span>30 cm braided sleeve, gold contacts, rated for ten thousand insertions. Weighs less than the jQuery Color plugin.<span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/section</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;section</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;h4</span><span class="t-tag">&gt;</span>Reviews<span class="t-tag">&lt;/h4</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;p</span><span class="t-tag">&gt;</span>“Finally, a cable that does not need a build step.” — a reviewer who should know better.<span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/section</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;pre</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;out&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;geo-out&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;off&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/pre</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-16" aria-label="Copy JavaScript code">Copy</button><pre id="code-16" tabindex="0"><code><span class="t-k">const</span> $panel = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#geo-panel'</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-k">function</span> measure<span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">const</span> max = $panel<span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'scrollHeight'</span><span class="t-p">)</span> - $panel<span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'clientHeight'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">const</span> pct = max ? $panel<span class="t-f">.scrollTop</span><span class="t-p">(</span><span class="t-p">)</span> / max : <span class="t-n">0</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#geo-progress'</span><span class="t-p">)</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'width'</span><span class="t-p">,</span> <span class="t-p">(</span>pct * <span class="t-n">100</span><span class="t-p">)</span><span class="t-f">.toFixed</span><span class="t-p">(</span><span class="t-n">1</span><span class="t-p">)</span> + <span class="t-s">'%'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">const</span> off = $panel<span class="t-f">.offset</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#geo-out'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span>
+    <span class="t-s">'scrollTop() → '</span> + Math<span class="t-f">.round</span><span class="t-p">(</span>$panel<span class="t-f">.scrollTop</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">)</span> + <span class="t-s">'px of '</span> + max + <span class="t-s">'px\n'</span> +
+    <span class="t-s">'width()     → '</span> + Math<span class="t-f">.round</span><span class="t-p">(</span>$panel<span class="t-f">.width</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">)</span> + <span class="t-s">'px · height() → '</span> + Math<span class="t-f">.round</span><span class="t-p">(</span>$panel<span class="t-f">.height</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">)</span> + <span class="t-s">'px\n'</span> +
+    <span class="t-s">'offset()    → { top: '</span> + Math<span class="t-f">.round</span><span class="t-p">(</span>off.top<span class="t-p">)</span> + <span class="t-s">', left: '</span> + Math<span class="t-f">.round</span><span class="t-p">(</span>off.left<span class="t-p">)</span> + <span class="t-s">' }'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span>
+
+$panel<span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'scroll'</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-f">.throttle</span><span class="t-p">(</span>measure<span class="t-p">,</span> <span class="t-n">50</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span>window<span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'resize'</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-f">.throttle</span><span class="t-p">(</span>measure<span class="t-p">,</span> <span class="t-n">100</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#geo-nav'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-s">'[data-to]'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">const</span> $section = $panel<span class="t-f">.children</span><span class="t-p">(</span><span class="t-s">'section'</span><span class="t-p">)</span><span class="t-f">.eq</span><span class="t-p">(</span>+<span class="t-k">this</span>.dataset.to<span class="t-p">)</span><span class="t-p">;</span>
+  $panel<span class="t-f">.scrollTop</span><span class="t-p">(</span>$section<span class="t-f">.position</span><span class="t-p">(</span><span class="t-p">)</span>.top - <span class="t-n">8</span><span class="t-p">)</span><span class="t-p">;</span>    <span class="t-c">// position() is relative to the panel</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#geo-toggle'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  $panel<span class="t-f">.toggle</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">const</span> open = $panel<span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'display'</span><span class="t-p">)</span> !== <span class="t-s">'none'</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'aria-expanded'</span><span class="t-p">,</span> String<span class="t-p">(</span>open<span class="t-p">)</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span>open ? <span class="t-s">'Hide panel'</span> : <span class="t-s">'Show panel'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+measure<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Position a popover under a button</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-17" aria-label="Copy JavaScript code">Copy</button><pre id="code-17" tabindex="0"><code><span class="t-k">const</span> <span class="t-p">{</span> top<span class="t-p">,</span> left <span class="t-p">}</span> = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#help'</span><span class="t-p">)</span><span class="t-f">.offset</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#popover'</span><span class="t-p">)</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-p">{</span> top: top + <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#help'</span><span class="t-p">)</span><span class="t-f">.height</span><span class="t-p">(</span><span class="t-p">)</span> + <span class="t-n">8</span><span class="t-p">,</span> left <span class="t-p">}</span><span class="t-p">)</span><span class="t-f">.show</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div><h3>Back to top</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-18" aria-label="Copy JavaScript code">Copy</button><pre id="code-18" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#to-top'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-d">$</span><span class="t-p">(</span>window<span class="t-p">)</span><span class="t-f">.scrollTop</span><span class="t-p">(</span><span class="t-n">0</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span>window<span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'scroll'</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-f">.throttle</span><span class="t-p">(</span><span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#to-top'</span><span class="t-p">)</span><span class="t-f">.toggle</span><span class="t-p">(</span><span class="t-d">$</span><span class="t-p">(</span>window<span class="t-p">)</span><span class="t-f">.scrollTop</span><span class="t-p">(</span><span class="t-p">)</span> &gt; <span class="t-n">600</span><span class="t-p">)</span><span class="t-p">,</span> <span class="t-n">100</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">.width([value]) · .height([value]) → number | self</span><p>Measured size (from <code>getBoundingClientRect</code>) or set the CSS size. On <code>$(window)</code>, returns the viewport size.</p><a href="/docs/#css-width-height" style="font-size:14px">Reference: .width() / .height() →</a></div><div class="api-item"><span class="sig">.offset() → { top, left }</span><p>Position relative to the document, including scroll.</p><a href="/docs/#css-offset" style="font-size:14px">Reference: .offset() →</a></div><div class="api-item"><span class="sig">.position() → { top, left }</span><p>Position relative to the offset parent.</p><a href="/docs/#css-position" style="font-size:14px">Reference: .position() →</a></div><div class="api-item"><span class="sig">.scrollTop([value]) · .scrollLeft([value]) → number | self</span><p>Get or set scroll position. Works on elements and on <code>$(window)</code>.</p><a href="/docs/#css-scrolltop-scrollleft" style="font-size:14px">Reference: .scrollTop() / .scrollLeft() →</a></div><div class="api-item"><span class="sig">.show() · .hide() · .toggle([state]) → self</span><p>Instant visibility via <code>display</code>. <code>.hide()</code> remembers the previous display value so <code>.show()</code> restores it correctly.</p><a href="/docs/#css-show-hide-toggle" style="font-size:14px">Reference: .show() / .hide() / .toggle() →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from jQuery</strong><code>.innerWidth()</code>/<code>.outerWidth()</code> and the <code>.offset()</code> setter are not included; read <code>getBoundingClientRect()</code> or set <code>top/left</code> with <code>.css()</code>.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="core" href="/features/classes-and-css/"><span class="label">Core</span><h3>Classes &amp; CSS</h3><p>Toggle classes and set styles with addClass(), toggleClass() and css() — including CSS custom properties, which jsKjs reads and writes without adding px..</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="util" href="/features/debounce-and-throttle/"><span class="label">Utilities</span><h3>Debounce &amp; throttle</h3><p>See the difference between debounce and throttle in real time: raw, throttled and debounced event lanes driven by your pointer.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="motion" href="/features/classic-effects/"><span class="label">Motion</span><h3>Classic effects</h3><p>jQuery's fadeIn, fadeOut, fadeToggle, slideDown, slideUp, slideToggle and animate() — same names, milliseconds and callbacks — rebuilt on the jsKjs Motion engine..</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/classes-and-css/"><span class="dir">← Previous</span><strong>Classes &amp; CSS</strong></a>
+    <a class="next" href="/features/traversal/"><span class="dir">Next →</span><strong>DOM traversal</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Core features">
+    <div class="aside-group"><h2>Core · jQuery-compatible</h2><ul><li><a href="/features/selectors/">Selectors &amp; collections</a></li><li><a href="/features/dom-manipulation/">DOM manipulation</a></li><li><a href="/features/attributes-and-data/">Attributes, properties &amp; data</a></li><li><a href="/features/classes-and-css/">Classes &amp; CSS</a></li><li><a href="/features/geometry-and-scroll/" aria-current="page">Geometry, scroll &amp; visibility</a></li><li><a href="/features/traversal/">DOM traversal</a></li><li><a href="/features/events/">Events</a></li><li><a href="/features/event-delegation/">Event delegation</a></li><li><a href="/features/custom-events/">Custom events</a></li><li><a href="/features/ajax/">AJAX with $.ajax</a></li><li><a href="/features/fetch-shorthands/">$.get, $.post &amp; $.getJSON</a></li><li><a href="/features/load-fragments/">Loading HTML fragments</a></li><li><a href="/features/forms-and-serialize/">Forms &amp; serialization</a></li><li><a href="/features/timeouts-and-errors/">Timeouts, aborts &amp; retries</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#motion">Motion · GSAP-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/jquery/">What's ported from jQuery</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+const $panel = $('#geo-panel');
+
+function measure() {
+  const max = $panel.prop('scrollHeight') - $panel.prop('clientHeight');
+  const pct = max ? $panel.scrollTop() / max : 0;
+  $('#geo-progress').css('width', (pct * 100).toFixed(1) + '%');
+  const off = $panel.offset();
+  $('#geo-out').text(
+    'scrollTop() → ' + Math.round($panel.scrollTop()) + 'px of ' + max + 'px\n' +
+    'width()     → ' + Math.round($panel.width()) + 'px · height() → ' + Math.round($panel.height()) + 'px\n' +
+    'offset()    → { top: ' + Math.round(off.top) + ', left: ' + Math.round(off.left) + ' }');
+}
+
+$panel.on('scroll', $.throttle(measure, 50));
+$(window).on('resize', $.throttle(measure, 100));
+
+$('#geo-nav').on('click', '[data-to]', function () {
+  const $section = $panel.children('section').eq(+this.dataset.to);
+  $panel.scrollTop($section.position().top - 8);    // position() is relative to the panel
+});
+
+$('#geo-toggle').on('click', function () {
+  $panel.toggle();
+  const open = $panel.css('display') !== 'none';
+  $(this).attr('aria-expanded', String(open)).text(open ? 'Hide panel' : 'Show panel');
+});
+
+measure();
+</script>
+
+</body>
+</html>

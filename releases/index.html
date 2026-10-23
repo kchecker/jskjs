@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jsKjs Release Notes and Changelog</title>
+<meta name="description" content="jsKjs changelog. v1.0.0 (October 2026): jQuery-compatible core, Hyper declarative requests, Pulse reactivity, Motion animation — 8.1 KB gzipped, MIT licensed.">
+<link rel="canonical" href="https://jskjs.org/releases/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Release notes">
+<meta property="og:description" content="jsKjs changelog. v1.0.0 (October 2026): jQuery-compatible core, Hyper declarative requests, Pulse reactivity, Motion animation — 8.1 KB gzipped, MIT licensed.">
+<meta property="og:url" content="https://jskjs.org/releases/">
+<meta property="og:image" content="https://jskjs.org/assets/og/releases.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Release notes — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Release notes">
+<meta name="twitter:description" content="jsKjs changelog. v1.0.0 (October 2026): jQuery-compatible core, Hyper declarative requests, Pulse reactivity, Motion animation — 8.1 KB gzipped, MIT licensed.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/releases.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Release notes","description":"jsKjs changelog. v1.0.0 (October 2026): jQuery-compatible core, Hyper declarative requests, Pulse reactivity, Motion animation — 8.1 KB gzipped, MIT licensed.","url":"https://jskjs.org/releases/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Releases","item":"https://jskjs.org/releases/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="motion">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/" aria-current="page">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/" aria-current="page">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><span aria-current="page">Releases</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Releases</p>
+  <h1>Release notes</h1>
+  <p class="lede">jsKjs follows semantic versioning. The documented API is stable within a major version.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div><div class="wrap section" style="max-width:900px"><article class="plate screws" data-mod="motion">
+  <p class="label">v1.0.0 · October 2026 · first public release</p>
+  <div class="prose" style="margin-top:16px">
+  <h2 style="margin-top:0">Core — jQuery-compatible</h2>
+  <p>Native <code>querySelectorAll</code> selectors; Array-subclass collections; content, attribute, class, CSS (including custom properties), geometry and WeakMap-backed data methods; traversal with selector/function/element matchers; insertion and removal; events with delegation, namespaces, <code>.one()</code> and custom-event payloads; fetch-based <code>$.ajax</code>, <code>$.get</code>, <code>$.post</code>, <code>$.getJSON</code>, <code>.load()</code>, <code>.serialize()</code>, <code>.serializeObject()</code>.</p>
+  <h2>Hyper — htmx-style</h2>
+  <p><code>kj-get/post/put/patch/delete</code>, <code>kj-target</code>, eight <code>kj-swap</code> strategies, <code>kj-trigger</code> (events, <code>delay:</code>, <code>load</code>, <code>revealed</code>, <code>every Ns</code>), <code>kj-confirm</code>, <code>kj-indicator</code> with automatic <code>aria-busy</code>, <code>kj-include</code>, <code>kj-vals</code>, <code>kj-push-url</code>; lifecycle events <code>kj:before/after/error/load</code>; automatic wiring of new content.</p>
+  <h2>Pulse — Alpine-style</h2>
+  <p><code>kj-data</code> with <code>init(el)</code>, <code>kj-text</code>, <code>kj-html</code>, <code>kj-show</code>, <code>kj-model</code> (text, number, range, select, checkbox, radio), <code>@event</code> with <code>.prevent/.stop/.enter/.escape</code>, <code>:attr</code> binding, <code>$.component()</code> with arguments, <code>$.store()</code>, <code>$.reactive()</code>.</p>
+  <h2>Motion — GSAP-style</h2>
+  <p><code>$.to/$.from/$.fromTo</code> with independent transforms, ten easings (<code>$.easings</code>) or custom functions, <code>stagger</code>, Promises; <code>$.timeline()</code> with <code>'&lt;'</code> and <code>'+=N'</code> positions, <code>paused</code>, <code>play()</code>, <code>onComplete</code>; classic <code>fadeIn/fadeOut/fadeToggle/slideDown/slideUp/slideToggle/animate</code>.</p>
+  <h2>Hardening before launch</h2>
+  <ul>
+    <li>Deep <code>$.extend</code> ignores <code>__proto__</code>, <code>constructor</code> and <code>prototype</code> keys (prototype-pollution fix, with regression test).</li>
+    <li>HTML strings with surrounding whitespace are parsed as HTML, not selectors.</li>
+    <li>Hyper sends URL-encoded bodies (multipart only for file uploads) and includes a named input's own value.</li>
+    <li><code>kj:after</code> fires before the swap and <code>kj:load</code> reaches document listeners even after <code>outerHTML</code> swaps.</li>
+    <li>Polling stops when its element is removed.</li>
+    <li><code>kj-model</code> supports radio buttons and accepts programmatic changes on focused fields.</li>
+    <li>Callback-style AJAX no longer reports unhandled promise rejections.</li>
+    <li><code>.not()</code>/<code>.is()</code> accept functions and elements; <code>.css()</code> reads and writes custom properties without <code>px</code>.</li>
+    <li>Timelines start <code>'&lt;'</code> steps together with the previous step; zero-duration tweens are safe.</li>
+  </ul>
+  <h2>Footprint & support</h2>
+  <p>21.6 KB minified, 8.1 KB gzipped, zero dependencies. Chrome/Edge/Firefox 90+, Safari 15+. Tested with 47 unit tests and real-browser checks of every demo on this site.</p>
+  </div></article>
+  <p style="margin-top:24px">Report issues and follow future releases on <a href="https://github.com/kchecker/jskjs" rel="noopener">GitHub</a>.</p></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+
+
+</body>
+</html>

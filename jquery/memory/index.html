@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jQuery .data() Memory Leaks vs WeakMap Storage — jsKjs</title>
+<meta name="description" content="Older jQuery kept element data and handlers in a central cache that could leak when nodes were removed outside jQuery. Modern jQuery improved this; jsKjs uses WeakMap so cleanup is a language guarantee.">
+<link rel="canonical" href="https://jskjs.org/jquery/memory/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Data in the wrong place">
+<meta property="og:description" content="Older jQuery kept element data and handlers in a central cache that could leak when nodes were removed outside jQuery. Modern jQuery improved this; jsKjs uses WeakMap so cleanup is a language guarantee.">
+<meta property="og:url" content="https://jskjs.org/jquery/memory/">
+<meta property="og:image" content="https://jskjs.org/assets/og/jquery-memory.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Data in the wrong place — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Data in the wrong place">
+<meta name="twitter:description" content="Older jQuery kept element data and handlers in a central cache that could leak when nodes were removed outside jQuery. Modern jQuery improved this; jsKjs uses WeakMap so cleanup is a language guarantee.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/jquery-memory.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"Article","headline":"Data in the wrong place","description":"Older jQuery kept element data and handlers in a central cache that could leak when nodes were removed outside jQuery. Modern jQuery improved this; jsKjs uses WeakMap so cleanup is a language guarantee.","url":"https://jskjs.org/jquery/memory/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"isPartOf":{"@type":"CreativeWorkSeries","name":"What aged in jQuery","url":"https://jskjs.org/jquery/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"What aged in jQuery","item":"https://jskjs.org/jquery/"},{"@type":"ListItem","position":3,"name":"Data in the wrong place","item":"https://jskjs.org/jquery/memory/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="hyper">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/" aria-current="page">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/" aria-current="page">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/jquery/">What aged in jQuery</a></li><li><span aria-current="page">Data in the wrong place</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">What aged in jQuery · 4 of 8</p>
+  <h1>Data in the wrong place</h1>
+  <p class="lede">Where you keep data about elements decides whether it leaks. jQuery's answer improved over the years; JavaScript now has a built-in one.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+    <h2>Why it made sense</h2><p>With no way to attach arbitrary data to DOM nodes safely, early jQuery kept a central cache keyed by an ID stamped on each element. It worked — as long as every removal went through jQuery.</p>
+    <h2>What changed</h2><p>In older versions, removing nodes with native APIs (or another library) could leave their entries — data and event handlers — behind in that cache. Modern jQuery keeps data on a property of the element itself, which fixed most leaks, but it still writes an expando property onto your nodes, and teardown habits such as "always call <code>.remove()</code>" linger in codebases.</p>
+  </div>
+  
+  <div class="prose"><h2>What jsKjs does instead</h2><p>jsKjs stores per-element data and handler records in <code>WeakMap</code>s keyed by the element. A <code>WeakMap</code> entry cannot keep its key alive, so when an element is gone — however it was removed — its data goes too. Nothing is written onto your DOM nodes.</p></div>
+  <div class="verdict"><div><h3>jQuery</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-224" aria-label="Copy JavaScript code">Copy</button><pre id="code-224" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#chart'</span><span class="t-p">)</span><span class="t-f">.data</span><span class="t-p">(</span><span class="t-s">'series'</span><span class="t-p">,</span> hugeArray<span class="t-p">)</span><span class="t-p">;</span>
+document<span class="t-f">.getElementById</span><span class="t-p">(</span><span class="t-s">'chart'</span><span class="t-p">)</span><span class="t-f">.remove</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// older jQuery: the cache entry could outlive the node</span></code></pre></div></div><div><h3>jsKjs</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-225" aria-label="Copy JavaScript code">Copy</button><pre id="code-225" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#chart'</span><span class="t-p">)</span><span class="t-f">.data</span><span class="t-p">(</span><span class="t-s">'series'</span><span class="t-p">,</span> hugeArray<span class="t-p">)</span><span class="t-p">;</span>        <span class="t-c">// stored in a WeakMap</span>
+document<span class="t-f">.getElementById</span><span class="t-p">(</span><span class="t-s">'chart'</span><span class="t-p">)</span><span class="t-f">.remove</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// node and data are collected together</span></code></pre></div></div></div>
+  <h2 style="margin-top:40px;font-size:1.2rem">Sources</h2><ul style="margin-top:10px"><li><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WeakMap" rel="noopener">MDN — WeakMap</a></li></ul>
+  <nav class="pager" aria-label="Previous and next essay">
+    <a class="prev" href="/jquery/promises/"><span class="dir">← Essay 3</span><strong>jqXHR and the almost-promise</strong></a>
+    <a class="next" href="/jquery/state/"><span class="dir">Essay 5 →</span><strong>No model, only the DOM</strong></a>
+  </nav>
+</article>
+<aside class="aside" aria-label="Series"><div class="aside-group"><h2>The series</h2><ul><li><a href="/jquery/weight/">1. The weight of compatibility</a></li><li><a href="/jquery/selector-engine/">2. A selector engine the browser already has</a></li><li><a href="/jquery/promises/">3. jqXHR and the almost-promise</a></li><li><a href="/jquery/memory/" aria-current="page">4. Data in the wrong place</a></li><li><a href="/jquery/state/">5. No model, only the DOM</a></li><li><a href="/jquery/animation/">6. .animate() stopped at numbers</a></li><li><a href="/jquery/ajax-boilerplate/">7. A handler for every endpoint</a></li><li><a href="/jquery/security/">8. Footguns: HTML strings and deep merges</a></li></ul></div>
+<div class="aside-group"><h2>Next steps</h2><ul><li><a href="/migrate/">Migrate from jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/start/">Getting started</a></li></ul></div></aside>
+</div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+
+
+</body>
+</html>

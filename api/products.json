@@ -1,0 +1,8 @@
+[
+  { "id": 1, "name": "Tween Engine Tee",   "price": 24, "tag": "apparel" },
+  { "id": 2, "name": "Selector Socks",     "price": 12, "tag": "apparel" },
+  { "id": 3, "name": "Stagger Sticker Pack","price": 6,  "tag": "stickers" },
+  { "id": 4, "name": "Easing Mug",         "price": 18, "tag": "kitchen" },
+  { "id": 5, "name": "Delegation Deskmat", "price": 32, "tag": "desk" },
+  { "id": 6, "name": "WeakMap Water Bottle","price": 21, "tag": "kitchen" }
+]

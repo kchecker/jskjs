@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AJAX Error Handling: Timeouts, Abort and Retry with Backoff — jsKjs</title>
+<meta name="description" content="Handle real-world network failure: HTTP errors with status codes, automatic timeouts, manual abort(), and a retry-with-backoff helper — demonstrated against live endpoints.">
+<link rel="canonical" href="https://jskjs.org/features/timeouts-and-errors/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Timeouts, aborts &amp; retries">
+<meta property="og:description" content="Handle real-world network failure: HTTP errors with status codes, automatic timeouts, manual abort(), and a retry-with-backoff helper — demonstrated against live endpoints.">
+<meta property="og:url" content="https://jskjs.org/features/timeouts-and-errors/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-timeouts-and-errors.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Timeouts, aborts &amp; retries — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Timeouts, aborts &amp; retries">
+<meta name="twitter:description" content="Handle real-world network failure: HTTP errors with status codes, automatic timeouts, manual abort(), and a retry-with-backoff helper — demonstrated against live endpoints.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-timeouts-and-errors.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Timeouts, aborts & retries","description":"Handle real-world network failure: HTTP errors with status codes, automatic timeouts, manual abort(), and a retry-with-backoff helper — demonstrated against live endpoints.","url":"https://jskjs.org/features/timeouts-and-errors/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Core","item":"https://jskjs.org/features/#core"},{"@type":"ListItem","position":4,"name":"Timeouts, aborts & retries","item":"https://jskjs.org/features/timeouts-and-errors/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="core">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#core">Core</a></li><li><span aria-current="page">Timeouts, aborts &amp; retries</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Core · jQuery-compatible</p>
+  <h1>Timeouts, aborts &amp; retries</h1>
+  <p class="lede">Networks fail. jsKjs gives you real status codes, automatic timeouts that abort the request, a manual <code>.abort()</code>, and everything you need to retry politely.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<p>Any non-2xx response rejects with an <code>Error</code> that carries <code>.status</code> and the parsed body as <code>.data</code>. A <code>timeout</code> option aborts the underlying <code>fetch</code> through an <code>AbortController</code>, and the rejection's <code>name</code> is <code>'AbortError'</code>. Call <code>.abort()</code> on the returned promise to cancel yourself — useful when a newer search makes an older one irrelevant.</p>
+<p>The flaky endpoint below fails about 60% of the time at random, on the server, so the retry demo is honest: sometimes it succeeds first try, sometimes it needs three.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Failure lab</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><div class="row">
+  <button type="button" id="te-404">GET a 404</button>
+  <button type="button" id="te-500">GET a 500</button>
+  <button type="button" id="te-timeout">Timeout 800 ms vs 3 s server</button>
+  <button type="button" id="te-abort">Abort after 400 ms</button>
+  <button type="button" id="te-retry">Retry with backoff</button>
+</div>
+<pre class="out" id="te-out" aria-live="polite">Pick a failure.</pre></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-44" aria-label="Copy HTML code">Copy</button><pre id="code-44" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;te-404&quot;</span><span class="t-tag">&gt;</span>GET a 404<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;te-500&quot;</span><span class="t-tag">&gt;</span>GET a 500<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;te-timeout&quot;</span><span class="t-tag">&gt;</span>Timeout 800 ms vs 3 s server<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;te-abort&quot;</span><span class="t-tag">&gt;</span>Abort after 400 ms<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;te-retry&quot;</span><span class="t-tag">&gt;</span>Retry with backoff<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;pre</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;out&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;te-out&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;polite&quot;</span><span class="t-tag">&gt;</span>Pick a failure.<span class="t-tag">&lt;/pre</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-45" aria-label="Copy JavaScript code">Copy</button><pre id="code-45" tabindex="0"><code><span class="t-k">const</span> out = msg =&gt; <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#te-out'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span>msg<span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#te-404'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt;
+  <span class="t-d">$</span><span class="t-f">.ajax</span><span class="t-p">(</span><span class="t-s">'/api/fail.php?code=404'</span><span class="t-p">)</span><span class="t-f">.fail</span><span class="t-p">(</span>err =&gt; out<span class="t-p">(</span><span class="t-s">'.fail() → status '</span> + err.status + <span class="t-s">': '</span> + err.data<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#te-500'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">async</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+  <span class="t-k">try</span> <span class="t-p">{</span> <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.get</span><span class="t-p">(</span><span class="t-s">'/api/fail.php?code=500'</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span>
+  <span class="t-k">catch</span> <span class="t-p">(</span>err<span class="t-p">)</span> <span class="t-p">{</span> out<span class="t-p">(</span><span class="t-s">'try/catch → status '</span> + err.status<span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#te-timeout'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+  out<span class="t-p">(</span><span class="t-s">'Waiting up to 800 ms…'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-f">.ajax</span><span class="t-p">(</span><span class="t-p">{</span> url: <span class="t-s">'/api/slow.php?ms=3000'</span><span class="t-p">,</span> timeout: <span class="t-n">800</span> <span class="t-p">}</span><span class="t-p">)</span>
+    <span class="t-f">.fail</span><span class="t-p">(</span>err =&gt; out<span class="t-p">(</span>err.name + <span class="t-s">' — gave up after 800 ms; the server needed 3 s.'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#te-abort'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+  out<span class="t-p">(</span><span class="t-s">'Started; aborting in 400 ms…'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">const</span> req = <span class="t-d">$</span><span class="t-f">.ajax</span><span class="t-p">(</span><span class="t-s">'/api/slow.php?ms=3000'</span><span class="t-p">)</span><span class="t-p">;</span>
+  req<span class="t-f">.fail</span><span class="t-p">(</span>err =&gt; out<span class="t-p">(</span><span class="t-s">'.abort() → '</span> + err.name<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  setTimeout<span class="t-p">(</span><span class="t-p">(</span><span class="t-p">)</span> =&gt; req<span class="t-f">.abort</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">,</span> <span class="t-n">400</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-k">async</span> <span class="t-k">function</span> withRetry<span class="t-p">(</span>url<span class="t-p">,</span> tries = <span class="t-n">4</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">for</span> <span class="t-p">(</span><span class="t-k">let</span> i = <span class="t-n">1</span><span class="t-p">;</span> i &lt;= tries<span class="t-p">;</span> i++<span class="t-p">)</span> <span class="t-p">{</span>
+    <span class="t-k">try</span> <span class="t-p">{</span> <span class="t-k">return</span> <span class="t-p">{</span> data: <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.get</span><span class="t-p">(</span>url<span class="t-p">)</span><span class="t-p">,</span> attempt: i <span class="t-p">}</span><span class="t-p">;</span> <span class="t-p">}</span>
+    <span class="t-k">catch</span> <span class="t-p">(</span>err<span class="t-p">)</span> <span class="t-p">{</span>
+      out<span class="t-p">(</span><span class="t-s">'Attempt '</span> + i + <span class="t-s">' → '</span> + err.status + <span class="t-p">(</span>i &lt; tries ? <span class="t-s">', retrying in '</span> + <span class="t-n">200</span> * <span class="t-n">2</span> ** i + <span class="t-s">' ms…'</span> : <span class="t-s">''</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+      <span class="t-k">if</span> <span class="t-p">(</span>i === tries<span class="t-p">)</span> <span class="t-k">throw</span> err<span class="t-p">;</span>
+      <span class="t-k">await</span> <span class="t-k">new</span> Promise<span class="t-p">(</span>r =&gt; setTimeout<span class="t-p">(</span>r<span class="t-p">,</span> <span class="t-n">200</span> * <span class="t-n">2</span> ** i<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+    <span class="t-p">}</span>
+  <span class="t-p">}</span>
+<span class="t-p">}</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#te-retry'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">async</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+  <span class="t-k">try</span> <span class="t-p">{</span>
+    <span class="t-k">const</span> <span class="t-p">{</span> data<span class="t-p">,</span> attempt <span class="t-p">}</span> = <span class="t-k">await</span> withRetry<span class="t-p">(</span><span class="t-s">'/api/flaky.php'</span><span class="t-p">)</span><span class="t-p">;</span>
+    out<span class="t-p">(</span><span class="t-s">'Succeeded on attempt '</span> + attempt + <span class="t-s">': '</span> + data<span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-p">}</span> <span class="t-k">catch</span> <span class="t-p">(</span>err<span class="t-p">)</span> <span class="t-p">{</span> out<span class="t-p">(</span><span class="t-s">'Gave up after 4 attempts.'</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Cancel stale searches</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-46" aria-label="Copy JavaScript code">Copy</button><pre id="code-46" tabindex="0"><code><span class="t-k">let</span> pending<span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#q'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'input'</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-f">.debounce</span><span class="t-p">(</span><span class="t-k">async</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  pending?<span class="t-f">.abort</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>                       <span class="t-c">// cancel the previous request</span>
+  pending = <span class="t-d">$</span><span class="t-f">.get</span><span class="t-p">(</span><span class="t-s">'/api/search'</span><span class="t-p">,</span> <span class="t-p">{</span> q: <span class="t-k">this</span>.value <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">try</span> <span class="t-p">{</span> <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#results'</span><span class="t-p">)</span><span class="t-f">.html</span><span class="t-p">(</span><span class="t-k">await</span> pending<span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span> <span class="t-k">catch</span> <span class="t-p">(</span>e<span class="t-p">)</span> <span class="t-p">{</span> <span class="t-c">/* aborted or failed */</span> <span class="t-p">}</span>
+<span class="t-p">}</span><span class="t-p">,</span> <span class="t-n">200</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">$.ajax(url | options [, options]) → Promise</span><p>Full-control requests. Options: <code>url, method</code> (or jQuery’s <code>type</code>), <code>data</code> (object → urlencoded or querystring; <code>FormData</code>; string), <code>json: true</code> (send JSON body), <code>dataType</code> (’json’ | ’auto’), <code>headers</code>, <code>timeout</code> (ms, auto-aborts), <code>credentials</code>, and callbacks <code>success(data, status, res)</code>, <code>error(err)</code>, <code>complete()</code>. The promise also has <code>.abort()</code>.</p><a href="/docs/#ajax-ajax" style="font-size:14px">Reference: $.ajax() →</a></div></div>
+  
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="core" href="/features/ajax/"><span class="label">Core</span><h3>AJAX with $.ajax</h3><p>jQuery's $.ajax rebuilt on fetch: native Promises and async/await, JSON bodies, headers, timeouts with auto-abort, plus success/error callbacks and .done/.fail for migration..</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="hyper" href="/features/lifecycle-events/"><span class="label">Hyper</span><h3>Request lifecycle events</h3><p>Every declarative request emits bubbling lifecycle events — kj:before, kj:after, kj:error and kj:load — so one document-level listener can drive a page-wide progress bar or error toast..</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="util" href="/features/debounce-and-throttle/"><span class="label">Utilities</span><h3>Debounce &amp; throttle</h3><p>See the difference between debounce and throttle in real time: raw, throttled and debounced event lanes driven by your pointer.</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/forms-and-serialize/"><span class="dir">← Previous</span><strong>Forms &amp; serialization</strong></a>
+    <a class="next" href="/features/declarative-requests/"><span class="dir">Next →</span><strong>Declarative requests</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Core features">
+    <div class="aside-group"><h2>Core · jQuery-compatible</h2><ul><li><a href="/features/selectors/">Selectors &amp; collections</a></li><li><a href="/features/dom-manipulation/">DOM manipulation</a></li><li><a href="/features/attributes-and-data/">Attributes, properties &amp; data</a></li><li><a href="/features/classes-and-css/">Classes &amp; CSS</a></li><li><a href="/features/geometry-and-scroll/">Geometry, scroll &amp; visibility</a></li><li><a href="/features/traversal/">DOM traversal</a></li><li><a href="/features/events/">Events</a></li><li><a href="/features/event-delegation/">Event delegation</a></li><li><a href="/features/custom-events/">Custom events</a></li><li><a href="/features/ajax/">AJAX with $.ajax</a></li><li><a href="/features/fetch-shorthands/">$.get, $.post &amp; $.getJSON</a></li><li><a href="/features/load-fragments/">Loading HTML fragments</a></li><li><a href="/features/forms-and-serialize/">Forms &amp; serialization</a></li><li><a href="/features/timeouts-and-errors/" aria-current="page">Timeouts, aborts &amp; retries</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#motion">Motion · GSAP-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/jquery/">What's ported from jQuery</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+const out = msg => $('#te-out').text(msg);
+
+$('#te-404').on('click', () =>
+  $.ajax('/api/fail.php?code=404').fail(err => out('.fail() → status ' + err.status + ': ' + err.data)));
+
+$('#te-500').on('click', async () => {
+  try { await $.get('/api/fail.php?code=500'); }
+  catch (err) { out('try/catch → status ' + err.status); }
+});
+
+$('#te-timeout').on('click', () => {
+  out('Waiting up to 800 ms…');
+  $.ajax({ url: '/api/slow.php?ms=3000', timeout: 800 })
+    .fail(err => out(err.name + ' — gave up after 800 ms; the server needed 3 s.'));
+});
+
+$('#te-abort').on('click', () => {
+  out('Started; aborting in 400 ms…');
+  const req = $.ajax('/api/slow.php?ms=3000');
+  req.fail(err => out('.abort() → ' + err.name));
+  setTimeout(() => req.abort(), 400);
+});
+
+async function withRetry(url, tries = 4) {
+  for (let i = 1; i <= tries; i++) {
+    try { return { data: await $.get(url), attempt: i }; }
+    catch (err) {
+      out('Attempt ' + i + ' → ' + err.status + (i < tries ? ', retrying in ' + 200 * 2 ** i + ' ms…' : ''));
+      if (i === tries) throw err;
+      await new Promise(r => setTimeout(r, 200 * 2 ** i));
+    }
+  }
+}
+
+$('#te-retry').on('click', async () => {
+  try {
+    const { data, attempt } = await withRetry('/api/flaky.php');
+    out('Succeeded on attempt ' + attempt + ': ' + data);
+  } catch (err) { out('Gave up after 4 attempts.'); }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jsKjs vs jQuery 4: API Compatibility, Size and Differences — jsKjs</title>
+<meta name="description" content="jsKjs vs jQuery 4.0: which jQuery APIs are supported, which behave differently, which are missing, and when you should keep using jQuery. Measured sizes and migration notes.">
+<link rel="canonical" href="https://jskjs.org/compare/jquery/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="jsKjs vs jQuery">
+<meta property="og:description" content="jsKjs vs jQuery 4.0: which jQuery APIs are supported, which behave differently, which are missing, and when you should keep using jQuery. Measured sizes and migration notes.">
+<meta property="og:url" content="https://jskjs.org/compare/jquery/">
+<meta property="og:image" content="https://jskjs.org/assets/og/compare-jquery.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="jsKjs vs jQuery — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="jsKjs vs jQuery">
+<meta name="twitter:description" content="jsKjs vs jQuery 4.0: which jQuery APIs are supported, which behave differently, which are missing, and when you should keep using jQuery. Measured sizes and migration notes.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/compare-jquery.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"jsKjs vs jQuery","description":"jsKjs vs jQuery 4.0: which jQuery APIs are supported, which behave differently, which are missing, and when you should keep using jQuery. Measured sizes and migration notes.","url":"https://jskjs.org/compare/jquery/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Compare","item":"https://jskjs.org/compare/"},{"@type":"ListItem","position":3,"name":"vs jQuery","item":"https://jskjs.org/compare/jquery/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="core">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/" aria-current="page">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/" aria-current="page">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/compare/">Compare</a></li><li><span aria-current="page">vs jQuery</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Compare · Core · jQuery-compatible</p>
+  <h1>jsKjs vs jQuery</h1>
+  <p class="lede">jsKjs implements the jQuery API most code actually uses — on native browser features — and adds three more modules. Here is exactly where it matches, differs and stops.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div><div class="wrap section">
+  <div class="grid g2">
+    <div class="plate mod-top" data-mod="core"><span class="label">Choose jsKjs when…</span><ul style="margin-top:12px;padding-left:1.2em"><li style="margin-top:6px">You target evergreen browsers and want the jQuery API without the legacy weight.</li><li style="margin-top:6px">You also need declarative requests, reactive state or real animation — without three more libraries.</li><li style="margin-top:6px">You want native Promises, <code>fetch</code> and WeakMap-based data by default.</li></ul></div>
+    <div class="plate mod-top" data-mod="util"><span class="label">Choose jQuery when…</span><ul style="margin-top:12px;padding-left:1.2em"><li style="margin-top:6px">You must support Internet Explorer 11 or other pre-2021 browsers.</li><li style="margin-top:6px">You depend on jQuery plugins that use internals (<code>$.fx</code>, <code>$.Deferred</code>, ajax prefilters/transports).</li><li style="margin-top:6px">You rely heavily on the fx queue (<code>.stop()</code>, <code>.delay()</code>, <code>.queue()</code>).</li></ul></div>
+  </div>
+  <h2 style="margin-top:56px">Feature by feature</h2>
+  <p class="muted" style="margin-top:8px">Compared with jQuery 4.0.0. ✓ works the same · ◐ supported with differences · ✗ not included.</p>
+  <div class="table-wrap"><table><caption class="sr-only">jQuery features and jsKjs support</caption><thead><tr><th scope="col">jQuery</th><th scope="col">jsKjs</th><th scope="col">Notes</th></tr></thead><tbody>
+  <tr><td>$() selectors, context, HTML creation, DOM ready</td><td class="yes" style="white-space:nowrap">✓ Yes</td><td>Native querySelectorAll; jQuery-only pseudos (:visible, :first) are not CSS.</td></tr><tr><td>Collection basics: .each .get .eq .first .last .index .add</td><td class="yes" style="white-space:nowrap">✓ Yes</td><td>Collections are real Arrays; native .map/.slice return plain arrays.</td></tr><tr><td>.html .text .val</td><td class="yes" style="white-space:nowrap">✓ Yes</td><td>.val() on a checkbox returns a boolean.</td></tr><tr><td>.attr .removeAttr .prop .data .removeData</td><td class="yes" style="white-space:nowrap">✓ Yes</td><td>.data() parses data-* JSON; storage is a WeakMap.</td></tr><tr><td>.addClass .removeClass .toggleClass .hasClass .css</td><td class="yes" style="white-space:nowrap">✓ Yes</td><td>.css() also reads and writes custom properties.</td></tr><tr><td>.width .height .offset .position .scrollTop .scrollLeft</td><td class="partial" style="white-space:nowrap">◐ Partial</td><td>No .innerWidth/.outerWidth or .offset() setter.</td></tr><tr><td>.show .hide .toggle</td><td class="yes" style="white-space:nowrap">✓ Yes</td><td></td></tr><tr><td>.append .prepend .before .after .appendTo .prependTo .wrap .remove .detach .empty .clone .replaceWith</td><td class="yes" style="white-space:nowrap">✓ Yes</td><td></td></tr><tr><td>.wrapAll .wrapInner .unwrap</td><td class="no" style="white-space:nowrap">✗ No</td><td></td></tr><tr><td>.find .filter .not .is .closest .parent .parents .children .siblings .next .prev</td><td class="yes" style="white-space:nowrap">✓ Yes</td><td>.filter/.not/.is accept selectors, elements or functions.</td></tr><tr><td>.nextAll .prevAll .nextUntil .prevUntil .parentsUntil .has .contents .end .addBack .slice</td><td class="no" style="white-space:nowrap">✗ No</td><td></td></tr><tr><td>.on .off .one .trigger, delegation, namespaces, shortcuts, .hover</td><td class="yes" style="white-space:nowrap">✓ Yes</td><td>Handlers receive the native Event; .trigger takes one payload object.</td></tr><tr><td>.bind .unbind .live .delegate .die</td><td class="no" style="white-space:nowrap">✗ No</td><td>Removed from modern jQuery too — use .on().</td></tr><tr><td>$.ajax $.get $.post $.getJSON .load .serialize</td><td class="partial" style="white-space:nowrap">◐ Partial</td><td>Promise-based (fetch), not jqXHR; callbacks and .done/.fail/.always still work.</td></tr><tr><td>$.ajaxSetup, prefilters, transports, JSONP, $.getScript, .serializeArray</td><td class="no" style="white-space:nowrap">✗ No</td><td></td></tr><tr><td>.fadeIn .fadeOut .fadeToggle .slideDown .slideUp .slideToggle .animate</td><td class="yes" style="white-space:nowrap">✓ Yes</td><td>Same names, milliseconds and callbacks; runs on the Motion engine.</td></tr><tr><td>.stop .finish .delay .queue .dequeue .fadeTo, $.fx</td><td class="no" style="white-space:nowrap">✗ No</td><td>Use await, timelines or setTimeout.</td></tr><tr><td>$.Deferred $.Callbacks $.when</td><td class="no" style="white-space:nowrap">✗ No</td><td>Use native Promises.</td></tr><tr><td>$.each $.map $.extend $.param $.parseHTML $.trim $.isArray $.isFunction $.isPlainObject $.noConflict</td><td class="yes" style="white-space:nowrap">✓ Yes</td><td>Deep $.extend is prototype-pollution safe.</td></tr><tr><td>$.grep $.inArray $.merge $.makeArray $.type $.now</td><td class="no" style="white-space:nowrap">✗ No</td><td>Use Array methods and Date.now().</td></tr><tr><td>$.fn plugins</td><td class="partial" style="white-space:nowrap">◐ Partial</td><td>$.fn is the collection prototype, so plugins built on supported APIs work.</td></tr><tr><td>Browser support</td><td class="partial" style="white-space:nowrap">◐ Partial</td><td>jsKjs: evergreen only. jQuery 4: also IE11 and older Safari/Firefox.</td></tr>
+  </tbody></table></div>
+  <h2 style="margin-top:48px">Writing a tiny plugin still works</h2><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-234" aria-label="Copy JavaScript code">Copy</button><pre id="code-234" tabindex="0"><code><span class="t-d">$</span>.fn.highlight = <span class="t-k">function</span> <span class="t-p">(</span>color = <span class="t-s">'yellow'</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">return</span> <span class="t-k">this</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'background'</span><span class="t-p">,</span> color<span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// return this to stay chainable</span>
+<span class="t-p">}</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.match'</span><span class="t-p">)</span><span class="t-f">.highlight</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+  <p style="margin-top:30px"><a class="btn" href="/features/#core">See every Core feature live →</a></p>
+</div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$.to(): GSAP-style Tweens with Transforms, Easing and Promises — jsKjs</title>
+<meta name="description" content="Animate any numeric CSS property and transforms (x, y, rotate, scale) with $.to(). Duration in seconds, professional easings, and a Promise you can await. Interactive demo.">
+<link rel="canonical" href="https://jskjs.org/features/tweens/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Tweens">
+<meta property="og:description" content="Animate any numeric CSS property and transforms (x, y, rotate, scale) with $.to(). Duration in seconds, professional easings, and a Promise you can await. Interactive demo.">
+<meta property="og:url" content="https://jskjs.org/features/tweens/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-tweens.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Tweens — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tweens">
+<meta name="twitter:description" content="Animate any numeric CSS property and transforms (x, y, rotate, scale) with $.to(). Duration in seconds, professional easings, and a Promise you can await. Interactive demo.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-tweens.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+.arena { position:relative; height:280px; border-radius:14px; background:
+  radial-gradient(circle, var(--line) 1.2px, transparent 1.5px) 0 0 / 22px 22px, var(--surface-2); overflow:hidden; cursor:crosshair; margin-top:14px; }
+.ball { position:absolute; top:0; left:0; width:44px; height:44px; border-radius:50%; background:var(--motion); box-shadow:0 10px 24px -8px rgba(255,178,36,.8); }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Tweens","description":"Animate any numeric CSS property and transforms (x, y, rotate, scale) with $.to(). Duration in seconds, professional easings, and a Promise you can await. Interactive demo.","url":"https://jskjs.org/features/tweens/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Motion","item":"https://jskjs.org/features/#motion"},{"@type":"ListItem","position":4,"name":"Tweens","item":"https://jskjs.org/features/tweens/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="motion">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#motion">Motion</a></li><li><span aria-current="page">Tweens</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Motion · GSAP-style</p>
+  <h1>Tweens</h1>
+  <p class="lede"><code>$.to(target, { x: 200, rotate: 15, duration: .6, ease: 'back.out' })</code>. Seconds, not milliseconds; transforms, not left/top; a Promise you can <code>await</code>.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<h2>The tween engine</h2>
+<p>Every frame runs on <code>requestAnimationFrame</code>. Transform shorthands — <code>x</code>, <code>y</code>, <code>rotate</code>, <code>scale</code>, <code>scaleX</code>, <code>scaleY</code>, <code>skewX</code>, <code>skewY</code> — are tracked per element and composed into a single <code>transform</code> write per frame, so animating <code>x</code> never clobbers a <code>rotate</code> set earlier.</p>
+<p>Any other numeric CSS property (<code>opacity</code>, <code>width</code>, <code>margin-left</code>, <code>stroke-dashoffset</code>) tweens from its computed value. Options: <code>duration</code> (seconds, default 0.4), <code>delay</code>, <code>ease</code>, <code>stagger</code> and <code>onComplete</code>.</p>
+<p>Respect <code>prefers-reduced-motion</code>: check <code>matchMedia('(prefers-reduced-motion: reduce)')</code> and skip or shorten decorative tweens.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Click anywhere — the ball tweens there</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><div class="row">
+  <div class="field" style="min-width:180px"><label for="tw-ease">Ease</label><select id="tw-ease"></select></div>
+  <div class="field" style="min-width:200px"><label for="tw-dur">Duration: <span id="tw-dur-v">0.7</span>s</label><input id="tw-dur" type="range" min="0.2" max="2" step="0.1" value="0.7"></div>
+</div>
+<div id="tw-arena" class="arena" aria-label="Animation area. Click to move the ball, or use the corner buttons."><div id="tw-ball" class="ball"></div></div>
+<div class="row" style="margin-top:10px" aria-label="Move to a corner">
+  <button type="button" data-corner="tl">↖ Top left</button><button type="button" data-corner="tr">↗ Top right</button>
+  <button type="button" data-corner="bl">↙ Bottom left</button><button type="button" data-corner="br">↘ Bottom right</button>
+</div>
+<pre class="out" id="tw-out"></pre></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-96" aria-label="Copy HTML code">Copy</button><pre id="code-96" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;field&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;min-width:180px&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;tw-ease&quot;</span><span class="t-tag">&gt;</span>Ease<span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;select</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tw-ease&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/select</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;field&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;min-width:200px&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;tw-dur&quot;</span><span class="t-tag">&gt;</span>Duration: <span class="t-tag">&lt;span</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tw-dur-v&quot;</span><span class="t-tag">&gt;</span>0.7<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span>s<span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tw-dur&quot;</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;range&quot;</span> <span class="t-at">min</span><span class="t-p">=</span><span class="t-s">&quot;0.2&quot;</span> <span class="t-at">max</span><span class="t-p">=</span><span class="t-s">&quot;2&quot;</span> <span class="t-at">step</span><span class="t-p">=</span><span class="t-s">&quot;0.1&quot;</span> <span class="t-at">value</span><span class="t-p">=</span><span class="t-s">&quot;0.7&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tw-arena&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;arena&quot;</span> <span class="t-at">aria-label</span><span class="t-p">=</span><span class="t-s">&quot;Animation area. Click to move the ball, or use the corner buttons.&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tw-ball&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;ball&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin-top:10px&quot;</span> <span class="t-at">aria-label</span><span class="t-p">=</span><span class="t-s">&quot;Move to a corner&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-corner</span><span class="t-p">=</span><span class="t-s">&quot;tl&quot;</span><span class="t-tag">&gt;</span>↖ Top left<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-corner</span><span class="t-p">=</span><span class="t-s">&quot;tr&quot;</span><span class="t-tag">&gt;</span>↗ Top right<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-corner</span><span class="t-p">=</span><span class="t-s">&quot;bl&quot;</span><span class="t-tag">&gt;</span>↙ Bottom left<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">data-corner</span><span class="t-p">=</span><span class="t-s">&quot;br&quot;</span><span class="t-tag">&gt;</span>↘ Bottom right<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;pre</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;out&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;tw-out&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/pre</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-97" aria-label="Copy JavaScript code">Copy</button><pre id="code-97" tabindex="0"><code><span class="t-k">const</span> SIZE = <span class="t-n">44</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-f">.each</span><span class="t-p">(</span><span class="t-d">$</span>.easings<span class="t-p">,</span> name =&gt; <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'&lt;option&gt;'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span>name<span class="t-p">)</span><span class="t-f">.appendTo</span><span class="t-p">(</span><span class="t-s">'#tw-ease'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// every built-in easing</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tw-ease'</span><span class="t-p">)</span><span class="t-f">.val</span><span class="t-p">(</span><span class="t-s">'back.out'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tw-dur'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'input'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span> <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tw-dur-v'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-k">this</span>.value<span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-k">async</span> <span class="t-k">function</span> moveTo<span class="t-p">(</span>x<span class="t-p">,</span> y<span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">const</span> ease = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tw-ease'</span><span class="t-p">)</span><span class="t-f">.val</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">,</span> duration = +<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tw-dur'</span><span class="t-p">)</span><span class="t-f">.val</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tw-out'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-s">&quot;await $.to('#tw-ball', { x: &quot;</span> + Math<span class="t-f">.round</span><span class="t-p">(</span>x<span class="t-p">)</span> + <span class="t-s">', y: '</span> + Math<span class="t-f">.round</span><span class="t-p">(</span>y<span class="t-p">)</span> +
+    <span class="t-s">', duration: '</span> + duration + <span class="t-s">&quot;, ease: '&quot;</span> + ease + <span class="t-s">&quot;' })&quot;</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'#tw-ball'</span><span class="t-p">,</span> <span class="t-p">{</span> x<span class="t-p">,</span> y<span class="t-p">,</span> duration<span class="t-p">,</span> ease <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-f">.fromTo</span><span class="t-p">(</span><span class="t-s">'#tw-ball'</span><span class="t-p">,</span> <span class="t-p">{</span> scale: <span class="t-n">1.3</span> <span class="t-p">}</span><span class="t-p">,</span> <span class="t-p">{</span> scale: <span class="t-n">1</span><span class="t-p">,</span> duration: .<span class="t-n">3</span><span class="t-p">,</span> ease: <span class="t-s">'elastic.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// land with a wobble</span>
+<span class="t-p">}</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tw-arena'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span>e<span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">const</span> r = <span class="t-k">this</span><span class="t-f">.getBoundingClientRect</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+  moveTo<span class="t-p">(</span>Math<span class="t-f">.min</span><span class="t-p">(</span>Math<span class="t-f">.max</span><span class="t-p">(</span>e.clientX - r.left - SIZE / <span class="t-n">2</span><span class="t-p">,</span> <span class="t-n">0</span><span class="t-p">)</span><span class="t-p">,</span> r.width - SIZE<span class="t-p">)</span><span class="t-p">,</span>
+         Math<span class="t-f">.min</span><span class="t-p">(</span>Math<span class="t-f">.max</span><span class="t-p">(</span>e.clientY - r.top - SIZE / <span class="t-n">2</span><span class="t-p">,</span> <span class="t-n">0</span><span class="t-p">)</span><span class="t-p">,</span> r.height - SIZE<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'[data-corner]'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">const</span> r = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#tw-arena'</span><span class="t-p">)</span><span class="t-p">[</span><span class="t-n">0</span><span class="t-p">]</span><span class="t-f">.getBoundingClientRect</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">,</span> c = <span class="t-k">this</span>.dataset.corner<span class="t-p">;</span>
+  moveTo<span class="t-p">(</span>c<span class="t-f">.includes</span><span class="t-p">(</span><span class="t-s">'r'</span><span class="t-p">)</span> ? r.width - SIZE : <span class="t-n">0</span><span class="t-p">,</span> c<span class="t-f">.includes</span><span class="t-p">(</span><span class="t-s">'b'</span><span class="t-p">)</span> ? r.height - SIZE : <span class="t-n">0</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Everyday tweens</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-98" aria-label="Copy JavaScript code">Copy</button><pre id="code-98" tabindex="0"><code><span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'.card'</span><span class="t-p">,</span> <span class="t-p">{</span> y: -<span class="t-n">6</span><span class="t-p">,</span> scale: <span class="t-n">1.02</span><span class="t-p">,</span> duration: .<span class="t-n">2</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'#modal'</span><span class="t-p">,</span> <span class="t-p">{</span> opacity: <span class="t-n">0</span><span class="t-p">,</span> y: <span class="t-n">20</span><span class="t-p">,</span> duration: .<span class="t-n">25</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#modal'</span><span class="t-p">)</span><span class="t-f">.hide</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.badge'</span><span class="t-p">)</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-p">{</span> rotate: <span class="t-n">360</span><span class="t-p">,</span> duration: <span class="t-n">1</span><span class="t-p">,</span> ease: <span class="t-s">'elastic.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>   <span class="t-c">// chainable form</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">$.to(target, { …props, duration, delay, ease, stagger, onComplete }) → Promise</span><p>Tween to a state. <code>stagger</code> offsets each element’s start; <code>onComplete</code> fires after the last finishes. Also chainable on sets: <code>$(sel).to(props)</code>.</p><a href="/docs/#motion-to" style="font-size:14px">Reference: $.to() →</a></div><div class="api-item"><span class="sig">ease: name | (t) =&gt; number</span><p>Built in: <code>linear, ease-in, ease-out, ease-in-out, power2.in, power2.out, power2.inOut, back.out, elastic.out, bounce.out</code> — exposed as <code>$.easings</code> — or pass any function mapping 0→1 progress.</p><a href="/docs/#motion-easings" style="font-size:14px">Reference: Easings →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from GSAP</strong><code>gsap.to()</code> → <code>$.to()</code>, same property names and seconds. Not included: <code>repeat</code>/<code>yoyo</code>, playback control on single tweens, colour and SVG-attribute tweening, <code>onUpdate</code>, and automatic overwriting of competing tweens.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="motion" href="/features/from-and-fromto/"><span class="label">Motion</span><h3>From &amp; fromTo</h3><p>Animate elements in from a starting state with $.from(), or define both ends with $.fromTo().</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="motion" href="/features/transforms/"><span class="label">Motion</span><h3>Transforms</h3><p>Animate x, y, rotate, scale, scaleX, scaleY, skewX and skewY independently — jsKjs composes them into one transform per frame.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="motion" href="/features/easings/"><span class="label">Motion</span><h3>Easings</h3><p>Ten built-in easings — linear, ease-in/out, power2, back.out, elastic.out, bounce.out — plotted as curves and playable live.</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/global-store/"><span class="dir">← Previous</span><strong>Global stores</strong></a>
+    <a class="next" href="/features/from-and-fromto/"><span class="dir">Next →</span><strong>From &amp; fromTo</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Motion features">
+    <div class="aside-group"><h2>Motion · GSAP-style</h2><ul><li><a href="/features/tweens/" aria-current="page">Tweens</a></li><li><a href="/features/from-and-fromto/">From &amp; fromTo</a></li><li><a href="/features/timelines/">Timelines</a></li><li><a href="/features/stagger/">Stagger</a></li><li><a href="/features/easings/">Easings</a></li><li><a href="/features/transforms/">Transforms</a></li><li><a href="/features/classic-effects/">Classic effects</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#core">Core · jQuery-compatible</a></li><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/gsap/">What's ported from GSAP</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+const SIZE = 44;
+$.each($.easings, name => $('<option>').text(name).appendTo('#tw-ease'));   // every built-in easing
+$('#tw-ease').val('back.out');
+$('#tw-dur').on('input', function () { $('#tw-dur-v').text(this.value); });
+
+async function moveTo(x, y) {
+  const ease = $('#tw-ease').val(), duration = +$('#tw-dur').val();
+  $('#tw-out').text("await $.to('#tw-ball', { x: " + Math.round(x) + ', y: ' + Math.round(y) +
+    ', duration: ' + duration + ", ease: '" + ease + "' })");
+  await $.to('#tw-ball', { x, y, duration, ease });
+  $.fromTo('#tw-ball', { scale: 1.3 }, { scale: 1, duration: .3, ease: 'elastic.out' });   // land with a wobble
+}
+
+$('#tw-arena').on('click', function (e) {
+  const r = this.getBoundingClientRect();
+  moveTo(Math.min(Math.max(e.clientX - r.left - SIZE / 2, 0), r.width - SIZE),
+         Math.min(Math.max(e.clientY - r.top - SIZE / 2, 0), r.height - SIZE));
+});
+
+$('[data-corner]').on('click', function () {
+  const r = $('#tw-arena')[0].getBoundingClientRect(), c = this.dataset.corner;
+  moveTo(c.includes('r') ? r.width - SIZE : 0, c.includes('b') ? r.height - SIZE : 0);
+});
+</script>
+
+</body>
+</html>

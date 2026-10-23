@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why jQuery Apps Turn into Spaghetti — and Reactive State Instead — jsKjs</title>
+<meta name="description" content="jQuery has no concept of state: the DOM is the model, and every change is manual synchronisation. jsKjs adds Alpine-style reactivity with kj-data, so the UI follows the data.">
+<link rel="canonical" href="https://jskjs.org/jquery/state/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="No model, only the DOM">
+<meta property="og:description" content="jQuery has no concept of state: the DOM is the model, and every change is manual synchronisation. jsKjs adds Alpine-style reactivity with kj-data, so the UI follows the data.">
+<meta property="og:url" content="https://jskjs.org/jquery/state/">
+<meta property="og:image" content="https://jskjs.org/assets/og/jquery-state.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="No model, only the DOM — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="No model, only the DOM">
+<meta name="twitter:description" content="jQuery has no concept of state: the DOM is the model, and every change is manual synchronisation. jsKjs adds Alpine-style reactivity with kj-data, so the UI follows the data.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/jquery-state.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"Article","headline":"No model, only the DOM","description":"jQuery has no concept of state: the DOM is the model, and every change is manual synchronisation. jsKjs adds Alpine-style reactivity with kj-data, so the UI follows the data.","url":"https://jskjs.org/jquery/state/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"isPartOf":{"@type":"CreativeWorkSeries","name":"What aged in jQuery","url":"https://jskjs.org/jquery/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"What aged in jQuery","item":"https://jskjs.org/jquery/"},{"@type":"ListItem","position":3,"name":"No model, only the DOM","item":"https://jskjs.org/jquery/state/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="hyper">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/" aria-current="page">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/" aria-current="page">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/jquery/">What aged in jQuery</a></li><li><span aria-current="page">No model, only the DOM</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">What aged in jQuery · 5 of 8</p>
+  <h1>No model, only the DOM</h1>
+  <p class="lede">jQuery manipulates the page. It never had a place to keep what the page <em>means</em> — so the meaning ends up scattered across classes, attributes and text.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+    <h2>Why it made sense</h2><p>Pages in 2006 were documents with a little behaviour. Reading state back out of the DOM ("is the menu open? check the class") was perfectly reasonable at that scale.</p>
+    <h2>What changed</h2><p>Modern interfaces have many pieces of state that affect many parts of the page. With only imperative DOM edits, every change must update every dependent element by hand, in the right order — miss one and the UI lies. This is the bug class that pushed teams towards frameworks, often for pages that didn't need a single-page app.</p>
+  </div>
+  
+  <div class="prose"><h2>What jsKjs does instead</h2><p>Pulse puts state where it is used — <code>kj-data="{ open: false }"</code> — and binds the page to it. Change the value and every <code>kj-text</code>, <code>kj-show</code>, <code>:attr</code> and <code>kj-model</code> that depends on it updates. No build step, no virtual DOM, and the jQuery API is still there for everything else.</p></div>
+  <div class="verdict"><div><h3>jQuery</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-226" aria-label="Copy JavaScript code">Copy</button><pre id="code-226" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#toggle'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">const</span> open = !<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#menu'</span><span class="t-p">)</span><span class="t-f">.hasClass</span><span class="t-p">(</span><span class="t-s">'open'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#menu'</span><span class="t-p">)</span><span class="t-f">.toggleClass</span><span class="t-p">(</span><span class="t-s">'open'</span><span class="t-p">,</span> open<span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'aria-expanded'</span><span class="t-p">,</span> open<span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span>open ? <span class="t-s">'Close'</span> : <span class="t-s">'Menu'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#overlay'</span><span class="t-p">)</span><span class="t-f">.toggle</span><span class="t-p">(</span>open<span class="t-p">)</span><span class="t-p">;</span>                 <span class="t-c">// …and every other dependent element</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></div><div><h3>jsKjs</h3><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-227" aria-label="Copy HTML code">Copy</button><pre id="code-227" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-kj">kj-data</span><span class="t-p">=</span><span class="t-s">&quot;{ open: false }&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-kj">@click</span><span class="t-p">=</span><span class="t-s">&quot;open = !open&quot;</span> <span class="t-kj">:aria-expanded</span><span class="t-p">=</span><span class="t-s">&quot;open ? 'true' : 'false'&quot;</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;open ? 'Close' : 'Menu'&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;nav</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;menu&quot;</span> <span class="t-kj">kj-show</span><span class="t-p">=</span><span class="t-s">&quot;open&quot;</span><span class="t-tag">&gt;</span>…<span class="t-tag">&lt;/nav</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;overlay&quot;</span> <span class="t-kj">kj-show</span><span class="t-p">=</span><span class="t-s">&quot;open&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span></code></pre></div></div></div>
+  
+  <nav class="pager" aria-label="Previous and next essay">
+    <a class="prev" href="/jquery/memory/"><span class="dir">← Essay 4</span><strong>Data in the wrong place</strong></a>
+    <a class="next" href="/jquery/animation/"><span class="dir">Essay 6 →</span><strong>.animate() stopped at numbers</strong></a>
+  </nav>
+</article>
+<aside class="aside" aria-label="Series"><div class="aside-group"><h2>The series</h2><ul><li><a href="/jquery/weight/">1. The weight of compatibility</a></li><li><a href="/jquery/selector-engine/">2. A selector engine the browser already has</a></li><li><a href="/jquery/promises/">3. jqXHR and the almost-promise</a></li><li><a href="/jquery/memory/">4. Data in the wrong place</a></li><li><a href="/jquery/state/" aria-current="page">5. No model, only the DOM</a></li><li><a href="/jquery/animation/">6. .animate() stopped at numbers</a></li><li><a href="/jquery/ajax-boilerplate/">7. A handler for every endpoint</a></li><li><a href="/jquery/security/">8. Footguns: HTML strings and deep merges</a></li></ul></div>
+<div class="aside-group"><h2>Next steps</h2><ul><li><a href="/migrate/">Migrate from jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/start/">Getting started</a></li></ul></div></aside>
+</div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+
+
+</body>
+</html>

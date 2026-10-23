@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fadeIn, slideToggle and animate(): jQuery Effects on a Modern Engine — jsKjs</title>
+<meta name="description" content="jQuery&#39;s fadeIn, fadeOut, fadeToggle, slideDown, slideUp, slideToggle and animate() — same names, milliseconds and callbacks — rebuilt on the jsKjs Motion engine.">
+<link rel="canonical" href="https://jskjs.org/features/classic-effects/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Classic effects">
+<meta property="og:description" content="jQuery&#39;s fadeIn, fadeOut, fadeToggle, slideDown, slideUp, slideToggle and animate() — same names, milliseconds and callbacks — rebuilt on the jsKjs Motion engine.">
+<meta property="og:url" content="https://jskjs.org/features/classic-effects/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-classic-effects.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Classic effects — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Classic effects">
+<meta name="twitter:description" content="jQuery&#39;s fadeIn, fadeOut, fadeToggle, slideDown, slideUp, slideToggle and animate() — same names, milliseconds and callbacks — rebuilt on the jsKjs Motion engine.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-classic-effects.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+.fx-q { border-bottom:1px solid var(--line); }
+.stage .fx-q > button { width:100%; text-align:left; border:0; border-radius:0; padding:14px 4px; background:transparent; display:flex; justify-content:space-between; }
+.stage .fx-q > button:hover { background:var(--surface-2); color:var(--ink); }
+.fx-a { padding:0 4px 14px; color:var(--muted); }
+.fx-track { height:12px; background:var(--surface-2); border-radius:8px; overflow:hidden; margin-top:12px; }
+#fx-bar { height:100%; width:0; background:var(--motion); border-radius:8px; }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Classic effects","description":"jQuery's fadeIn, fadeOut, fadeToggle, slideDown, slideUp, slideToggle and animate() — same names, milliseconds and callbacks — rebuilt on the jsKjs Motion engine.","url":"https://jskjs.org/features/classic-effects/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Motion","item":"https://jskjs.org/features/#motion"},{"@type":"ListItem","position":4,"name":"Classic effects","item":"https://jskjs.org/features/classic-effects/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="motion">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#motion">Motion</a></li><li><span aria-current="page">Classic effects</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Motion · GSAP-style</p>
+  <h1>Classic effects</h1>
+  <p class="lede">Your old <code>.fadeIn(400)</code> and <code>.slideToggle()</code> calls keep working — same names, same milliseconds, same callbacks — running on the Motion engine.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<p>These shims exist so jQuery code migrates without edits. They use <strong>milliseconds</strong> (jQuery's unit), accept a completion callback with <code>this</code> bound to each element, and return the collection for chaining. <code>.slideDown()</code> measures the element's natural height, so it works with dynamic content.</p>
+<p>For new code, prefer <code>$.to()</code> and <code>await</code> — they are more flexible and composable.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Accordion, notice and progress</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><div id="fx-faq">
+  <div class="fx-q"><button type="button" aria-expanded="false" aria-controls="fx-a1">Does .fadeIn() still take milliseconds? <span aria-hidden="true">＋</span></button>
+    <div class="fx-a" id="fx-a1" style="display:none">Yes. The classic effects keep jQuery's units and callbacks.</div></div>
+  <div class="fx-q"><button type="button" aria-expanded="false" aria-controls="fx-a2">Can I chain them? <span aria-hidden="true">＋</span></button>
+    <div class="fx-a" id="fx-a2" style="display:none">They return the collection, so <code>.slideUp(200).addClass('closed')</code> works.</div></div>
+  <div class="fx-q"><button type="button" aria-expanded="false" aria-controls="fx-a3">What about .stop() and queues? <span aria-hidden="true">＋</span></button>
+    <div class="fx-a" id="fx-a3" style="display:none">Not included. Use await or a timeline to sequence effects.</div></div>
+</div>
+<div class="row" style="margin-top:16px">
+  <button type="button" id="fx-show">Save settings (fadeIn)</button>
+  <button type="button" id="fx-upload">Upload (animate)</button>
+</div>
+<div id="fx-notice" class="note" role="status" style="display:none" data-mod="pulse"><strong>Saved</strong>Your settings were saved. <button type="button" id="fx-dismiss">Dismiss (fadeOut)</button></div>
+<div class="fx-track" aria-hidden="true"><div id="fx-bar"></div></div>
+<p class="muted" id="fx-status" aria-live="polite" style="font-size:14px"></p></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-114" aria-label="Copy HTML code">Copy</button><pre id="code-114" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fx-faq&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;fx-q&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">aria-expanded</span><span class="t-p">=</span><span class="t-s">&quot;false&quot;</span> <span class="t-at">aria-controls</span><span class="t-p">=</span><span class="t-s">&quot;fx-a1&quot;</span><span class="t-tag">&gt;</span>Does .fadeIn() still take milliseconds? <span class="t-tag">&lt;span</span> <span class="t-at">aria-hidden</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span><span class="t-tag">&gt;</span>＋<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;fx-a&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fx-a1&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;display:none&quot;</span><span class="t-tag">&gt;</span>Yes. The classic effects keep jQuery's units and callbacks.<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;fx-q&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">aria-expanded</span><span class="t-p">=</span><span class="t-s">&quot;false&quot;</span> <span class="t-at">aria-controls</span><span class="t-p">=</span><span class="t-s">&quot;fx-a2&quot;</span><span class="t-tag">&gt;</span>Can I chain them? <span class="t-tag">&lt;span</span> <span class="t-at">aria-hidden</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span><span class="t-tag">&gt;</span>＋<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;fx-a&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fx-a2&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;display:none&quot;</span><span class="t-tag">&gt;</span>They return the collection, so <span class="t-tag">&lt;code</span><span class="t-tag">&gt;</span>.slideUp(200).addClass('closed')<span class="t-tag">&lt;/code</span><span class="t-tag">&gt;</span> works.<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;fx-q&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">aria-expanded</span><span class="t-p">=</span><span class="t-s">&quot;false&quot;</span> <span class="t-at">aria-controls</span><span class="t-p">=</span><span class="t-s">&quot;fx-a3&quot;</span><span class="t-tag">&gt;</span>What about .stop() and queues? <span class="t-tag">&lt;span</span> <span class="t-at">aria-hidden</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span><span class="t-tag">&gt;</span>＋<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;fx-a&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fx-a3&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;display:none&quot;</span><span class="t-tag">&gt;</span>Not included. Use await or a timeline to sequence effects.<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin-top:16px&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fx-show&quot;</span><span class="t-tag">&gt;</span>Save settings (fadeIn)<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fx-upload&quot;</span><span class="t-tag">&gt;</span>Upload (animate)<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fx-notice&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;note&quot;</span> <span class="t-at">role</span><span class="t-p">=</span><span class="t-s">&quot;status&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;display:none&quot;</span> <span class="t-at">data-mod</span><span class="t-p">=</span><span class="t-s">&quot;pulse&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;strong</span><span class="t-tag">&gt;</span>Saved<span class="t-tag">&lt;/strong</span><span class="t-tag">&gt;</span>Your settings were saved. <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fx-dismiss&quot;</span><span class="t-tag">&gt;</span>Dismiss (fadeOut)<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;fx-track&quot;</span> <span class="t-at">aria-hidden</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fx-bar&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;p</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;muted&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;fx-status&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;polite&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;font-size:14px&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-115" aria-label="Copy JavaScript code">Copy</button><pre id="code-115" tabindex="0"><code><span class="t-c">// Accordion: one open at a time</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fx-faq'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-s">'.fx-q &gt; button'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">const</span> open = <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'aria-expanded'</span><span class="t-p">)</span> === <span class="t-s">'true'</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fx-faq .fx-q &gt; button'</span><span class="t-p">)</span><span class="t-f">.not</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'aria-expanded'</span><span class="t-p">,</span> <span class="t-s">'false'</span><span class="t-p">)</span><span class="t-f">.next</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-f">.slideUp</span><span class="t-p">(</span><span class="t-n">200</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'aria-expanded'</span><span class="t-p">,</span> String<span class="t-p">(</span>!open<span class="t-p">)</span><span class="t-p">)</span><span class="t-f">.next</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-f">.slideToggle</span><span class="t-p">(</span><span class="t-n">200</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fx-show'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fx-notice'</span><span class="t-p">)</span><span class="t-f">.fadeIn</span><span class="t-p">(</span><span class="t-n">300</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fx-dismiss'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fx-notice'</span><span class="t-p">)</span><span class="t-f">.fadeOut</span><span class="t-p">(</span><span class="t-n">300</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fx-upload'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">const</span> full = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.fx-track'</span><span class="t-p">)</span><span class="t-f">.width</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'disabled'</span><span class="t-p">,</span> <span class="t-k">true</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fx-status'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-s">'Uploading…'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fx-bar'</span><span class="t-p">)</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'width'</span><span class="t-p">,</span> <span class="t-n">0</span><span class="t-p">)</span><span class="t-f">.animate</span><span class="t-p">(</span><span class="t-p">{</span> width: full <span class="t-p">}</span><span class="t-p">,</span> <span class="t-n">1200</span><span class="t-p">,</span> <span class="t-s">'power2.inOut'</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+    <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#fx-status'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-s">'Upload complete ✓'</span><span class="t-p">)</span><span class="t-p">;</span>
+    <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.prop</span><span class="t-p">(</span><span class="t-s">'disabled'</span><span class="t-p">,</span> <span class="t-k">false</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Unchanged jQuery code</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-116" aria-label="Copy JavaScript code">Copy</button><pre id="code-116" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.toast'</span><span class="t-p">)</span><span class="t-f">.fadeIn</span><span class="t-p">(</span><span class="t-n">200</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#details'</span><span class="t-p">)</span><span class="t-f">.slideToggle</span><span class="t-p">(</span><span class="t-n">300</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.panel'</span><span class="t-p">)</span><span class="t-f">.animate</span><span class="t-p">(</span><span class="t-p">{</span> marginLeft: <span class="t-n">40</span><span class="t-p">,</span> opacity: .<span class="t-n">6</span> <span class="t-p">}</span><span class="t-p">,</span> <span class="t-n">400</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span> <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'moved'</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">.fadeIn([ms = 400] [, complete]) → self</span><p>Fade elements in (from hidden) or out (hiding when done).</p><a href="/docs/#effects-fadein-fadeout-fadetoggle" style="font-size:14px">Reference: .fadeIn() / .fadeOut() / .fadeToggle() →</a></div><div class="api-item"><span class="sig">.slideDown([ms = 400] [, complete]) → self</span><p>Animate height to reveal or collapse.</p><a href="/docs/#effects-slidedown-slideup-slidetoggle" style="font-size:14px">Reference: .slideDown() / .slideUp() / .slideToggle() →</a></div><div class="api-item"><span class="sig">.animate(props [, ms = 400] [, ease] [, complete]) → self</span><p>jQuery-signature tween of numeric CSS properties.</p><a href="/docs/#effects-animate" style="font-size:14px">Reference: .animate() →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from jQuery</strong>Same names, units and callbacks. Not included: <code>.stop()</code>, <code>.finish()</code>, <code>.delay()</code>, <code>.queue()</code>, <code>.fadeTo()</code> and <code>$.fx</code> settings.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="motion" href="/features/tweens/"><span class="label">Motion</span><h3>Tweens</h3><p>Animate any numeric CSS property and transforms (x, y, rotate, scale) with $.to().</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="core" href="/features/geometry-and-scroll/"><span class="label">Core</span><h3>Geometry, scroll &amp; visibility</h3><p>Measure and position elements with width(), height(), offset() and position(), control scrolling with scrollTop(), and show or hide elements without losing their display value..</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="pulse" href="/features/conditional-display/"><span class="label">Pulse</span><h3>Conditional display</h3><p>Show and hide parts of the page from state with kj-show.</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/transforms/"><span class="dir">← Previous</span><strong>Transforms</strong></a>
+    <a class="next" href="/features/debounce-and-throttle/"><span class="dir">Next →</span><strong>Debounce &amp; throttle</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Motion features">
+    <div class="aside-group"><h2>Motion · GSAP-style</h2><ul><li><a href="/features/tweens/">Tweens</a></li><li><a href="/features/from-and-fromto/">From &amp; fromTo</a></li><li><a href="/features/timelines/">Timelines</a></li><li><a href="/features/stagger/">Stagger</a></li><li><a href="/features/easings/">Easings</a></li><li><a href="/features/transforms/">Transforms</a></li><li><a href="/features/classic-effects/" aria-current="page">Classic effects</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#core">Core · jQuery-compatible</a></li><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/gsap/">What's ported from GSAP</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+// Accordion: one open at a time
+$('#fx-faq').on('click', '.fx-q > button', function () {
+  const open = $(this).attr('aria-expanded') === 'true';
+  $('#fx-faq .fx-q > button').not(this).attr('aria-expanded', 'false').next().slideUp(200);
+  $(this).attr('aria-expanded', String(!open)).next().slideToggle(200);
+});
+
+$('#fx-show').on('click', () => $('#fx-notice').fadeIn(300));
+$('#fx-dismiss').on('click', () => $('#fx-notice').fadeOut(300));
+
+$('#fx-upload').on('click', function () {
+  const full = $('.fx-track').width();
+  $(this).prop('disabled', true);
+  $('#fx-status').text('Uploading…');
+  $('#fx-bar').css('width', 0).animate({ width: full }, 1200, 'power2.inOut', () => {
+    $('#fx-status').text('Upload complete ✓');
+    $(this).prop('disabled', false);
+  });
+});
+</script>
+
+</body>
+</html>

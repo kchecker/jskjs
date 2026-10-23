@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jsKjs — jQuery-compatible JavaScript with htmx, Alpine &amp; GSAP superpowers in 8.1 KB</title>
+<meta name="description" content="jsKjs is an open-source, jQuery-compatible JavaScript library with htmx-style requests, Alpine-style reactivity and GSAP-style animation in one 8.1 KB script. No build step, built for AI agents.">
+<link rel="canonical" href="https://jskjs.org/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="jsKjs — four libraries, one $">
+<meta property="og:description" content="jsKjs is an open-source, jQuery-compatible JavaScript library with htmx-style requests, Alpine-style reactivity and GSAP-style animation in one 8.1 KB script. No build step, built for AI agents.">
+<meta property="og:url" content="https://jskjs.org/">
+<meta property="og:image" content="https://jskjs.org/assets/og/home.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="jsKjs — four libraries, one $ — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="jsKjs — four libraries, one $">
+<meta name="twitter:description" content="jsKjs is an open-source, jQuery-compatible JavaScript library with htmx-style requests, Alpine-style reactivity and GSAP-style animation in one 8.1 KB script. No build step, built for AI agents.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/home.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebSite","name":"jsKjs","url":"https://jskjs.org/","description":"jsKjs is an open-source, jQuery-compatible JavaScript library with htmx-style requests, Alpine-style reactivity and GSAP-style animation in one 8.1 KB script. No build step, built for AI agents.","inLanguage":"en"},{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"jsKjs","description":"jsKjs is an open-source, jQuery-compatible JavaScript library with htmx-style requests, Alpine-style reactivity and GSAP-style animation in one 8.1 KB script. No build step, built for AI agents.","codeRepository":"https://github.com/kchecker/jskjs","programmingLanguage":"JavaScript","runtimePlatform":"Web browser","version":"1.0.0","license":"https://opensource.org/licenses/MIT","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"url":"https://jskjs.org/"}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="motion">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band"><div class="wrap hero"><div class="hero-grid">
+  <div>
+    <p class="label" data-mod="motion">v1.0.0 · Open source · MIT</p>
+    <h1>Four libraries.<br>One <span class="dollar">$</span>.</h1>
+    <p class="lede">jsKjs is the jQuery API you already know — plus htmx-style requests, Alpine-style reactivity and GSAP-style motion — in one 8.1 KB script. No build step. No dependencies. Made for humans and their AI agents.</p>
+    <div class="cta"><a class="btn btn-primary" href="/start/">Start in 60 seconds</a><a class="btn" href="/features/">See it live</a><a class="btn" href="/download/">Get it 🥁</a></div>
+    <div class="install"><div class="code"><span class="code-label">One script tag</span><button class="copy-btn" type="button" data-copy="code-306" aria-label="Copy One script tag code">Copy</button><pre id="code-306" tabindex="0"><code><span class="t-tag">&lt;script</span> <span class="t-at">src</span><span class="t-p">=</span><span class="t-s">&quot;https://jskjs.org/cdn/1.0.0/jskjs.min.js&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/script</span><span class="t-tag">&gt;</span></code></pre></div></div>
+  </div>
+  <div class="bay" id="bay" role="img" aria-label="Diagram: four modules — Core (jQuery API, replaces 26.8 KB), Hyper (htmx-style, 16.4 KB), Pulse (Alpine-style, 19.4 KB) and Motion (GSAP-style, 27.6 KB) — patched into one 8.1 KB jsKjs output.">
+    <div class="module" data-mod="core"><div class="mname">Core</div><div class="mfrom">jQuery-compatible API</div><div class="msize">replaces 26.8 KB</div><div class="knobs"><span class="knob" style="--k:60%"></span><span class="knob" style="--k:35%"></span><span class="knob" style="--k:75%"></span></div><span class="jack-out"></span></div>
+    <div class="module" data-mod="hyper"><div class="mname">Hyper</div><div class="mfrom">htmx-style requests</div><div class="msize">replaces 16.4 KB</div><div class="knobs"><span class="knob" style="--k:40%"></span><span class="knob" style="--k:70%"></span><span class="knob" style="--k:25%"></span></div><span class="jack-out"></span></div>
+    <div class="module" data-mod="pulse"><div class="mname">Pulse</div><div class="mfrom">Alpine-style state</div><div class="msize">replaces 19.4 KB</div><div class="knobs"><span class="knob" style="--k:80%"></span><span class="knob" style="--k:45%"></span><span class="knob" style="--k:55%"></span></div><span class="jack-out"></span></div>
+    <div class="module" data-mod="motion"><div class="mname">Motion</div><div class="mfrom">GSAP-style animation</div><div class="msize">replaces 27.6 KB</div><div class="knobs"><span class="knob" style="--k:30%"></span><span class="knob" style="--k:65%"></span><span class="knob" style="--k:50%"></span></div><span class="jack-out"></span></div>
+    <div class="output"><span class="jack-in"></span><div class="big">$ 8.1 KB</div><div class="small">jsKjs · gzipped</div></div>
+    <svg class="cables" aria-hidden="true"></svg>
+  </div>
+  </div></div>
+  <div class="ticker"><div class="wrap"><span><b>90.2 KB → 8.1 KB</b> gzipped</span><span><b>0</b> dependencies</span><span><b>0</b> build steps</span><span><b>40</b> features with live demos</span><span><b>11</b> AI-agent rule files</span></div></div></div>
+<div class="wrap section"><div class="feature-row" data-mod="core"><div><p class="label">Core · jQuery-compatible</p><h2 style="margin-top:14px">The $ you know</h2><p class="lede" style="margin-top:14px;color:var(--muted)">Selectors, traversal, events, delegation, AJAX — the jQuery API, on native browser features. Your muscle memory works on day one; collections are real arrays.</p><p style="margin-top:18px"><a class="btn" href="/features/#core">Core features →</a></p></div><div><section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Delegation in six lines</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><form id="h-form" class="row"><label for="h-in" class="sr-only">New item</label><input id="h-in" type="text" placeholder="Add an item…" style="flex:1;min-width:160px"><button type="submit">Add</button></form>
+<ul id="h-list" class="list-plain"><li>Click an item to strike it</li><li>New items work too</li></ul></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-307" aria-label="Copy HTML code">Copy</button><pre id="code-307" tabindex="0"><code><span class="t-tag">&lt;form</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;h-form&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;h-in&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;sr-only&quot;</span><span class="t-tag">&gt;</span>New item<span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;h-in&quot;</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;text&quot;</span> <span class="t-at">placeholder</span><span class="t-p">=</span><span class="t-s">&quot;Add an item…&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;flex:1;min-width:160px&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;submit&quot;</span><span class="t-tag">&gt;</span>Add<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/form</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;ul</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;h-list&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;list-plain&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;li</span><span class="t-tag">&gt;</span>Click an item to strike it<span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;li</span><span class="t-tag">&gt;</span>New items work too<span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/ul</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-308" aria-label="Copy JavaScript code">Copy</button><pre id="code-308" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#h-form'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'submit'</span><span class="t-p">,</span> e =&gt; <span class="t-p">{</span>
+  e<span class="t-f">.preventDefault</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-k">if</span> <span class="t-p">(</span><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#h-in'</span><span class="t-p">)</span><span class="t-f">.val</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">)</span> <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'&lt;li&gt;'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#h-in'</span><span class="t-p">)</span><span class="t-f">.val</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-f">.appendTo</span><span class="t-p">(</span><span class="t-s">'#h-list'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#h-in'</span><span class="t-p">)</span><span class="t-f">.val</span><span class="t-p">(</span><span class="t-s">''</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#h-list'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-s">'li'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span> <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'text-decoration'</span><span class="t-p">,</span> <span class="t-s">'line-through'</span><span class="t-p">)</span><span class="t-f">.fadeOut</span><span class="t-p">(</span><span class="t-n">500</span><span class="t-p">)</span><span class="t-p">;</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section></div></div><div class="feature-row" data-mod="hyper"><div><p class="label">Hyper · htmx-style</p><h2 style="margin-top:14px">Requests in your HTML</h2><p class="lede" style="margin-top:14px;color:var(--muted)">Describe the request in attributes and let the server answer with HTML. Live search, forms, polling and infinite scroll without writing a handler. This one is calling a real PHP endpoint.</p><p style="margin-top:18px"><a class="btn" href="/features/#hyper">Hyper features →</a></p></div><div><section class="stage" aria-labelledby="stage-2-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-2-t" style="font:inherit">Live · Live search — zero JavaScript</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-2"><label for="h-q">Search jsKjs internals</label>
+<input id="h-q" name="q" type="search" autocomplete="off" placeholder="Try “anim” or “store”" style="margin-top:6px"
+       kj-get="/api/search.php" kj-trigger="keyup delay:250ms" kj-target="#h-hits">
+<ul id="h-hits" class="list-plain" aria-live="polite" style="font-family:var(--mono);font-size:14px"></ul></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-309" aria-label="Copy HTML code">Copy</button><pre id="code-309" tabindex="0"><code><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;h-q&quot;</span><span class="t-tag">&gt;</span>Search jsKjs internals<span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;input</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;h-q&quot;</span> <span class="t-at">name</span><span class="t-p">=</span><span class="t-s">&quot;q&quot;</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;search&quot;</span> <span class="t-at">autocomplete</span><span class="t-p">=</span><span class="t-s">&quot;off&quot;</span> <span class="t-at">placeholder</span><span class="t-p">=</span><span class="t-s">&quot;Try “anim” or “store”&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin-top:6px&quot;</span>
+       <span class="t-kj">kj-get</span><span class="t-p">=</span><span class="t-s">&quot;/api/search.php&quot;</span> <span class="t-kj">kj-trigger</span><span class="t-p">=</span><span class="t-s">&quot;keyup delay:250ms&quot;</span> <span class="t-kj">kj-target</span><span class="t-p">=</span><span class="t-s">&quot;#h-hits&quot;</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;ul</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;h-hits&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;list-plain&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;polite&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;font-family:var(--mono);font-size:14px&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/ul</span><span class="t-tag">&gt;</span></code></pre></div></details>
+</section></div></div><div class="feature-row" data-mod="pulse"><div><p class="label">Pulse · Alpine-style</p><h2 style="margin-top:14px">State that lives on the element</h2><p class="lede" style="margin-top:14px;color:var(--muted)">Declare state with kj-data, bind it with kj-text, kj-show, kj-model and @click. Change the data and the page follows — no build step, no virtual DOM.</p><p style="margin-top:18px"><a class="btn" href="/features/#pulse">Pulse features →</a></p></div><div><section class="stage" aria-labelledby="stage-3-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-3-t" style="font:inherit">Live · Pricing toggle — zero JavaScript</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-3"><div kj-data="{ yearly: false }">
+  <div class="row" role="group" aria-label="Billing period">
+    <button type="button" @click="yearly = false" :aria-pressed="yearly ? 'false' : 'true'">Monthly</button>
+    <button type="button" @click="yearly = true" :aria-pressed="yearly ? 'true' : 'false'">Yearly</button>
+  </div>
+  <p style="margin:14px 0 0"><b style="font:850 40px/1 var(--display)" kj-text="yearly ? '$120' : '$12'"></b>
+    <span class="muted" kj-text="yearly ? 'per year — two months free' : 'per month'"></span></p>
+</div></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-310" aria-label="Copy HTML code">Copy</button><pre id="code-310" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-kj">kj-data</span><span class="t-p">=</span><span class="t-s">&quot;{ yearly: false }&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span> <span class="t-at">role</span><span class="t-p">=</span><span class="t-s">&quot;group&quot;</span> <span class="t-at">aria-label</span><span class="t-p">=</span><span class="t-s">&quot;Billing period&quot;</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-kj">@click</span><span class="t-p">=</span><span class="t-s">&quot;yearly = false&quot;</span> <span class="t-kj">:aria-pressed</span><span class="t-p">=</span><span class="t-s">&quot;yearly ? 'false' : 'true'&quot;</span><span class="t-tag">&gt;</span>Monthly<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-kj">@click</span><span class="t-p">=</span><span class="t-s">&quot;yearly = true&quot;</span> <span class="t-kj">:aria-pressed</span><span class="t-p">=</span><span class="t-s">&quot;yearly ? 'true' : 'false'&quot;</span><span class="t-tag">&gt;</span>Yearly<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;p</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin:14px 0 0&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;b</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;font:850 40px/1 var(--display)&quot;</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;yearly ? '$120' : '$12'&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/b</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;muted&quot;</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;yearly ? 'per year — two months free' : 'per month'&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span></code></pre></div></details>
+</section></div></div><div class="feature-row" data-mod="motion"><div><p class="label">Motion · GSAP-style</p><h2 style="margin-top:14px">Motion with taste</h2><p class="lede" style="margin-top:14px;color:var(--muted)">Tweens, transforms, ten easings, stagger and timelines on requestAnimationFrame — with Promises you can await. Seconds, like GSAP; classic fadeIn() still works.</p><p style="margin-top:18px"><a class="btn" href="/features/#motion">Motion features →</a></p></div><div><section class="stage" aria-labelledby="stage-4-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-4-t" style="font:inherit">Live · A staggered wave</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-4"><div id="h-dots" style="display:grid;grid-template-columns:repeat(12,1fr);gap:8px" aria-hidden="true"></div>
+<div class="row" style="margin-top:14px"><button type="button" id="h-wave">Play the wave</button></div></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-311" aria-label="Copy HTML code">Copy</button><pre id="code-311" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;h-dots&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;display:grid;grid-template-columns:repeat(12,1fr);gap:8px&quot;</span> <span class="t-at">aria-hidden</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin-top:14px&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;h-wave&quot;</span><span class="t-tag">&gt;</span>Play the wave<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-312" aria-label="Copy JavaScript code">Copy</button><pre id="code-312" tabindex="0"><code><span class="t-k">for</span> <span class="t-p">(</span><span class="t-k">let</span> i = <span class="t-n">0</span><span class="t-p">;</span> i &lt; <span class="t-n">36</span><span class="t-p">;</span> i++<span class="t-p">)</span> <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'&lt;span&gt;'</span><span class="t-p">)</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-p">{</span> aspectRatio: <span class="t-s">'1'</span><span class="t-p">,</span> borderRadius: <span class="t-s">'50%'</span><span class="t-p">,</span> background: <span class="t-s">'var(--motion)'</span><span class="t-p">,</span> opacity: .<span class="t-n">35</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-f">.appendTo</span><span class="t-p">(</span><span class="t-s">'#h-dots'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#h-wave'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">async</span> <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-p">{</span>
+  <span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'#h-dots span'</span><span class="t-p">,</span> <span class="t-p">{</span> y: -<span class="t-n">14</span><span class="t-p">,</span> opacity: <span class="t-n">1</span><span class="t-p">,</span> duration: .<span class="t-n">25</span><span class="t-p">,</span> stagger: .<span class="t-n">02</span><span class="t-p">,</span> ease: <span class="t-s">'power2.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-f">.to</span><span class="t-p">(</span><span class="t-s">'#h-dots span'</span><span class="t-p">,</span> <span class="t-p">{</span> y: <span class="t-n">0</span><span class="t-p">,</span> opacity: .<span class="t-n">35</span><span class="t-p">,</span> duration: .<span class="t-n">5</span><span class="t-p">,</span> stagger: .<span class="t-n">02</span><span class="t-p">,</span> ease: <span class="t-s">'bounce.out'</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section></div></div></div>
+<div class="wrap section"><div class="feature-row" style="align-items:start" data-mod="util">
+  <div><p class="label">Measured, not guessed</p><h2 style="margin-top:14px">A twelfth of the weight</h2><p class="lede" style="margin-top:14px;color:var(--muted)">The official builds of the four libraries total 90.2 KB gzipped. jsKjs is 8.1 KB, because it targets evergreen browsers and ports the parts most sites use. <a href="/compare/">See exactly what's included.</a></p></div>
+  <div><figure style="margin:24px 0"><div class="sizes" role="img" aria-label="Gzipped size comparison: jQuery 26.8 KB, htmx 16.4 KB, Alpine.js 19.4 KB, GSAP core 27.6 KB, All four 90.2 KB, jsKjs 8.1 KB">
+    <div class="size-row" title="jQuery: 26.8 KB gzipped"><span class="name">jQuery<small>v4.0.0</small></span><span class="track"><span class="fill" style="width:29.6%"></span></span><span class="val">26.8 KB</span></div><div class="size-row" title="htmx: 16.4 KB gzipped"><span class="name">htmx<small>v2.0.11</small></span><span class="track"><span class="fill" style="width:18.2%"></span></span><span class="val">16.4 KB</span></div><div class="size-row" title="Alpine.js: 19.4 KB gzipped"><span class="name">Alpine.js<small>v3.17.5</small></span><span class="track"><span class="fill" style="width:21.5%"></span></span><span class="val">19.4 KB</span></div><div class="size-row" title="GSAP core: 27.6 KB gzipped"><span class="name">GSAP core<small>v3.15.0</small></span><span class="track"><span class="fill" style="width:30.6%"></span></span><span class="val">27.6 KB</span></div><div class="size-row total" title="All four: 90.2 KB gzipped"><span class="name">All four<small>combined</small></span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="val">90.2 KB</span></div><div class="size-row kj" title="jsKjs: 8.1 KB gzipped"><span class="name">jsKjs<small>v1.0.0</small></span><span class="track"><span class="fill" style="width:9.0%"></span></span><span class="val">8.1 KB</span></div>
+  </div><figcaption class="muted" style="font-size:13.5px;margin-top:12px">Official minified builds from npm (jquery, htmx.org, alpinejs, gsap), compressed with <code>gzip -9</code>, October 2026. jsKjs ports the commonly used subset of each — <a href="/compare/">see exactly what's included</a>.</figcaption></figure></div>
+</div></div>
+<div class="wrap section" data-mod="pulse">
+  <div class="section-head"><p class="label">Built for AI agents</p><h2>Tell your agent “use jsKjs”.</h2><p class="lede" style="color:var(--muted)">One documented API instead of four, HTML you can review at a glance, and nothing to build. Ready-made rules for every major coding agent.</p></div>
+  <div class="grid g4"><div class="plate"><h3>One mental model, not four</h3><p style="margin-top:8px;color:var(--muted);font-size:15px">An agent asked to add "live search with a fade-in" to a jQuery + htmx + Alpine + GSAP page must juggle four APIs, load orders and overlapping ideas of state.</p></div><div class="plate"><h3>A closed, written-down API</h3><p style="margin-top:8px;color:var(--muted);font-size:15px">The rules file lists every available method <em>and</em> every common method that is not available.</p></div><div class="plate"><h3>Changes you can review at a glance</h3><p style="margin-top:8px;color:var(--muted);font-size:15px"><code>&lt;form kj-post="/subscribe.php" kj-target="#msg"&gt;</code> says what it does.</p></div><div class="plate"><h3>Training data that already transfers</h3><p style="margin-top:8px;color:var(--muted);font-size:15px">Models have read an enormous amount of jQuery.</p></div></div>
+  <div class="row" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px"><a class="chip" href="/ai/claude/">Claude Code &amp; Claude.ai</a><a class="chip" href="/ai/codex/">OpenAI Codex</a><a class="chip" href="/ai/copilot/">GitHub Copilot</a><a class="chip" href="/ai/cursor/">Cursor</a><a class="chip" href="/ai/vscode-openrouter/">VS Code agents with OpenRouter</a><a class="chip" href="/ai/windsurf/">Windsurf / Devin Desktop</a><a class="chip" href="/ai/gemini/">Gemini CLI</a><a class="chip" href="/ai/llms-txt/">llms.txt</a></div>
+  <p style="margin-top:24px"><a class="btn btn-primary" href="/ai/">Why agents build better with jsKjs →</a> <a class="btn" href="/ai/kit/">Get the agent kit</a></p>
+</div>
+<div class="wrap section" data-mod="hyper">
+  <div class="section-head"><p class="label">A fair review</p><h2>What aged in jQuery</h2><p class="lede" style="color:var(--muted)">jQuery changed the web. Eight short, sourced essays on what aged — and what jsKjs does instead.</p></div>
+  <div class="grid g4"><a class="card plate" data-mod="hyper" href="/jquery/weight/"><span class="series-num" aria-hidden="true" style="font-size:40px">01</span><h3>The weight of compatibility</h3></a><a class="card plate" data-mod="hyper" href="/jquery/selector-engine/"><span class="series-num" aria-hidden="true" style="font-size:40px">02</span><h3>A selector engine the browser already has</h3></a><a class="card plate" data-mod="hyper" href="/jquery/promises/"><span class="series-num" aria-hidden="true" style="font-size:40px">03</span><h3>jqXHR and the almost-promise</h3></a><a class="card plate" data-mod="hyper" href="/jquery/memory/"><span class="series-num" aria-hidden="true" style="font-size:40px">04</span><h3>Data in the wrong place</h3></a><a class="card plate" data-mod="hyper" href="/jquery/state/"><span class="series-num" aria-hidden="true" style="font-size:40px">05</span><h3>No model, only the DOM</h3></a><a class="card plate" data-mod="hyper" href="/jquery/animation/"><span class="series-num" aria-hidden="true" style="font-size:40px">06</span><h3>.animate() stopped at numbers</h3></a><a class="card plate" data-mod="hyper" href="/jquery/ajax-boilerplate/"><span class="series-num" aria-hidden="true" style="font-size:40px">07</span><h3>A handler for every endpoint</h3></a><a class="card plate" data-mod="hyper" href="/jquery/security/"><span class="series-num" aria-hidden="true" style="font-size:40px">08</span><h3>Footguns: HTML strings and deep merges</h3></a></div>
+</div>
+<div class="band"><div class="wrap section" style="text-align:center">
+  <p class="label" data-mod="motion" style="justify-content:center">Open source · MIT</p>
+  <h2 style="margin:16px auto 0;max-width:20ch">The repository is public. Want to see it?</h2>
+  <p class="lede" style="margin:16px auto 0">Source, tests, the AI kit and this very website — on GitHub.</p>
+  <p style="margin-top:28px"><a class="btn btn-primary" href="/download/">🥁 Drum roll, please</a></p>
+</div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+$('#h-form').on('submit', e => {
+  e.preventDefault();
+  if ($('#h-in').val()) $('<li>').text($('#h-in').val()).appendTo('#h-list');
+  $('#h-in').val('');
+});
+$('#h-list').on('click', 'li', function () { $(this).css('text-decoration', 'line-through').fadeOut(500); });
+</script>
+<script>
+for (let i = 0; i < 36; i++) $('<span>').css({ aspectRatio: '1', borderRadius: '50%', background: 'var(--motion)', opacity: .35 }).appendTo('#h-dots');
+$('#h-wave').on('click', async () => {
+  await $.to('#h-dots span', { y: -14, opacity: 1, duration: .25, stagger: .02, ease: 'power2.out' });
+  $.to('#h-dots span', { y: 0, opacity: .35, duration: .5, stagger: .02, ease: 'bounce.out' });
+});
+</script>
+<script>
+/* Home hero: draw patch cables from each module into the $ output */
+(function () {
+  var bay = document.getElementById('bay');
+  if (!bay) return;
+  var svg = bay.querySelector('.cables');
+  var NS = 'http://www.w3.org/2000/svg';
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function draw(animate) {
+    var b = bay.getBoundingClientRect();
+    var jin = bay.querySelector('.jack-in').getBoundingClientRect();
+    var ox = jin.left + jin.width / 2 - b.left, oy = jin.top + jin.height / 2 - b.top;
+    svg.setAttribute('viewBox', '0 0 ' + b.width + ' ' + b.height);
+    svg.innerHTML = '';
+    var paths = [];
+    $('.module', bay).each(function (i, m) {
+      var j = m.querySelector('.jack-out').getBoundingClientRect();
+      var x = j.left + j.width / 2 - b.left, y = j.top + j.height / 2 - b.top;
+      var sag = 50 + i * 16;
+      var d = 'M' + x + ' ' + y + ' C ' + x + ' ' + (y + sag) + ', ' + ox + ' ' + (oy - sag) + ', ' + ox + ' ' + oy;
+      ['shadow', ''].forEach(function (cls) {
+        var p = document.createElementNS(NS, 'path');
+        p.setAttribute('d', d);
+        if (cls) p.setAttribute('class', cls);
+        else p.setAttribute('stroke', getComputedStyle(m).getPropertyValue('--mod').trim());
+        svg.appendChild(p); paths.push(p);
+      });
+    });
+    if (animate && !reduce) {
+      paths.forEach(function (p) { var L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; });
+      $.to(paths, { strokeDashoffset: 0, duration: .9, stagger: .06, delay: .45, ease: 'power2.inOut' });
+    }
+  }
+  if (!reduce) {
+    $.from('#bay .module', { y: 16, opacity: 0, duration: .45, stagger: .08, ease: 'power2.out' });
+    $.fromTo('#bay .output', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .5, delay: 1.2, ease: 'back.out' });
+  }
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { draw(true); });
+  $(window).on('resize', $.debounce(function () { draw(false); }, 150));
+})();
+
+</script>
+</body>
+</html>

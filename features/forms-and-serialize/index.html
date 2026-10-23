@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Serialize Forms: serialize() and serializeObject() in jsKjs — jsKjs</title>
+<meta name="description" content="Turn forms into query strings or plain objects with serialize() and serializeObject(), then submit them with $.post — or declaratively with kj-post.">
+<link rel="canonical" href="https://jskjs.org/features/forms-and-serialize/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Forms &amp; serialization">
+<meta property="og:description" content="Turn forms into query strings or plain objects with serialize() and serializeObject(), then submit them with $.post — or declaratively with kj-post.">
+<meta property="og:url" content="https://jskjs.org/features/forms-and-serialize/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-forms-and-serialize.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Forms &amp; serialization — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Forms &amp; serialization">
+<meta name="twitter:description" content="Turn forms into query strings or plain objects with serialize() and serializeObject(), then submit them with $.post — or declaratively with kj-post.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-forms-and-serialize.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Forms & serialization","description":"Turn forms into query strings or plain objects with serialize() and serializeObject(), then submit them with $.post — or declaratively with kj-post.","url":"https://jskjs.org/features/forms-and-serialize/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Core","item":"https://jskjs.org/features/#core"},{"@type":"ListItem","position":4,"name":"Forms & serialization","item":"https://jskjs.org/features/forms-and-serialize/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="core">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#core">Core</a></li><li><span aria-current="page">Forms &amp; serialization</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Core · jQuery-compatible</p>
+  <h1>Forms &amp; serialization</h1>
+  <p class="lede"><code>.serialize()</code> gives you <code>name=Ada&amp;plan=pro</code>; <code>.serializeObject()</code> gives you <code>{ name: 'Ada', plan: 'pro' }</code>. Both read the browser's own <code>FormData</code>.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<p>Because serialization uses <code>FormData</code>, it follows the browser's rules exactly: disabled fields are skipped, unchecked checkboxes are omitted, and multi-selects contribute one entry per selected option (<code>.serializeObject()</code> keeps the last; use <code>new FormData(form).getAll(name)</code> for all of them).</p>
+<p>Prefer HTML? <code>&lt;form kj-post="/api/save"&gt;</code> does the same thing with no JavaScript at all — see <a href="/features/declarative-requests/">declarative requests</a>.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Live serialization + server echo</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><form id="sf" class="grid g3" style="gap:12px">
+  <div class="field"><label for="sf-name">Name</label><input id="sf-name" name="name" type="text" value="Ada"></div>
+  <div class="field"><label for="sf-plan">Plan</label><select id="sf-plan" name="plan"><option>free</option><option selected>pro</option><option>team</option></select></div>
+  <label style="align-self:end;padding-bottom:10px"><input type="checkbox" name="newsletter" value="yes" checked> Newsletter</label>
+  <div style="grid-column:1/-1"><button type="submit">Submit with $.post</button></div>
+</form>
+<pre class="out" id="sf-live" aria-live="off"></pre>
+<div id="sf-server" aria-live="polite"></div></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-41" aria-label="Copy HTML code">Copy</button><pre id="code-41" tabindex="0"><code><span class="t-tag">&lt;form</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;sf&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;grid g3&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;gap:12px&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;field&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;sf-name&quot;</span><span class="t-tag">&gt;</span>Name<span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;sf-name&quot;</span> <span class="t-at">name</span><span class="t-p">=</span><span class="t-s">&quot;name&quot;</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;text&quot;</span> <span class="t-at">value</span><span class="t-p">=</span><span class="t-s">&quot;Ada&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;field&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;sf-plan&quot;</span><span class="t-tag">&gt;</span>Plan<span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;select</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;sf-plan&quot;</span> <span class="t-at">name</span><span class="t-p">=</span><span class="t-s">&quot;plan&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;option</span><span class="t-tag">&gt;</span>free<span class="t-tag">&lt;/option</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;option</span> <span class="t-at">selected</span><span class="t-tag">&gt;</span>pro<span class="t-tag">&lt;/option</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;option</span><span class="t-tag">&gt;</span>team<span class="t-tag">&lt;/option</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/select</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;label</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;align-self:end;padding-bottom:10px&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;checkbox&quot;</span> <span class="t-at">name</span><span class="t-p">=</span><span class="t-s">&quot;newsletter&quot;</span> <span class="t-at">value</span><span class="t-p">=</span><span class="t-s">&quot;yes&quot;</span> <span class="t-at">checked</span><span class="t-tag">&gt;</span> Newsletter<span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;grid-column:1/-1&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;submit&quot;</span><span class="t-tag">&gt;</span>Submit with $.post<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/form</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;pre</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;out&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;sf-live&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;off&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/pre</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;sf-server&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;polite&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-42" aria-label="Copy JavaScript code">Copy</button><pre id="code-42" tabindex="0"><code><span class="t-k">const</span> show = <span class="t-p">(</span><span class="t-p">)</span> =&gt; <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#sf-live'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span>
+  <span class="t-s">'.serialize()       → &quot;'</span> + <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#sf'</span><span class="t-p">)</span><span class="t-f">.serialize</span><span class="t-p">(</span><span class="t-p">)</span> + <span class="t-s">'&quot;\n'</span> +
+  <span class="t-s">'.serializeObject() → '</span> + JSON<span class="t-f">.stringify</span><span class="t-p">(</span><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#sf'</span><span class="t-p">)</span><span class="t-f">.serializeObject</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#sf'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'input change'</span><span class="t-p">,</span> show<span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#sf'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'submit'</span><span class="t-p">,</span> <span class="t-k">async</span> e =&gt; <span class="t-p">{</span>
+  e<span class="t-f">.preventDefault</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#sf-server'</span><span class="t-p">)</span><span class="t-f">.html</span><span class="t-p">(</span><span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.post</span><span class="t-p">(</span><span class="t-s">'/api/echo.php'</span><span class="t-p">,</span> <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#sf'</span><span class="t-p">)</span><span class="t-f">.serializeObject</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+show<span class="t-p">(</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Send as JSON instead</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-43" aria-label="Copy JavaScript code">Copy</button><pre id="code-43" tabindex="0"><code><span class="t-k">await</span> <span class="t-d">$</span><span class="t-f">.ajax</span><span class="t-p">(</span><span class="t-p">{</span> url: <span class="t-s">'/api/profile'</span><span class="t-p">,</span> method: <span class="t-s">'PUT'</span><span class="t-p">,</span> data: <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#profile'</span><span class="t-p">)</span><span class="t-f">.serializeObject</span><span class="t-p">(</span><span class="t-p">)</span><span class="t-p">,</span> json: <span class="t-k">true</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">.serialize() → string</span><p>URL-encode a form’s fields.</p><a href="/docs/#ajax-serialize" style="font-size:14px">Reference: .serialize() →</a></div><div class="api-item"><span class="sig">.serializeObject() → object</span><p>A form’s fields as a plain object (jsKjs extra).</p><a href="/docs/#ajax-serializeobject" style="font-size:14px">Reference: .serializeObject() →</a></div><div class="api-item"><span class="sig">.val([value]) → any | self</span><p>Get or set form values. Checkboxes read/write booleans; multi-selects read as arrays.</p><a href="/docs/#content-val" style="font-size:14px">Reference: .val() →</a></div><div class="api-item"><span class="sig">$.post(url [, data] [, success]) → Promise</span><p>POST shorthand (urlencoded body by default).</p><a href="/docs/#ajax-post" style="font-size:14px">Reference: $.post() →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from jQuery</strong><code>.serializeArray()</code> is not included; <code>.serializeObject()</code> (a jsKjs extra) covers the common case.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="hyper" href="/features/declarative-requests/"><span class="label">Hyper</span><h3>Declarative requests</h3><p>Make GET, POST, PUT, PATCH and DELETE requests straight from HTML with kj-get, kj-post and friends — htmx-style hypermedia with zero JavaScript.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="hyper" href="/features/include-and-vals/"><span class="label">Hyper</span><h3>Sending extra data</h3><p>Send more than the element itself: kj-include adds another form's fields, kj-vals adds literal JSON values.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="pulse" href="/features/two-way-binding/"><span class="label">Pulse</span><h3>Two-way binding</h3><p>Bind form controls to state in both directions with kj-model — text, number, range, checkbox, radio and select.</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/load-fragments/"><span class="dir">← Previous</span><strong>Loading HTML fragments</strong></a>
+    <a class="next" href="/features/timeouts-and-errors/"><span class="dir">Next →</span><strong>Timeouts, aborts &amp; retries</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Core features">
+    <div class="aside-group"><h2>Core · jQuery-compatible</h2><ul><li><a href="/features/selectors/">Selectors &amp; collections</a></li><li><a href="/features/dom-manipulation/">DOM manipulation</a></li><li><a href="/features/attributes-and-data/">Attributes, properties &amp; data</a></li><li><a href="/features/classes-and-css/">Classes &amp; CSS</a></li><li><a href="/features/geometry-and-scroll/">Geometry, scroll &amp; visibility</a></li><li><a href="/features/traversal/">DOM traversal</a></li><li><a href="/features/events/">Events</a></li><li><a href="/features/event-delegation/">Event delegation</a></li><li><a href="/features/custom-events/">Custom events</a></li><li><a href="/features/ajax/">AJAX with $.ajax</a></li><li><a href="/features/fetch-shorthands/">$.get, $.post &amp; $.getJSON</a></li><li><a href="/features/load-fragments/">Loading HTML fragments</a></li><li><a href="/features/forms-and-serialize/" aria-current="page">Forms &amp; serialization</a></li><li><a href="/features/timeouts-and-errors/">Timeouts, aborts &amp; retries</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#motion">Motion · GSAP-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/jquery/">What's ported from jQuery</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+const show = () => $('#sf-live').text(
+  '.serialize()       → "' + $('#sf').serialize() + '"\n' +
+  '.serializeObject() → ' + JSON.stringify($('#sf').serializeObject()));
+
+$('#sf').on('input change', show);
+
+$('#sf').on('submit', async e => {
+  e.preventDefault();
+  $('#sf-server').html(await $.post('/api/echo.php', $('#sf').serializeObject()));
+});
+
+show();
+</script>
+
+</body>
+</html>

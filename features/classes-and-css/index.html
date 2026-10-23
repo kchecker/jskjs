@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>addClass, toggleClass and css() with CSS Custom Properties — jsKjs</title>
+<meta name="description" content="Toggle classes and set styles with addClass(), toggleClass() and css() — including CSS custom properties, which jsKjs reads and writes without adding px.">
+<link rel="canonical" href="https://jskjs.org/features/classes-and-css/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Classes &amp; CSS">
+<meta property="og:description" content="Toggle classes and set styles with addClass(), toggleClass() and css() — including CSS custom properties, which jsKjs reads and writes without adding px.">
+<meta property="og:url" content="https://jskjs.org/features/classes-and-css/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-classes-and-css.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Classes &amp; CSS — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Classes &amp; CSS">
+<meta name="twitter:description" content="Toggle classes and set styles with addClass(), toggleClass() and css() — including CSS custom properties, which jsKjs reads and writes without adding px.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-classes-and-css.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261023">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+.tuner { display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); align-items:end; }
+.pv { --accent-h: 230; --r: 14px; margin-top:20px; border:2px solid hsl(var(--accent-h) 65% 50%); border-radius:var(--r); padding:22px; background:var(--surface); transition:box-shadow .2s, padding .2s; }
+.pv.compact { padding:10px 14px; } .pv.compact p { display:none; }
+.pv.elevated { box-shadow:0 24px 40px -18px hsl(var(--accent-h) 70% 40% / .75); }
+.pv-badge { font:700 11px/1 var(--mono); background:hsl(var(--accent-h) 70% 36%); color:#fff; padding:6px 9px; border-radius:calc(var(--r) / 2); }
+.pv h4 { margin:12px 0 4px; } .pv p { margin:0 0 14px; color:var(--muted); }
+.stage .pv-btn { background:hsl(var(--accent-h) 70% 36%); color:#fff; border-color:transparent; border-radius:calc(var(--r) * .7); }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Classes & CSS","description":"Toggle classes and set styles with addClass(), toggleClass() and css() — including CSS custom properties, which jsKjs reads and writes without adding px.","url":"https://jskjs.org/features/classes-and-css/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-10-23","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Core","item":"https://jskjs.org/features/#core"},{"@type":"ListItem","position":4,"name":"Classes & CSS","item":"https://jskjs.org/features/classes-and-css/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="core">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#core">Core</a></li><li><span aria-current="page">Classes &amp; CSS</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Core · jQuery-compatible</p>
+  <h1>Classes &amp; CSS</h1>
+  <p class="lede">Class lists and inline styles, the jQuery way — with first-class support for CSS custom properties, so one <code>.css('--accent', …)</code> can re-theme a whole component.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<h2>Classes for state, variables for tuning</h2>
+<p>Use classes for discrete states (<code>open</code>, <code>compact</code>, <code>error</code>) and CSS custom properties for continuous values (hue, radius, progress). <code>.css()</code> writes custom properties with <code>setProperty</code> and never appends <code>px</code> to them, so <code>.css('--hue', 200)</code> means exactly 200.</p>
+<p>For ordinary properties, numbers become pixels automatically — except unitless ones such as <code>opacity</code>, <code>z-index</code> and <code>line-height</code>. Reading a property returns the <em>computed</em> value.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Theme tuner</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><div class="tuner">
+  <div class="field"><label for="t-hue">Accent hue: <span id="t-hue-v">230</span></label><input id="t-hue" type="range" min="0" max="360" value="230"></div>
+  <div class="field"><label for="t-rad">Corner radius: <span id="t-rad-v">14</span>px</label><input id="t-rad" type="range" min="0" max="32" value="14"></div>
+  <div class="row"><button type="button" id="t-compact" aria-pressed="false">Compact</button><button type="button" id="t-shadow" aria-pressed="false">Elevated</button></div>
+</div>
+<div id="preview" class="pv">
+  <span class="pv-badge">NEW</span>
+  <h4>Patch cable, 30 cm</h4>
+  <p>Braided, gold-plated, guaranteed to make your modules talk.</p>
+  <button type="button" class="pv-btn">Add to rack</button>
+</div>
+<pre class="out" id="css-out" aria-live="polite"></pre></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-12" aria-label="Copy HTML code">Copy</button><pre id="code-12" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;tuner&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;field&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;t-hue&quot;</span><span class="t-tag">&gt;</span>Accent hue: <span class="t-tag">&lt;span</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;t-hue-v&quot;</span><span class="t-tag">&gt;</span>230<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;t-hue&quot;</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;range&quot;</span> <span class="t-at">min</span><span class="t-p">=</span><span class="t-s">&quot;0&quot;</span> <span class="t-at">max</span><span class="t-p">=</span><span class="t-s">&quot;360&quot;</span> <span class="t-at">value</span><span class="t-p">=</span><span class="t-s">&quot;230&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;field&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;t-rad&quot;</span><span class="t-tag">&gt;</span>Corner radius: <span class="t-tag">&lt;span</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;t-rad-v&quot;</span><span class="t-tag">&gt;</span>14<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span>px<span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;t-rad&quot;</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;range&quot;</span> <span class="t-at">min</span><span class="t-p">=</span><span class="t-s">&quot;0&quot;</span> <span class="t-at">max</span><span class="t-p">=</span><span class="t-s">&quot;32&quot;</span> <span class="t-at">value</span><span class="t-p">=</span><span class="t-s">&quot;14&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;t-compact&quot;</span> <span class="t-at">aria-pressed</span><span class="t-p">=</span><span class="t-s">&quot;false&quot;</span><span class="t-tag">&gt;</span>Compact<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;t-shadow&quot;</span> <span class="t-at">aria-pressed</span><span class="t-p">=</span><span class="t-s">&quot;false&quot;</span><span class="t-tag">&gt;</span>Elevated<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;preview&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;pv&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;pv-badge&quot;</span><span class="t-tag">&gt;</span>NEW<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;h4</span><span class="t-tag">&gt;</span>Patch cable, 30 cm<span class="t-tag">&lt;/h4</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;p</span><span class="t-tag">&gt;</span>Braided, gold-plated, guaranteed to make your modules talk.<span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;pv-btn&quot;</span><span class="t-tag">&gt;</span>Add to rack<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;pre</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;out&quot;</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;css-out&quot;</span> <span class="t-at">aria-live</span><span class="t-p">=</span><span class="t-s">&quot;polite&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/pre</span><span class="t-tag">&gt;</span></code></pre></div><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-13" aria-label="Copy JavaScript code">Copy</button><pre id="code-13" tabindex="0"><code><span class="t-k">const</span> $pv = <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#preview'</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-k">function</span> report<span class="t-p">(</span>note<span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#css-out'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span>note + <span class="t-s">'\n'</span> +
+    <span class="t-s">&quot;css('--accent-h')     → &quot;</span> + $pv<span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'--accent-h'</span><span class="t-p">)</span> + <span class="t-s">'\n'</span> +
+    <span class="t-s">&quot;css('border-radius')  → &quot;</span> + $pv<span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'border-radius'</span><span class="t-p">)</span> + <span class="t-s">'\n'</span> +
+    <span class="t-s">&quot;hasClass('compact')   → &quot;</span> + $pv<span class="t-f">.hasClass</span><span class="t-p">(</span><span class="t-s">'compact'</span><span class="t-p">)</span> + <span class="t-s">'\n'</span> +
+    <span class="t-s">&quot;hasClass('elevated')  → &quot;</span> + $pv<span class="t-f">.hasClass</span><span class="t-p">(</span><span class="t-s">'elevated'</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#t-hue'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'input'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  $pv<span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'--accent-h'</span><span class="t-p">,</span> <span class="t-k">this</span>.value<span class="t-p">)</span><span class="t-p">;</span>     <span class="t-c">// custom property: no px added</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#t-hue-v'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-k">this</span>.value<span class="t-p">)</span><span class="t-p">;</span>
+  report<span class="t-p">(</span><span class="t-s">'One custom property re-themes border, badge, button and shadow.'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#t-rad'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'input'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  $pv<span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'--r'</span><span class="t-p">,</span> <span class="t-k">this</span>.value + <span class="t-s">'px'</span><span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#t-rad-v'</span><span class="t-p">)</span><span class="t-f">.text</span><span class="t-p">(</span><span class="t-k">this</span>.value<span class="t-p">)</span><span class="t-p">;</span>
+  report<span class="t-p">(</span><span class="t-s">'Radius flows to every corner through calc().'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#t-compact, #t-shadow'</span><span class="t-p">)</span><span class="t-f">.on</span><span class="t-p">(</span><span class="t-s">'click'</span><span class="t-p">,</span> <span class="t-k">function</span> <span class="t-p">(</span><span class="t-p">)</span> <span class="t-p">{</span>
+  <span class="t-k">const</span> cls = <span class="t-k">this</span>.id === <span class="t-s">'t-compact'</span> ? <span class="t-s">'compact'</span> : <span class="t-s">'elevated'</span><span class="t-p">;</span>
+  $pv<span class="t-f">.toggleClass</span><span class="t-p">(</span>cls<span class="t-p">)</span><span class="t-p">;</span>
+  <span class="t-d">$</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">)</span><span class="t-f">.attr</span><span class="t-p">(</span><span class="t-s">'aria-pressed'</span><span class="t-p">,</span> String<span class="t-p">(</span>$pv<span class="t-f">.hasClass</span><span class="t-p">(</span>cls<span class="t-p">)</span><span class="t-p">)</span><span class="t-p">)</span><span class="t-p">;</span>
+  report<span class="t-p">(</span><span class="t-s">&quot;.toggleClass('&quot;</span> + cls + <span class="t-s">&quot;')&quot;</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>
+
+report<span class="t-p">(</span><span class="t-s">'Drag a slider or toggle a class.'</span><span class="t-p">)</span><span class="t-p">;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Common patterns</h3><div class="code"><span class="code-label">JavaScript</span><button class="copy-btn" type="button" data-copy="code-14" aria-label="Copy JavaScript code">Copy</button><pre id="code-14" tabindex="0"><code><span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.tab'</span><span class="t-p">)</span><span class="t-f">.removeClass</span><span class="t-p">(</span><span class="t-s">'active'</span><span class="t-p">)</span><span class="t-f">.eq</span><span class="t-p">(</span><span class="t-n">2</span><span class="t-p">)</span><span class="t-f">.addClass</span><span class="t-p">(</span><span class="t-s">'active'</span><span class="t-p">)</span><span class="t-p">;</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'#menu'</span><span class="t-p">)</span><span class="t-f">.toggleClass</span><span class="t-p">(</span><span class="t-s">'open'</span><span class="t-p">,</span> isOpen<span class="t-p">)</span><span class="t-p">;</span>          <span class="t-c">// force on/off</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">'.bar'</span><span class="t-p">)</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-p">{</span> width: <span class="t-n">240</span><span class="t-p">,</span> opacity: .<span class="t-n">8</span> <span class="t-p">}</span><span class="t-p">)</span><span class="t-p">;</span>       <span class="t-c">// width → 240px, opacity stays .8</span>
+<span class="t-d">$</span><span class="t-p">(</span><span class="t-s">':root'</span><span class="t-p">)</span><span class="t-f">.css</span><span class="t-p">(</span><span class="t-s">'--brand'</span><span class="t-p">,</span> <span class="t-s">'#6c5ce7'</span><span class="t-p">)</span><span class="t-p">;</span>             <span class="t-c">// theme the whole page</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">.addClass(names) → self</span><p>Add one or more classes.</p><a href="/docs/#classes-addclass" style="font-size:14px">Reference: .addClass() →</a></div><div class="api-item"><span class="sig">.removeClass([names]) → self</span><p>Remove classes; with no argument, removes all classes.</p><a href="/docs/#classes-removeclass" style="font-size:14px">Reference: .removeClass() →</a></div><div class="api-item"><span class="sig">.toggleClass(names [, force]) → self</span><p>Toggle classes, optionally forcing on/off with a boolean.</p><a href="/docs/#classes-toggleclass" style="font-size:14px">Reference: .toggleClass() →</a></div><div class="api-item"><span class="sig">.hasClass(name) → boolean</span><p>True if any element in the set has the class.</p><a href="/docs/#classes-hasclass" style="font-size:14px">Reference: .hasClass() →</a></div><div class="api-item"><span class="sig">.css(name [, value]) · .css(object) → string | self</span><p>Get a computed style from the first element, or set styles on all. Numbers become px except for unitless properties. Custom properties (<code>--name</code>) are read with <code>getPropertyValue</code> and written without px.</p><a href="/docs/#css-css" style="font-size:14px">Reference: .css() →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from jQuery</strong>Same API. jsKjs also reads custom properties with <code>.css("--name")</code> (returns the trimmed computed value).</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="core" href="/features/geometry-and-scroll/"><span class="label">Core</span><h3>Geometry, scroll &amp; visibility</h3><p>Measure and position elements with width(), height(), offset() and position(), control scrolling with scrollTop(), and show or hide elements without losing their display value..</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="motion" href="/features/transforms/"><span class="label">Motion</span><h3>Transforms</h3><p>Animate x, y, rotate, scale, scaleX, scaleY, skewX and skewY independently — jsKjs composes them into one transform per frame.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="core" href="/features/attributes-and-data/"><span class="label">Core</span><h3>Attributes, properties &amp; data</h3><p>Read and write HTML attributes, live DOM properties and per-element data.</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/attributes-and-data/"><span class="dir">← Previous</span><strong>Attributes, properties &amp; data</strong></a>
+    <a class="next" href="/features/geometry-and-scroll/"><span class="dir">Next →</span><strong>Geometry, scroll &amp; visibility</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Core features">
+    <div class="aside-group"><h2>Core · jQuery-compatible</h2><ul><li><a href="/features/selectors/">Selectors &amp; collections</a></li><li><a href="/features/dom-manipulation/">DOM manipulation</a></li><li><a href="/features/attributes-and-data/">Attributes, properties &amp; data</a></li><li><a href="/features/classes-and-css/" aria-current="page">Classes &amp; CSS</a></li><li><a href="/features/geometry-and-scroll/">Geometry, scroll &amp; visibility</a></li><li><a href="/features/traversal/">DOM traversal</a></li><li><a href="/features/events/">Events</a></li><li><a href="/features/event-delegation/">Event delegation</a></li><li><a href="/features/custom-events/">Custom events</a></li><li><a href="/features/ajax/">AJAX with $.ajax</a></li><li><a href="/features/fetch-shorthands/">$.get, $.post &amp; $.getJSON</a></li><li><a href="/features/load-fragments/">Loading HTML fragments</a></li><li><a href="/features/forms-and-serialize/">Forms &amp; serialization</a></li><li><a href="/features/timeouts-and-errors/">Timeouts, aborts &amp; retries</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#pulse">Pulse · Alpine-style</a></li><li><a href="/features/#motion">Motion · GSAP-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/jquery/">What's ported from jQuery</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 8.1 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs</a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">What aged in jQuery</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 8.1 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" rel="noopener">MIT License</a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261023"></script>
+<script>
+const $pv = $('#preview');
+
+function report(note) {
+  $('#css-out').text(note + '\n' +
+    "css('--accent-h')     → " + $pv.css('--accent-h') + '\n' +
+    "css('border-radius')  → " + $pv.css('border-radius') + '\n' +
+    "hasClass('compact')   → " + $pv.hasClass('compact') + '\n' +
+    "hasClass('elevated')  → " + $pv.hasClass('elevated'));
+}
+
+$('#t-hue').on('input', function () {
+  $pv.css('--accent-h', this.value);     // custom property: no px added
+  $('#t-hue-v').text(this.value);
+  report('One custom property re-themes border, badge, button and shadow.');
+});
+
+$('#t-rad').on('input', function () {
+  $pv.css('--r', this.value + 'px');
+  $('#t-rad-v').text(this.value);
+  report('Radius flows to every corner through calc().');
+});
+
+$('#t-compact, #t-shadow').on('click', function () {
+  const cls = this.id === 't-compact' ? 'compact' : 'elevated';
+  $pv.toggleClass(cls);
+  $(this).attr('aria-pressed', String($pv.hasClass(cls)));
+  report(".toggleClass('" + cls + "')");
+});
+
+report('Drag a slider or toggle a class.');
+</script>
+
+</body>
+</html>
