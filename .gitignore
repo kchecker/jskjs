@@ -3,3 +3,5 @@ site/public/
 site/og-manifest.json
 .skilltmp/
 *.log
+test/jquery-suite/jquery/
+scratch-old/

@@ -60,7 +60,7 @@ echo "<li id='note-$id'>$text <button kj-delete='/api/notes.php?id=$id'
       kj-target='#note-$id' kj-swap='outerHTML'>✕</button></li>";` },
   ],
   api: ['kj-get / kj-post / kj-put / kj-patch / kj-delete', 'kj-target'],
-  from: [{ lib: 'htmx', note: 'Rename <code>hx-</code> to <code>kj-</code>: <code>hx-get</code> → <code>kj-get</code>, <code>hx-target</code> → <code>kj-target</code>. Requests carry <code>X-Requested-With: jsKjs</code> instead of htmx\'s <code>HX-Request</code> header.' }],
+  from: [{ lib: 'htmx', note: 'Rename <code>hx-</code> to <code>kj-</code> when you like — <code>hx-*</code> attributes also work. Requests send htmx\'s <code>HX-Request</code>, <code>HX-Trigger</code>, <code>HX-Target</code> and <code>HX-Current-URL</code> headers, so existing server code keeps working.' }],
   related: ['targets-and-swaps', 'triggers', 'forms-and-serialize'],
 },
 {
@@ -113,7 +113,7 @@ $('#swap-reset').on('click', () =>
 <a href="/pricing" kj-post="/track?e=pricing" kj-swap="none">Pricing</a>` },
   ],
   api: ['kj-target', 'kj-swap'],
-  from: [{ lib: 'htmx', note: 'Same swap names. htmx swap <em>modifiers</em> (<code>swap:1s</code>, <code>settle</code>, <code>scroll:top</code>, <code>show</code>), <code>hx-select</code> and out-of-band swaps (<code>hx-swap-oob</code>) are not included.' }],
+  from: [{ lib: 'htmx', note: 'Same swap names and modifiers as htmx (<code>swap:</code>, <code>settle:</code>, <code>scroll:</code>, <code>show:</code>, <code>transition:</code>), plus <code>kj-select</code>, <code>kj-select-oob</code>, <code>kj-swap-oob</code> and <code>kj-preserve</code>.' }],
   related: ['declarative-requests', 'lazy-loading', 'load-fragments'],
 },
 {
@@ -161,7 +161,7 @@ $('#swap-reset').on('click', () =>
 <span kj-get="/price" kj-trigger="every 5s"></span>` },
   ],
   api: ['kj-trigger'],
-  from: [{ lib: 'htmx', note: 'Supported: an event name, <code>delay:</code>, <code>load</code>, <code>revealed</code>, <code>every Ns</code>. Not included: multiple events in one trigger, <code>changed</code>, <code>once</code>, <code>throttle:</code>, <code>from:</code>, <code>intersect</code> options and <code>[filter]</code> expressions.' }],
+  from: [{ lib: 'htmx', note: 'Same syntax as <code>hx-trigger</code>: several events, <code>[filters]</code>, <code>once</code>, <code>changed</code>, <code>delay:</code>, <code>throttle:</code>, <code>from:</code>, <code>target:</code>, <code>consume</code>, <code>queue:</code>, <code>load</code>, <code>revealed</code>, <code>intersect</code> and <code>every</code>.' }],
   related: ['polling', 'lazy-loading', 'debounce-and-throttle'],
 },
 {
@@ -209,7 +209,7 @@ $('#tick-pause').on('click', function () {
 </section>` },
   ],
   api: ['kj-trigger', 'Lifecycle events'],
-  from: [{ lib: 'htmx', note: 'Same syntax as <code>hx-trigger="every 2s"</code>. htmx\'s <code>286</code> stop-polling status code is not supported — remove the element instead.' }],
+  from: [{ lib: 'htmx', note: 'Same syntax as <code>hx-trigger="every 2s"</code>, including htmx\'s <code>286</code> stop-polling status code.' }],
   related: ['triggers', 'lifecycle-events', 'lazy-loading'],
 },
 {
@@ -285,7 +285,7 @@ $('#tick-pause').on('click', function () {
 <span id="export-spin" hidden>Preparing…</span>` },
   ],
   api: ['kj-confirm', 'kj-indicator'],
-  from: [{ lib: 'htmx', note: '<code>hx-confirm</code> → <code>kj-confirm</code>. jsKjs shows/hides the indicator element itself rather than toggling an <code>htmx-request</code> class; <code>hx-disabled-elt</code> is not included.' }],
+  from: [{ lib: 'htmx', note: '<code>hx-confirm</code> → <code>kj-confirm</code>, <code>hx-prompt</code> → <code>kj-prompt</code>, <code>hx-disabled-elt</code> → <code>kj-disabled-elt</code>. Indicators get the <code>kj-request</code> class (htmx: <code>htmx-request</code>); a hidden indicator is also shown for the request.' }],
   related: ['declarative-requests', 'lifecycle-events', 'targets-and-swaps'],
 },
 {
@@ -322,7 +322,7 @@ $('#flt').on('submit', e => e.preventDefault());`,
 <button kj-get="/products" kj-include="#search-filters" kj-vals='{"page": 3}' kj-target="#grid">Page 3</button>` },
   ],
   api: ['kj-include / kj-vals'],
-  from: [{ lib: 'htmx', note: 'Same idea as <code>hx-include</code> and <code>hx-vals</code>. <code>hx-vals="js:…"</code> (computed values) and <code>hx-params</code> filtering are not included.' }],
+  from: [{ lib: 'htmx', note: 'Same as <code>hx-include</code>, <code>hx-vals</code> (including <code>js:</code> values), <code>hx-headers</code> and <code>hx-params</code>.' }],
   related: ['declarative-requests', 'forms-and-serialize', 'targets-and-swaps'],
 },
 {
@@ -366,7 +366,7 @@ if (tabFromUrl()) $(window).trigger('popstate');`,
 <a href="/products?page=2" kj-get="/products?page=2" kj-target="#grid" kj-push-url="true">Page 2</a>` },
   ],
   api: ['kj-push-url'],
-  from: [{ lib: 'htmx', note: 'Like <code>hx-push-url</code>, minus htmx\'s history cache and automatic restore. <code>hx-replace-url</code> and <code>hx-boost</code> are not included.' }],
+  from: [{ lib: 'htmx', note: 'Same as htmx: <code>kj-push-url</code>, <code>kj-replace-url</code>, <code>kj-boost</code>, a history snapshot cache and restore on Back/Forward.' }],
   related: ['declarative-requests', 'load-fragments', 'lifecycle-events'],
 },
 {
@@ -428,7 +428,7 @@ $(document).on('kj:error', (e, { url, error }) => {
 });` },
   ],
   api: ['Lifecycle events'],
-  from: [{ lib: 'htmx', note: 'Rough equivalents: <code>htmx:beforeRequest</code> → <code>kj:before</code>, <code>htmx:afterRequest</code> → <code>kj:after</code>, <code>htmx:responseError</code> → <code>kj:error</code>, <code>htmx:afterSwap</code> → <code>kj:load</code>. Events are not cancelable.' }],
+  from: [{ lib: 'htmx', note: 'htmx → jsKjs: <code>htmx:configRequest</code> → <code>kj:config</code>, <code>beforeRequest</code> → <code>kj:before</code>, <code>afterRequest</code> → <code>kj:after</code>, <code>beforeSwap</code> → <code>kj:beforeSwap</code>, <code>afterSwap</code> → <code>kj:afterSwap</code>, <code>afterSettle</code> → <code>kj:afterSettle</code>, <code>load</code> → <code>kj:load</code>. Cancelable where htmx\'s are.' }],
   related: ['custom-events', 'confirm-and-indicators', 'polling'],
 },
 
@@ -476,7 +476,7 @@ output { font:800 22px var(--mono); min-width:2ch; text-align:center; }`,
 </div>` },
   ],
   api: ['kj-data', '$.reactive()'],
-  from: [{ lib: 'Alpine.js', note: '<code>x-data</code> → <code>kj-data</code>, same object syntax and <code>init()</code>. Alpine\'s magic properties (<code>$watch</code>, <code>$dispatch</code>, <code>$refs</code>, <code>$nextTick</code>) are not included; <code>$el</code> and <code>$event</code> are.' }],
+  from: [{ lib: 'Alpine.js', note: '<code>x-data</code> → <code>kj-data</code> (or keep <code>x-data</code>), same object syntax, <code>init()</code> and <code>destroy()</code>. All of Alpine\'s magics work: <code>$el</code>, <code>$refs</code>, <code>$watch</code>, <code>$dispatch</code>, <code>$nextTick</code>, <code>$store</code>, <code>$id</code>…' }],
   related: ['two-way-binding', 'text-and-html-binding', 'components'],
 },
 {
@@ -592,7 +592,7 @@ $.component('wizard', () => ({
 </div>` },
   ],
   api: ['kj-show'],
-  from: [{ lib: 'Alpine.js', note: '<code>x-show</code> → <code>kj-show</code>. <code>x-if</code> (adding/removing from the DOM) and <code>x-transition</code> are not included; combine <code>kj-show</code> with Motion for animated reveals.' }],
+  from: [{ lib: 'Alpine.js', note: '<code>x-show</code> → <code>kj-show</code>, <code>x-if</code> → <code>kj-if</code>, <code>x-transition</code> → <code>kj-transition</code> (modifier and class syntax).' }],
   related: ['reactive-state', 'event-directives', 'two-way-binding'],
 },
 {
@@ -659,7 +659,7 @@ $.component('mixer', () => ({
 <select kj-model="country">…</select>` },
   ],
   api: ['kj-model'],
-  from: [{ lib: 'Alpine.js', note: '<code>x-model</code> → <code>kj-model</code>. Values arrive as strings (use <code>+value</code>); Alpine\'s <code>.number</code>, <code>.lazy</code> and <code>.debounce</code> modifiers are not included.' }],
+  from: [{ lib: 'Alpine.js', note: '<code>x-model</code> → <code>kj-model</code> with every modifier: <code>.number</code>, <code>.lazy</code>, <code>.trim</code>, <code>.boolean</code>, <code>.debounce</code>, <code>.throttle</code>, <code>.fill</code>.' }],
   related: ['reactive-state', 'attribute-binding', 'forms-and-serialize'],
 },
 {
@@ -720,7 +720,7 @@ $.component('todos', () => ({
 <div kj-on:mouseenter="hovered = true" kj-on:mouseleave="hovered = false"></div>` },
   ],
   api: ['@event / kj-on:event'],
-  from: [{ lib: 'Alpine.js', note: '<code>x-on:</code>/<code>@</code> work the same. One modifier per directive; <code>.outside</code>, <code>.window</code>, <code>.document</code>, <code>.once</code>, <code>.debounce</code> and other key names are not included — use <code>$event.key</code>.' }],
+  from: [{ lib: 'Alpine.js', note: '<code>x-on:</code>/<code>@</code> work the same, with all of Alpine\'s modifiers (<code>.outside</code>, <code>.window</code>, <code>.once</code>, <code>.debounce</code>, key names…).' }],
   related: ['reactive-state', 'events', 'text-and-html-binding'],
 },
 {
@@ -787,7 +787,7 @@ $.component('gallery', () => ({
 <div :style="'width:' + progress + '%'"></div>` },
   ],
   api: [':attr / kj-bind:attr'],
-  from: [{ lib: 'Alpine.js', note: '<code>x-bind:</code>/<code>:</code> work the same for strings. Alpine\'s object syntax for <code>:class="{ active: on }"</code> and <code>:style="{ … }"</code> is not included — use a string expression.' }],
+  from: [{ lib: 'Alpine.js', note: '<code>x-bind:</code>/<code>:</code> work the same, including object syntax for <code>:class</code> and <code>:style</code>.' }],
   related: ['reactive-state', 'two-way-binding', 'components'],
 },
 {
@@ -899,7 +899,7 @@ const prefs = $.store('prefs', { theme: 'dark', compact: false });
 $('#compact').on('change', function () { prefs.compact = this.checked; });   // every component updates` },
   ],
   api: ['$.store()', '$.reactive()'],
-  from: [{ lib: 'Alpine.js', note: '<code>Alpine.store(\'cart\', …)</code> → <code>$.store(\'cart\', …)</code>; read it as <code>$.store(\'cart\')</code> instead of <code>$store.cart</code>.' }],
+  from: [{ lib: 'Alpine.js', note: '<code>Alpine.store(\'cart\', …)</code> → <code>$.store(\'cart\', …)</code>; read it in markup as <code>$store.cart</code>.' }],
   related: ['components', 'custom-events', 'reactive-state'],
 },
 ];

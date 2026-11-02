@@ -13,5 +13,14 @@ function input($key, $max = 200) {
   }
   return is_string($v) ? mb_substr(trim($v), 0, $max) : $v;
 }
+// Error demos only misbehave for requests made by the page itself (jsKjs sends X-Requested-With / HX-Request).
+// Crawlers and people opening the URL directly get a plain 200 explanation, so search engines never log 4xx/5xx here.
+function from_demo() { return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) || !empty($_SERVER['HTTP_HX_REQUEST']); }
+function demo_only($what) {
+  if (from_demo()) return;
+  header('Content-Type: text/plain; charset=utf-8');
+  echo "This endpoint powers a live demo on https://jskjs.org ($what). It only returns errors to requests made by the demo itself.";
+  exit;
+}
 function html_out() { header('Content-Type: text/html; charset=utf-8'); }
 function json_out($data) { header('Content-Type: application/json; charset=utf-8'); echo json_encode($data); exit; }

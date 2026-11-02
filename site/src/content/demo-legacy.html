@@ -139,7 +139,7 @@
       <div class="row" style="justify-content:space-between">
         <div class="row">
           <button id="shop-load">Load products</button>
-          <select id="shop-sort" style="width:auto"><option value="">sort: featured</option><option value="asc">price ↑</option><option value="desc">price ↓</option></select>
+          <select id="shop-sort" style="width:auto" aria-label="Sort products"><option value="">sort: featured</option><option value="asc">price ↑</option><option value="desc">price ↓</option></select>
           <input type="text" id="shop-filter" placeholder="filter… try 'kitchen'" style="width:180px">
         </div>
         <span class="badge" id="cart-badge">🛒 cart: 0</span>
@@ -248,10 +248,10 @@
 
     <div class="panel" kj-data="tabs">
       <h3 class="demo-title"><span class="num">04</span>Tabs — registered component</h3>
-      <div class="row tabs">
-        <button @click="active = 'html'" :aria-selected="active === 'html'">HTML</button>
-        <button @click="active = 'css'"  :aria-selected="active === 'css'">CSS</button>
-        <button @click="active = 'js'"   :aria-selected="active === 'js'">JS</button>
+      <div class="row tabs" role="tablist" aria-label="Code type">
+        <button @click="active = 'html'" role="tab" :aria-selected="active === 'html'">HTML</button>
+        <button @click="active = 'css'"  role="tab" :aria-selected="active === 'css'">CSS</button>
+        <button @click="active = 'js'"   role="tab" :aria-selected="active === 'js'">JS</button>
       </div>
       <p style="margin-top:12px" kj-text="content[active]"></p>
       <p style="margin-top:6px" class="muted" kj-text="'Mounted at ' + mountedAt + ' via init()'"></p>
@@ -348,7 +348,7 @@
     <div class="panel">
       <h3 class="demo-title"><span class="num">13</span>Lazy load on reveal <span class="muted" style="font-size:.7em">real static file</span></h3>
       <p class="muted">These comments loaded only when this panel scrolled into view.</p>
-      <ul id="comments" kj-get="../api/comments.html" kj-trigger="revealed" style="padding:8px 0 0; margin:0">Loading when revealed…</ul>
+      <ul id="comments" kj-get="../api/comments.html" kj-trigger="revealed" style="padding:8px 0 0; margin:0"><li>Loading when revealed…</li></ul>
       <p class="demo-note">kj-trigger="revealed" (IntersectionObserver)</p>
     </div>
 
@@ -366,8 +366,8 @@
       <h3 class="demo-title"><span class="num">15</span>kj-include + kj-vals <span class="muted" style="font-size:.7em">simulated</span></h3>
       <form id="filters" onsubmit="return false">
         <div class="row">
-          <input type="text" name="category" value="tools" style="flex:1">
-          <select name="sort" style="width:auto"><option>newest</option><option>popular</option></select>
+          <input type="text" name="category" value="tools" style="flex:1" aria-label="Category">
+          <select name="sort" style="width:auto" aria-label="Sort order"><option>newest</option><option>popular</option></select>
         </div>
       </form>
       <div class="row" style="margin-top:10px">
@@ -427,8 +427,8 @@
       <h3 class="demo-title"><span class="num">21</span>serialize / serializeObject</h3>
       <form id="ser-form" onsubmit="return false">
         <div class="row">
-          <input type="text" name="user" value="ada" style="flex:1">
-          <input type="text" name="plan" value="pro" style="flex:1">
+          <input type="text" name="user" value="ada" style="flex:1" aria-label="User">
+          <input type="text" name="plan" value="pro" style="flex:1" aria-label="Plan">
         </div>
       </form>
       <div class="row" style="margin-top:10px"><button id="btn-ser">Serialize</button></div>

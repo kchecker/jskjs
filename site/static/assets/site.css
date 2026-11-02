@@ -218,7 +218,7 @@ kbd { font-size: .82em; border: 1px solid var(--line); border-bottom-width: 3px;
 .btn:hover { border-color: var(--ink); }
 .btn:active { transform: translateY(1px); }
 .btn-primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.btn-primary:hover { background: var(--mod-ink); border-color: var(--mod-ink); color: #fff; }
+.btn-primary:hover { background: var(--mod-ink); border-color: var(--mod-ink); color: var(--bg); }
 .band .btn { background: transparent; color: var(--chrome-ink); border-color: var(--chrome-line); }
 .band .btn:hover { border-color: var(--chrome-ink); background: var(--chrome-2); }
 .band .btn-primary { background: var(--motion); color: #13152B; border-color: var(--motion); box-shadow: 0 10px 24px -14px rgba(138,88,0,.8); }
@@ -263,6 +263,8 @@ a.card.plate { transition: transform .15s, box-shadow .15s, border-color .15s; }
 .code pre {
   background: var(--code-bg); color: var(--code-fg); border-radius: 12px; padding: 18px 20px; overflow-x: auto;
   font-size: 13px; line-height: 1.7; tab-size: 2; border: 1px solid #1E2245;
+  white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal;   /* wrap long lines instead of scrolling sideways */
+  padding-right: 78px;                                                    /* keep text clear of the Copy button */
 }
 .code .code-label { position: absolute; top: 0; left: 18px; transform: translateY(-50%); background: var(--rack-2); color: var(--rack-muted);
   font: 600 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--rack-line); }
@@ -508,3 +510,20 @@ h1, h2 { text-wrap: balance; }
 .reveal { transition: filter .5s ease, opacity .5s ease; }
 .drum-stage { min-height: 0; }
 .drum-count:empty { min-height: 0; height: 0; }
+
+/* features hub: grouped, roomy cards */
+.ft-group { margin-top: 56px; display: grid; grid-template-columns: minmax(0, 280px) minmax(0, 1fr); gap: 28px 40px; align-items: start; }
+.ft-group:first-of-type { margin-top: 36px; }
+.ft-group-head { position: sticky; top: 96px; }
+.ft-group-head h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); margin: 8px 0 10px; }
+.ft-group-head p { color: var(--muted); font-size: 15.5px; line-height: 1.55; }
+.ft-group-link { display: inline-block; margin-top: 12px; font: 600 13px var(--mono); color: var(--mod-ink); }
+.ft-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+.ft-card { padding: 24px 24px 20px; min-height: 168px; }
+.ft-card h3 { font-size: 1.25rem; }
+.ft-card p { font-size: 15px; }
+@media (max-width: 900px) { .ft-group { grid-template-columns: 1fr; gap: 18px; } .ft-group-head { position: static; } }
+
+/* buttons on dark repo cards keep light text in both themes */
+.repo-card .btn:not(.btn-primary) { color: #E9EBF7; border-color: rgba(233,235,247,.4); background: transparent; }
+.repo-card .btn:not(.btn-primary):hover { border-color: #E9EBF7; background: rgba(255,255,255,.08); }

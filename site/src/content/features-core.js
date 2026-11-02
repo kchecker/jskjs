@@ -8,7 +8,8 @@ module.exports = [
   body: String.raw`
 <h2>What you get</h2>
 <p>jsKjs hands every selector straight to the browser's own <code>querySelectorAll</code>. There is no selector engine to download or execute, so anything your browser understands — <code>:has()</code>, <code>:is()</code>, <code>:not(a, b)</code>, attribute operators — works on day one. An invalid selector throws a clear error instead of quietly matching nothing.</p>
-<p>The collection you get back <em>extends</em> <code>Array</code>. Chain jQuery-style methods such as <code>.addClass()</code>, or use native array features directly: spread it, destructure it, loop it with <code>for…of</code>, or <code>.map()</code> it into plain values.</p>
+<p>jQuery's own selector extensions still work, so old code keeps running: <code>:visible</code>, <code>:hidden</code>, <code>:contains()</code>, <code>:first</code>, <code>:last</code>, <code>:eq(n)</code>, <code>:even</code>, <code>:odd</code>, <code>:input</code>, <code>:checkbox</code> and the rest of the form shortcuts. jsKjs only takes its slower path when a selector actually uses one of them.</p>
+<p>The collection you get back <em>extends</em> <code>Array</code>. Chain jQuery-style methods such as <code>.addClass()</code>, or use native array features directly: spread it, destructure it, loop it with <code>for…of</code>, or <code>.reduce()</code> it. Methods jQuery already defines keep jQuery's signatures: <code>.map((i, el) =&gt; …)</code> returns a collection, and <code>.get()</code> turns any collection into a plain array.</p>
 <h2>The five ways to call $()</h2>
 <ul>
 <li><code>$('.card')</code> — select by CSS selector (optionally scoped: <code>$('li', '#menu')</code>).</li>
@@ -32,6 +33,8 @@ module.exports = [
   <button type="button" class="chip" data-sel="[data-stock='0']">[data-stock='0']</button>
   <button type="button" class="chip" data-sel="li:has(b)">li:has(b)</button>
   <button type="button" class="chip" data-sel="li:not(.sale, [data-stock='0'])">li:not(.sale, …)</button>
+  <button type="button" class="chip" data-sel="li:contains(Mug)">li:contains(Mug)</button>
+  <button type="button" class="chip" data-sel="li:odd">li:odd</button>
 </div>
 <ul id="shelf" class="list-plain" style="margin-top:14px">
   <li data-stock="4">Tween Engine Tee</li>
@@ -46,13 +49,13 @@ function run(selector) {
   $('#shelf li').css('background', '');
   let $hits;
   try {
-    $hits = $(selector, '#shelf');            // native querySelectorAll, scoped
+    $hits = $(selector, '#shelf');            // native querySelectorAll, scoped (jQuery pseudos work too)
   } catch (err) {
-    $('#sel-out').text('✗ Not a valid CSS selector: ' + selector);
+    $('#sel-out').text('✗ Not a valid selector: ' + selector);
     return;
   }
   $hits.css('background', 'color-mix(in srgb, var(--core) 22%, transparent)');
-  const names = $hits.map(el => el.firstChild.textContent.trim());   // it's an Array
+  const names = $hits.map((i, el) => el.firstChild.textContent.trim()).get();   // jQuery-style .map, then a plain array
   $('#sel-out').text("$('" + selector + "', '#shelf') → " + $hits.length + ' match(es)\n' + JSON.stringify(names));
 }
 
@@ -72,13 +75,13 @@ $(document.body).attr('data-ready', '');
 
 $(() => console.log('DOM ready'));` },
     { title: 'It is an Array — use that', lang: 'js', code: String.raw`
-const ids = $('[data-id]').map(el => el.dataset.id);   // plain array of strings
+const ids = $('[data-id]').map((i, el) => el.dataset.id).get();   // jQuery's .map → plain array
 for (const img of $('img[loading="lazy"]')) observer.observe(img);
 const [first, second] = $('.step');
 const total = $('.line-item').reduce((sum, el) => sum + +el.dataset.price, 0);` },
   ],
   api: ['$()', '.each()', '.get()', '.eq()', '.first() / .last()', '.index()', '.add()'],
-  from: [{ lib: 'jQuery', note: 'Identical calls. jQuery-only pseudo-selectors such as <code>:first</code>, <code>:eq()</code> and <code>:visible</code> are not CSS, so use <code>.first()</code>, <code>.eq()</code> or <code>.filter()</code>. Native array methods like <code>.map()</code> return plain arrays — wrap with <code>$()</code> to keep chaining.' }],
+  from: [{ lib: 'jQuery', note: 'Identical calls, including jQuery-only pseudo-selectors such as <code>:first</code>, <code>:eq()</code>, <code>:contains()</code> and <code>:visible</code>. <code>.map()</code>, <code>.filter()</code> and <code>.each()</code> keep jQuery\'s <code>(index, element)</code> signatures.' }],
   related: ['traversal', 'dom-manipulation', 'event-delegation'],
 },
 {
@@ -162,7 +165,7 @@ $('.legacy-banner').replaceWith('<div class="banner">New</div>');
 $('#row-template').clone().removeAttr('id').appendTo('tbody');` },
   ],
   api: ['.html()', '.text()', '.append() / .prepend()', '.before() / .after()', '.appendTo() / .prependTo()', '.wrap()', '.remove()', '.empty()', '.clone()', '.replaceWith()'],
-  from: [{ lib: 'jQuery', note: 'Same names and argument styles. <code>.detach()</code> is an alias of <code>.remove()</code> (data survives either way). <code>.wrapAll()</code>, <code>.wrapInner()</code> and <code>.unwrap()</code> are not included.' }],
+  from: [{ lib: 'jQuery', note: 'Same API as jQuery, including <code>.wrapAll()</code>, <code>.wrapInner()</code>, <code>.unwrap()</code>, <code>.replaceAll()</code> and <code>.detach()</code> (which keeps data and events).' }],
   related: ['selectors', 'event-delegation', 'attributes-and-data'],
 },
 {
@@ -242,7 +245,7 @@ $('#chart').data('series', bigArrayOfPoints); // any value, no serialization
 $('#chart').removeData('series');` },
   ],
   api: ['.attr()', '.removeAttr()', '.prop()', '.data()', '.removeData()', '.val()'],
-  from: [{ lib: 'jQuery', note: '<code>.data()</code> behaves the same (JSON parsing, object stores). One deliberate difference: <code>.val()</code> on a checkbox returns <code>true/false</code> rather than its <code>value</code> attribute — use <code>.attr("value")</code> if you need that.' }],
+  from: [{ lib: 'jQuery', note: 'Same API as jQuery: <code>.data()</code> reads <code>data-*</code> attributes once and parses JSON, numbers and booleans; <code>.val()</code> follows jQuery (a checkbox returns its <code>value</code> — use <code>.prop(\'checked\')</code> for the state).' }],
   related: ['classes-and-css', 'forms-and-serialize', 'reactive-state'],
 },
 {
@@ -393,7 +396,7 @@ $('#to-top').on('click', () => $(window).scrollTop(0));
 $(window).on('scroll', $.throttle(() => $('#to-top').toggle($(window).scrollTop() > 600), 100));` },
   ],
   api: ['.width() / .height()', '.offset()', '.position()', '.scrollTop() / .scrollLeft()', '.show() / .hide() / .toggle()'],
-  from: [{ lib: 'jQuery', note: '<code>.innerWidth()</code>/<code>.outerWidth()</code> and the <code>.offset()</code> setter are not included; read <code>getBoundingClientRect()</code> or set <code>top/left</code> with <code>.css()</code>.' }],
+  from: [{ lib: 'jQuery', note: 'Same API as jQuery, including <code>.innerWidth()</code>, <code>.outerWidth(true)</code>, the <code>.offset()</code> setter and <code>$.cssHooks</code>.' }],
   related: ['classes-and-css', 'debounce-and-throttle', 'classic-effects'],
 },
 {
@@ -467,7 +470,7 @@ const $form = $('#email').closest('form');
 $form.find('[required]').filter((i, el) => !el.value).addClass('missing');` },
   ],
   api: ['.find()', '.filter()', '.not()', '.is()', '.closest()', '.parent() / .parents()', '.children()', '.siblings()', '.next() / .prev()'],
-  from: [{ lib: 'jQuery', note: 'Core traversal matches jQuery. <code>.nextAll()</code>, <code>.prevAll()</code>, <code>.nextUntil()</code>, <code>.parentsUntil()</code>, <code>.has()</code>, <code>.contents()</code>, <code>.end()</code> and <code>.addBack()</code> are not included.' }],
+  from: [{ lib: 'jQuery', note: 'Same API as jQuery, including <code>.nextAll()</code>, <code>.parentsUntil()</code>, <code>.has()</code>, <code>.contents()</code>, <code>.end()</code>, <code>.addBack()</code> and positional selectors.' }],
   related: ['selectors', 'event-delegation', 'dom-manipulation'],
 },
 {
@@ -537,7 +540,7 @@ $('#save').click(save);  $('#save').click();      // bind / trigger
 $('.card').hover(lift, drop);                     // mouseenter + mouseleave` },
   ],
   api: ['.on()', '.one()', '.off()', '.trigger()', '.hover()', 'Shortcuts', '.focus() / .blur()'],
-  from: [{ lib: 'jQuery', note: 'Same signatures. Handlers receive the native <code>Event</code> (no jQuery event wrapper), so use <code>e.key</code>, <code>e.target</code>, <code>e.preventDefault()</code> as usual. Legacy <code>.bind()</code>, <code>.live()</code>, <code>.delegate()</code> are not included — use <code>.on()</code>.' }],
+  from: [{ lib: 'jQuery', note: 'jQuery\'s event system: handlers receive a <code>jQuery.Event</code> (with <code>.originalEvent</code>), namespaces, <code>$.event.special</code> and <code>return false</code> all behave the same. <code>.bind()</code>/<code>.delegate()</code> are kept; <code>.live()</code> was removed from jQuery itself in 1.9.' }],
   related: ['event-delegation', 'custom-events', 'event-directives'],
 },
 {
@@ -611,7 +614,7 @@ $(document).on('submit', 'form[data-confirm]', function (e) {
 });` },
   ],
   api: ['.on()', '.closest()'],
-  from: [{ lib: 'jQuery', note: 'Identical: <code>.on(events, selector, handler)</code>. The old <code>.live()</code> and <code>.delegate()</code> forms are gone in favour of this one.' }],
+  from: [{ lib: 'jQuery', note: 'Identical: <code>.on(events, selector, handler)</code>, with jQuery\'s matching rules (the selector is evaluated relative to the delegation root).' }],
   related: ['events', 'traversal', 'dom-manipulation'],
 },
 {
@@ -668,19 +671,19 @@ $(document).on('auth:logout', () => location.assign('/'));
 $('#login-form').trigger('auth:login', { name: 'Ada', avatar: '/a.png' });` },
   ],
   api: ['.trigger()', '.on()'],
-  from: [{ lib: 'jQuery', note: 'jQuery passes extra parameters as an array (<code>trigger("x", [a, b])</code>). jsKjs passes one payload — use an object — available as <code>e.detail</code> and as the handler\'s second argument.' }],
+  from: [{ lib: 'jQuery', note: 'Identical to jQuery: <code>.trigger(\'x\', [a, b])</code> passes extra arguments to handlers. Native <code>CustomEvent</code>s (like Hyper\'s <code>kj:*</code> events) also hand their <code>detail</code> to jQuery handlers as the second argument.' }],
   related: ['events', 'lifecycle-events', 'global-store'],
 },
 {
   slug: 'ajax', mod: 'core', title: 'AJAX with $.ajax',
-  seo: '$.ajax on fetch: Promises, JSON, Timeouts and Abort',
-  desc: 'jQuery\'s $.ajax rebuilt on fetch: native Promises and async/await, JSON bodies, headers, timeouts with auto-abort, plus success/error callbacks and .done/.fail for migration.',
-  lede: 'The familiar <code>$.ajax()</code> options, powered by <code>fetch</code>. Await it, or keep your <code>success</code> and <code>error</code> callbacks — both work. Try it against live PHP endpoints below.',
+  seo: '$.ajax: jqXHR, async/await, JSON, Timeouts and Abort',
+  desc: 'jQuery\'s $.ajax with every option, jqXHR, callbacks, .done/.fail, prefilters and JSONP — and it is awaitable, so async/await and try/catch work too. Live PHP endpoints.',
+  lede: 'The familiar <code>$.ajax()</code>, behaving exactly like jQuery\'s — and you can <code>await</code> it. Try it against live PHP endpoints below.',
   body: String.raw`
-<h2>Promises first, callbacks welcome</h2>
-<p><code>$.ajax()</code> returns a native Promise, so <code>await</code> and <code>try/catch</code> just work. For migrating code it also accepts <code>success</code>, <code>error</code> and <code>complete</code> callbacks, and the promise carries <code>.done()</code>, <code>.fail()</code> and <code>.always()</code>.</p>
+<h2>jqXHR, and await</h2>
+<p><code>$.ajax()</code> returns jQuery's jqXHR: <code>.done()</code>, <code>.fail()</code>, <code>.always()</code>, <code>.then()</code>, <code>.abort()</code>, <code>getResponseHeader()</code> and the rest. Because it is a thenable, <code>await</code> works too: it resolves with the data, and a failure throws the jqXHR, so <code>err.status</code>, <code>err.statusText</code> and <code>err.responseText</code> are right there.</p>
 <h2>Options</h2>
-<p><code>url</code>, <code>method</code> (or jQuery's <code>type</code>), <code>data</code> (object, <code>FormData</code> or string), <code>json: true</code> to send a JSON body, <code>dataType</code> (<code>'json'</code> or <code>'auto'</code>), <code>headers</code>, <code>timeout</code> in milliseconds (aborts automatically), and <code>credentials</code>. Failed responses reject with an <code>Error</code> carrying <code>.status</code> and <code>.data</code>; the promise also exposes <code>.abort()</code>.</p>`,
+<p>Every jQuery option works — <code>url</code>, <code>method</code>/<code>type</code>, <code>data</code>, <code>dataType</code>, <code>headers</code>, <code>timeout</code>, <code>cache</code>, <code>contentType</code>, <code>processData</code>, <code>xhrFields</code>, <code>statusCode</code>, <code>beforeSend</code>, <code>converters</code>… plus one jsKjs extra: <code>json: true</code> sends <code>data</code> as a JSON body.</p>`,
   demos: [{
     title: 'Request builder (real PHP endpoints)',
     html: String.raw`
@@ -710,15 +713,15 @@ $('#ax-send').on('click', async () => {
       url: $('#ax-url').val(),
       method: $('#ax-method').val(),
       data: { name: $('#ax-name').val(), plan: 'pro' },
-      json: $('#ax-json').val(),                       // checkbox .val() → boolean
+      json: $('#ax-json').prop('checked'),             // jsKjs extra: send data as JSON
       timeout: +$('#ax-timeout').val() || undefined,
     });
     $('#ax-status').html('<span class="yes">✓ OK</span> in ' + Math.round(performance.now() - started) + ' ms');
     $('#ax-out').text(typeof data === 'string' ? data : JSON.stringify(data, null, 2));
   } catch (err) {
-    const why = err.name === 'AbortError' ? 'aborted by timeout' : 'HTTP ' + err.status;
+    const why = err.statusText === 'timeout' ? 'aborted by timeout' : 'HTTP ' + err.status;   // a failed await throws the jqXHR
     $('#ax-status').html('<span class="no">✗ ' + why + '</span>');
-    $('#ax-out').text(err.data || err.message);
+    $('#ax-out').text(err.responseText || err.statusText);
   }
 });`,
   }],
@@ -739,7 +742,7 @@ $.ajax({
 $.ajax('/api/ping').done(onPong).fail(onError).always(hideSpinner);` },
   ],
   api: ['$.ajax()'],
-  from: [{ lib: 'jQuery', note: 'Returns a Promise rather than a jqXHR. <code>$.ajaxSetup</code>, prefilters, transports and JSONP are not included; set shared headers with a small wrapper function instead.' }],
+  from: [{ lib: 'jQuery', note: 'Same as jQuery: <code>$.ajax()</code> returns a jqXHR (a thenable Deferred), so <code>.done/.fail/.always</code>, <code>await</code>, <code>$.ajaxSetup</code>, prefilters, transports, converters and JSONP all work.' }],
   related: ['fetch-shorthands', 'timeouts-and-errors', 'declarative-requests'],
 },
 {
@@ -792,7 +795,7 @@ await $.post('/api/subscribe', { email });
 $.get('/api/ping', data => console.log(data));                    // callback style` },
   ],
   api: ['$.get()', '$.post()', '$.getJSON()'],
-  from: [{ lib: 'jQuery', note: 'Same signatures. <code>$.getScript()</code> is not included — use a dynamic <code>import()</code> or a script element.' }],
+  from: [{ lib: 'jQuery', note: 'Same signatures as jQuery, including <code>$.getScript()</code>.' }],
   related: ['ajax', 'load-fragments', 'forms-and-serialize'],
 },
 {
@@ -825,7 +828,7 @@ $('#sidebar').load('/account #account-summary');
 $('#results').load('/search?q=' + encodeURIComponent(q) + ' .result');` },
   ],
   api: ['.load()'],
-  from: [{ lib: 'htmx', note: 'In attribute form, the same idea is <code>kj-get</code> + <code>kj-target</code>. Fragment selection from a response (htmx\'s <code>hx-select</code>) is only available through <code>.load()</code> in jsKjs.' }],
+  from: [{ lib: 'htmx', note: 'In attribute form the same idea is <code>kj-get</code> + <code>kj-target</code> + <code>kj-select</code> (htmx\'s <code>hx-select</code>).' }],
   related: ['fetch-shorthands', 'targets-and-swaps', 'declarative-requests'],
 },
 {
@@ -866,7 +869,7 @@ show();`,
 await $.ajax({ url: '/api/profile', method: 'PUT', data: $('#profile').serializeObject(), json: true });` },
   ],
   api: ['.serialize()', '.serializeObject()', '.val()', '$.post()'],
-  from: [{ lib: 'jQuery', note: '<code>.serializeArray()</code> is not included; <code>.serializeObject()</code> (a jsKjs extra) covers the common case.' }],
+  from: [{ lib: 'jQuery', note: 'Same as jQuery, including <code>.serializeArray()</code>. <code>.serializeObject()</code> is a jsKjs extra.' }],
   related: ['declarative-requests', 'include-and-vals', 'two-way-binding'],
 },
 {
@@ -875,7 +878,7 @@ await $.ajax({ url: '/api/profile', method: 'PUT', data: $('#profile').serialize
   desc: 'Handle real-world network failure: HTTP errors with status codes, automatic timeouts, manual abort(), and a retry-with-backoff helper — demonstrated against live endpoints.',
   lede: 'Networks fail. jsKjs gives you real status codes, automatic timeouts that abort the request, a manual <code>.abort()</code>, and everything you need to retry politely.',
   body: String.raw`
-<p>Any non-2xx response rejects with an <code>Error</code> that carries <code>.status</code> and the parsed body as <code>.data</code>. A <code>timeout</code> option aborts the underlying <code>fetch</code> through an <code>AbortController</code>, and the rejection's <code>name</code> is <code>'AbortError'</code>. Call <code>.abort()</code> on the returned promise to cancel yourself — useful when a newer search makes an older one irrelevant.</p>
+<p>Any non-2xx response fails with jQuery's arguments — <code>(jqXHR, textStatus, errorThrown)</code> — and an awaited request throws the jqXHR. A <code>timeout</code> aborts the request with <code>textStatus</code> <code>'timeout'</code>; call <code>.abort()</code> yourself to cancel (useful when a newer search makes an older one irrelevant).</p>
 <p>The flaky endpoint below fails about 60% of the time at random, on the server, so the retry demo is honest: sometimes it succeeds first try, sometimes it needs three.</p>`,
   demos: [{
     title: 'Failure lab',
@@ -892,7 +895,7 @@ await $.ajax({ url: '/api/profile', method: 'PUT', data: $('#profile').serialize
 const out = msg => $('#te-out').text(msg);
 
 $('#te-404').on('click', () =>
-  $.ajax('/api/fail.php?code=404').fail(err => out('.fail() → status ' + err.status + ': ' + err.data)));
+  $.ajax('/api/fail.php?code=404').fail(xhr => out('.fail() → status ' + xhr.status + ': ' + xhr.responseText)));
 
 $('#te-500').on('click', async () => {
   try { await $.get('/api/fail.php?code=500'); }
@@ -902,13 +905,13 @@ $('#te-500').on('click', async () => {
 $('#te-timeout').on('click', () => {
   out('Waiting up to 800 ms…');
   $.ajax({ url: '/api/slow.php?ms=3000', timeout: 800 })
-    .fail(err => out(err.name + ' — gave up after 800 ms; the server needed 3 s.'));
+    .fail((xhr, textStatus) => out(textStatus + ' — gave up after 800 ms; the server needed 3 s.'));
 });
 
 $('#te-abort').on('click', () => {
   out('Started; aborting in 400 ms…');
   const req = $.ajax('/api/slow.php?ms=3000');
-  req.fail(err => out('.abort() → ' + err.name));
+  req.fail((xhr, textStatus) => out('.abort() → ' + textStatus));
   setTimeout(() => req.abort(), 400);
 });
 

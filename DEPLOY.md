@@ -56,17 +56,19 @@ Note: deploying overwrites files in `public_html`, so use an empty `public_html`
 ## Part 3 — Search engines and analytics
 
 1. **Google Search Console** → Add property → **Domain** `jskjs.org` → add the TXT record it gives you in hPanel DNS → Verify.
-2. Search Console → **Sitemaps** → submit `https://jskjs.org/sitemap.xml` (75 pages).
+2. Search Console → **Sitemaps** → submit `https://jskjs.org/sitemap.xml` (85 pages).
 3. **Bing Webmaster Tools** → Import from Google Search Console (one click).
 4. Google Analytics (`G-1LYDFZTTQZ`) is already on every page — check **Realtime** after your first visit.
-5. Test a page in the [Rich Results Test](https://search.google.com/test/rich-results) and a share preview with any Open Graph checker — every page has its own 1200×630 image.
+5. If Search Console reports *Not found (404)*, *Server error (5xx)*, *Excluded by noindex* or *Alternate page with proper canonical tag* from an earlier upload, open each report → **Validate fix**. The `.htaccess` now redirects `/index.html` and slash-less URLs to the canonical address, and the demo API endpoints are `noindex` and never return errors to crawlers, so these clear on recrawl. *Excluded by noindex* for `/api/…` and `/404.html` is intended and can be ignored.
+6. Test a page in the [Rich Results Test](https://search.google.com/test/rich-results) and a share preview with any Open Graph checker — every page has its own 1200×630 image.
 
 ---
 
 ## Checklist after going live
 - [ ] https://jskjs.org loads over HTTPS, `www.` redirects to the bare domain
 - [ ] https://jskjs.org/api/ping.php → `pong`; the live search on the home page returns results
-- [ ] https://jskjs.org/cdn/1.0.0/jskjs.min.js loads, and the CDN page's SRI snippet works from another site
+- [ ] https://jskjs.org/cdn/1.0.0/jskjs.min.js and https://jskjs.org/cdn/1.0.0/plugins/jskjs.scroll.min.js load, and the CDN page's SRI snippets work from another site
+- [ ] https://jskjs.org/features/server-sent-events/ → **Connect** shows five events arriving about a second apart. If they all arrive at once, the server is buffering: hPanel → PHP Configuration → set `output_buffering` to Off (LiteSpeed honours the `X-Accel-Buffering: no` header the endpoint already sends)
 - [ ] https://jskjs.org/nothing-here shows the custom 404 page
 - [ ] https://jskjs.org/download/ drum roll reveals github.com/kchecker/jskjs (repo must be public)
 - [ ] Sitemap submitted in Search Console

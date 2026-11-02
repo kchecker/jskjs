@@ -90,7 +90,7 @@ setTimeout(() => {
 
   // utilities
   t('extend deep', $.extend(true, { a: { b: 1 } }, { a: { c: 2 } }).a.b === 1);
-  t('param', $.param({ a: 1, b: 'x y' }) === 'a=1&b=x+y');
+  t('param (jQuery: %20 in $.param, + only in form bodies)', $.param({ a: 1, b: 'x y' }) === 'a=1&b=x%20y');
   t('escape', $.escape('<b>') === '&lt;b&gt;');
   $.extend(true, {}, JSON.parse('{"__proto__": {"polluted": "yes"}}'));
   t('extend blocks prototype pollution', ({}).polluted === undefined);

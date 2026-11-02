@@ -9,7 +9,7 @@ const ADVANTAGES = [
   ['No build step to break', 'Agents fail most often in toolchains: bundler configs, version conflicts, missing dev servers. A jsKjs page is a file you open in a browser. The agent can verify its own work, and it deploys to any PHP shared host — like the one this site runs on.'],
   ['Small enough to read in full', 'The whole readable library is about 40 KB of source — a few thousand tokens. When an agent is unsure how something behaves, it can read the actual implementation instead of guessing.'],
   ['Server-rendered HTML plays to agent strengths', 'Hyper endpoints return HTML fragments. Agents write small PHP, Python or Node handlers well, and escaping output there is one obvious line.'],
-  ['Fast pages by default', 'About 8.1 KB instead of ~90 KB for the four libraries it replaces, with zero dependencies. Performance is part of what you ship, even when an AI wrote it.'],
+  ['Fast pages by default', 'About {{KJ_GZ_KB}} KB gzipped instead of {{OTHERS_KB}} KB for the four libraries it replaces, with zero dependencies. Performance is part of what you ship, even when an AI wrote it.'],
 ];
 
 const TOOLS = [
@@ -66,7 +66,7 @@ const TOOLS = [
     docs: [['Cursor — Rules', 'https://cursor.com/docs/context/rules']],
   },
   {
-    slug: 'vscode-openrouter', name: 'VS Code agents with OpenRouter', vendor: 'Cline · Roo Code · Continue',
+    slug: 'vscode-openrouter', name: 'VS Code agents (Cline, Roo Code, Continue)', vendor: 'Cline · Roo Code · Continue',
     seo: 'jsKjs with Cline, Roo Code and Continue (OpenRouter models) in VS Code',
     desc: 'OpenRouter routes your requests to hundreds of models — the rules live in your VS Code agent. Set up jsKjs rules for Cline (.clinerules), Roo Code (.roo/rules) and Continue (.continue/rules).',
     intro: String.raw`<p><strong>A quick correction worth making:</strong> OpenRouter is not a coding agent and has no rules file of its own. It is an API that routes your requests to many models (Claude, GPT, Gemini, Llama, Qwen…). You use it <em>through</em> a VS Code agent extension, and that extension is what reads project rules. The three most common ones are below — pick the file for yours. All three also read <code>AGENTS.md</code> or accept it alongside their own folder.</p>`,
@@ -119,7 +119,7 @@ const PROMPTS = [
     ['Motion polish', 'Add entrance animation to the cards with $.from and stagger (seconds, ease power2.out). Skip it when prefers-reduced-motion is set.'],
   ]},
   { group: 'Migrate & review', items: [
-    ['Migrate from jQuery', 'Replace jQuery with jsKjs in this project. Keep behaviour identical. Flag every use of APIs jsKjs does not include (.stop, .delay, $.Deferred, .nextAll, $.ajaxSetup, JSONP) and propose replacements. Note: .val() on checkboxes returns a boolean in jsKjs.'],
+    ['Migrate from jQuery', 'Replace jQuery with jsKjs in this project. jsKjs implements the jQuery 3.7 API, so keep the existing code and only swap the script tag. Then flag anything that reads jQuery internals (jQuery.expando, $.cache, $.find.compile) or targets browsers older than 2021, and propose replacements. Finally, suggest — but do not make — places where kj-* attributes or kj-data would remove hand-written AJAX or state code.'],
     ['Collapse four libraries', 'This page loads jQuery, htmx, Alpine.js and GSAP. Rewrite it to use only jsKjs. List anything that has no jsKjs equivalent instead of approximating it silently.'],
     ['Review against the rules', 'Review this file against the jsKjs rules in AGENTS.md: unescaped user data, invented APIs, missing labels or aria-live, seconds vs milliseconds mix-ups, and JavaScript that could be a kj-* attribute.'],
   ]},

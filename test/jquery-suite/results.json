@@ -1,0 +1,116 @@
+{
+  "jquery": "3.7.1",
+  "date": "2026-10-28",
+  "total": 1131,
+  "passed": 1119,
+  "assertTotal": 9859,
+  "assertPassed": 9842,
+  "modules": {
+    "basic": {
+      "passed": 14,
+      "total": 14
+    },
+    "core": {
+      "passed": 61,
+      "total": 61
+    },
+    "callbacks": {
+      "passed": 51,
+      "total": 51
+    },
+    "deferred": {
+      "passed": 28,
+      "total": 28
+    },
+    "deprecated": {
+      "passed": 24,
+      "total": 24
+    },
+    "support": {
+      "passed": 5,
+      "total": 5
+    },
+    "data": {
+      "passed": 40,
+      "total": 41
+    },
+    "queue": {
+      "passed": 14,
+      "total": 14
+    },
+    "attributes": {
+      "passed": 62,
+      "total": 62
+    },
+    "event": {
+      "passed": 115,
+      "total": 116
+    },
+    "selector": {
+      "passed": 57,
+      "total": 66
+    },
+    "traversing": {
+      "passed": 65,
+      "total": 65
+    },
+    "manipulation": {
+      "passed": 142,
+      "total": 143
+    },
+    "wrap": {
+      "passed": 16,
+      "total": 16
+    },
+    "css": {
+      "passed": 57,
+      "total": 57
+    },
+    "serialize": {
+      "passed": 4,
+      "total": 4
+    },
+    "ajax": {
+      "passed": 148,
+      "total": 148
+    },
+    "effects": {
+      "passed": 133,
+      "total": 133
+    },
+    "offset": {
+      "passed": 34,
+      "total": 34
+    },
+    "dimensions": {
+      "passed": 28,
+      "total": 28
+    },
+    "animation": {
+      "passed": 7,
+      "total": 7
+    },
+    "tween": {
+      "passed": 8,
+      "total": 8
+    },
+    "ready": {
+      "passed": 6,
+      "total": 6
+    }
+  },
+  "failing": [
+    "data: Check that the expando is removed when there's no more data",
+    "event: .off() removes the expando when there's no more data",
+    "selector: XML Document Selectors",
+    "selector: pseudo - nth-child",
+    "selector: pseudo - nth-last-child",
+    "selector: pseudo - misc",
+    "selector: pseudo - :not",
+    "selector: pseudo - position",
+    "selector: custom attribute getters",
+    "selector: jQuery.find.select with pre-compiled function",
+    "selector: jQuery.find.tokenize",
+    "manipulation: jQuery.cleanData eliminates all public data"
+  ]
+}

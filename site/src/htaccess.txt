@@ -12,6 +12,19 @@ ErrorDocument 404 /404.html
   # www → apex
   RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
   RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+  # One URL per page: /path/index.html → /path/  (only when the visitor typed it, so DirectoryIndex can't loop)
+  RewriteCond %{THE_REQUEST} \s/+((?:[^\s?]*/)?)index\.html[\s?]
+  RewriteRule ^ /%1 [L,R=301]
+  # Folders without the trailing slash → with it
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{REQUEST_URI} !/$
+  RewriteRule ^ %{REQUEST_URI}/ [L,R=301]
+</IfModule>
+<IfModule mod_headers.c>
+  # Demo endpoints and the 404 page are never indexed
+  <FilesMatch "^(404\.html|.*\.php)$">
+    Header set X-Robots-Tag "noindex"
+  </FilesMatch>
 </IfModule>
 
 AddType font/woff2 .woff2

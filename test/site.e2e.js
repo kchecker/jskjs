@@ -104,7 +104,7 @@ const t = (name, ok, info = '') => { ok ? pass++ : (fail++, console.log('FAIL', 
   await pg.close();
   pg = await open('/features/timeouts-and-errors/');
   await pg.click('#te-timeout'); await W(1200);
-  t('timeout aborts', (await pg.textContent('#te-out')).includes('AbortError'));
+  t('timeout aborts', (await pg.textContent('#te-out')).includes('timeout —'));
   await pg.close();
   // Big demo + download
   pg = await open('/demo/');

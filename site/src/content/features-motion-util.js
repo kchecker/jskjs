@@ -22,7 +22,7 @@ module.exports = [
   <div class="field" style="min-width:180px"><label for="tw-ease">Ease</label><select id="tw-ease"></select></div>
   <div class="field" style="min-width:200px"><label for="tw-dur">Duration: <span id="tw-dur-v">0.7</span>s</label><input id="tw-dur" type="range" min="0.2" max="2" step="0.1" value="0.7"></div>
 </div>
-<div id="tw-arena" class="arena" aria-label="Animation area. Click to move the ball, or use the corner buttons."><div id="tw-ball" class="ball"></div></div>
+<div id="tw-arena" class="arena" role="group" aria-label="Animation area. Click to move the ball, or use the corner buttons."><div id="tw-ball" class="ball"></div></div>
 <div class="row" style="margin-top:10px" aria-label="Move to a corner">
   <button type="button" data-corner="tl">↖ Top left</button><button type="button" data-corner="tr">↗ Top right</button>
   <button type="button" data-corner="bl">↙ Bottom left</button><button type="button" data-corner="br">↘ Bottom right</button>
@@ -61,7 +61,7 @@ $('#modal').hide();
 $('.badge').to({ rotate: 360, duration: 1, ease: 'elastic.out' });   // chainable form` },
   ],
   api: ['$.to()', 'Easings'],
-  from: [{ lib: 'GSAP', note: '<code>gsap.to()</code> → <code>$.to()</code>, same property names and seconds. Not included: <code>repeat</code>/<code>yoyo</code>, playback control on single tweens, colour and SVG-attribute tweening, <code>onUpdate</code>, and automatic overwriting of competing tweens.' }],
+  from: [{ lib: 'GSAP', note: '<code>gsap.to()</code> → <code>$.to()</code>: same properties and seconds, and the tween it returns is controllable (<code>pause</code>, <code>reverse</code>, <code>seek</code>, <code>progress</code>…) and awaitable.' }],
   related: ['from-and-fromto', 'transforms', 'easings'],
 },
 {
@@ -119,7 +119,7 @@ $.from('.feature', { y: 24, opacity: 0, duration: .5, stagger: .08 });
 $.fromTo('.toast', { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: .3 });` },
   ],
   api: ['$.from()', '$.fromTo()'],
-  from: [{ lib: 'GSAP', note: '<code>gsap.from()</code>/<code>gsap.fromTo()</code> → <code>$.from()</code>/<code>$.fromTo()</code>. <code>gsap.set()</code> has no separate equivalent — use <code>.css()</code> for styles, or a zero-duration <code>$.to()</code> for transforms.' }],
+  from: [{ lib: 'GSAP', note: '<code>gsap.from()</code>/<code>fromTo()</code>/<code>set()</code> → <code>$.from()</code>/<code>$.fromTo()</code>/<code>$.set()</code>.' }],
   related: ['tweens', 'stagger', 'timelines'],
 },
 {
@@ -198,7 +198,7 @@ $.timeline({ duration: .5, ease: 'power2.out' })
   .from('.cta', { scale: .8 }, '+=0.2');  // a beat later` },
   ],
   api: ['$.timeline()'],
-  from: [{ lib: 'GSAP', note: 'Supports sequencing, <code>\'&lt;\'</code>, <code>\'+=N\'</code>, defaults, <code>paused</code>, <code>play()</code> and <code>onComplete</code>. Not included: labels, absolute positions, <code>\'-=N\'</code> overlaps, <code>pause()</code>/<code>reverse()</code>/<code>seek()</code>/<code>progress()</code>, nesting and <code>repeat</code>.' }],
+  from: [{ lib: 'GSAP', note: 'Same as GSAP timelines: labels, <code>\'&lt;\'</code>, <code>\'&gt;\'</code>, <code>\'+=N\'</code>, <code>\'-=N\'</code>, absolute times, nesting, <code>call()</code>, <code>addPause()</code>, repeat/yoyo and full playback control.' }],
   related: ['tweens', 'from-and-fromto', 'stagger'],
 },
 {
@@ -255,7 +255,7 @@ $('#st-center').on('click', () => ripple(Math.floor(ROWS / 2) * COLS + COLS / 2)
 $.from('.menu li', { x: -12, opacity: 0, duration: .3, stagger: .04 });` },
   ],
   api: ['stagger', '$.to()'],
-  from: [{ lib: 'GSAP', note: 'A number works like GSAP\'s <code>stagger: 0.05</code>. Stagger objects (<code>{ each, from, grid, amount }</code>) are not included — sort the collection or compute delays, as above.' }],
+  from: [{ lib: 'GSAP', note: 'Same as GSAP: a number, or an object with <code>each</code>, <code>amount</code>, <code>from</code> (start, center, end, edges, random, index), <code>grid</code>, <code>axis</code> and <code>ease</code>.' }],
   related: ['tweens', 'timelines', 'easings'],
 },
 {
@@ -316,7 +316,7 @@ $.to('.dot', { x: 100, ease: t => 1 - Math.cos(t * Math.PI / 2) });   // sine.in
 $.easings['back.out'](0.5);                                             // use them anywhere` },
   ],
   api: ['Easings'],
-  from: [{ lib: 'GSAP', note: 'Names follow GSAP\'s style. Included: <code>power2</code> in/out/inOut, <code>back.out</code>, <code>elastic.out</code>, <code>bounce.out</code>, plus CSS-style names. Other families (<code>sine</code>, <code>expo</code>, <code>circ</code>, <code>steps()</code>, CustomEase) can be passed as functions.' }],
+  from: [{ lib: 'GSAP', note: 'Every GSAP ease family (<code>power0-4</code>, <code>sine</code>, <code>expo</code>, <code>circ</code>, <code>back</code>, <code>elastic</code>, <code>bounce</code>, configurable like <code>back.out(2)</code>), plus <code>steps(n)</code>, <code>cubic-bezier()</code>, CSS names and jQuery UI names.' }],
   related: ['tweens', 'stagger', 'transforms'],
 },
 {
@@ -383,7 +383,7 @@ $('.card').hover(
 $.to('.card .icon', { rotate: 360, duration: 2, ease: 'linear' });` },
   ],
   api: ['$.to()', '$.fromTo()'],
-  from: [{ lib: 'GSAP', note: 'Same shorthand names (<code>rotation</code> is accepted as an alias of <code>rotate</code>). <code>xPercent</code>, <code>yPercent</code>, <code>z</code>, 3D rotations and <code>transformOrigin</code> are not included — set <code>transform-origin</code> in CSS.' }],
+  from: [{ lib: 'GSAP', note: 'Same names as GSAP, including <code>xPercent</code>, <code>yPercent</code>, <code>z</code>, <code>rotationX/Y</code>, <code>transformPerspective</code> and <code>transformOrigin</code>.' }],
   related: ['tweens', 'classes-and-css', 'easings'],
 },
 {
@@ -447,7 +447,7 @@ $('#details').slideToggle(300);
 $('.panel').animate({ marginLeft: 40, opacity: .6 }, 400, function () { $(this).addClass('moved'); });` },
   ],
   api: ['.fadeIn() / .fadeOut() / .fadeToggle()', '.slideDown() / .slideUp() / .slideToggle()', '.animate()'],
-  from: [{ lib: 'jQuery', note: 'Same names, units and callbacks. Not included: <code>.stop()</code>, <code>.finish()</code>, <code>.delay()</code>, <code>.queue()</code>, <code>.fadeTo()</code> and <code>$.fx</code> settings.' }],
+  from: [{ lib: 'jQuery', note: 'jQuery\'s own effects engine: <code>.animate()</code>, <code>.stop()</code>, <code>.finish()</code>, <code>.delay()</code>, <code>.queue()</code>, <code>.fadeTo()</code>, <code>$.fx</code>, <code>step</code>/<code>progress</code> callbacks and easing plugins all behave the same.' }],
   related: ['tweens', 'geometry-and-scroll', 'conditional-display'],
 },
 
@@ -551,7 +551,7 @@ const kj = $.noConflict();      // window.$ goes back to the old value
 kj('#app').addClass('ready');   // jsKjs is also always available as window.kj and window.jsKjs` },
   ],
   api: ['$.each()', '$.map()', '$.extend()', '$.param()', '$.parseHTML()', '$.escape()', '$.uuid()', 'Type checks', '$.noConflict()', '$.version'],
-  from: [{ lib: 'jQuery', note: 'jQuery 4 removed <code>$.trim</code>, <code>$.isArray</code> and <code>$.isFunction</code>; jsKjs keeps them so older code runs. <code>$.Deferred</code>, <code>$.Callbacks</code>, <code>$.when</code> and <code>$.grep</code> are not included — use Promises and <code>Array.prototype.filter</code>.' }],
+  from: [{ lib: 'jQuery', note: 'Every jQuery static, including jQuery 3\'s deprecated ones (<code>$.trim</code>, <code>$.isArray</code>, <code>$.proxy</code>…) and <code>$.Deferred</code>, <code>$.Callbacks</code>, <code>$.when</code>, <code>$.grep</code>.' }],
   related: ['debounce-and-throttle', 'attributes-and-data', 'selectors'],
 },
 ];

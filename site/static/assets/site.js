@@ -73,6 +73,9 @@
           const ok = (!q || hay.includes(q)) && (mod === 'all' || this.dataset.mod === mod);
           $(this).toggle(ok); if (ok) shown++;
         });
+        $('[data-filter-group]').each(function () {
+          $(this).toggle($(this).find(grid).children().get().some(c => c.style.display !== 'none'));
+        });
         $('#filter-count').text(shown + ' shown');
       };
       $input.on('input', $.debounce(apply, 120));

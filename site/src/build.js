@@ -14,8 +14,7 @@ const BUILD_DATE = process.env.BUILD_DATE || new Date().toISOString().slice(0, 1
 
 /* ---------------- 1. library: minify, measure, hash ---------------- */
 fs.mkdirSync(path.join(REPO, 'dist'), { recursive: true });
-fs.copyFileSync(path.join(REPO, 'src/jskjs.js'), path.join(REPO, 'dist/jskjs.js'));
-execSync(`npx terser "${REPO}/src/jskjs.js" -c -m --comments "/^!/" -o "${REPO}/dist/jskjs.min.js"`, { cwd: REPO, stdio: 'inherit' });
+execSync(`node "${REPO}/scripts/build-lib.js"`, { cwd: REPO, stdio: 'inherit' });   // parts → src/jskjs.js → dist/ (+ plugins)
 const minBuf = fs.readFileSync(path.join(REPO, 'dist/jskjs.min.js'));
 const fullBuf = fs.readFileSync(path.join(REPO, 'dist/jskjs.js'));
 const gz = zlib.gzipSync(minBuf, { level: 9 }).length;
@@ -24,14 +23,26 @@ C.KJ_MIN_KB = (minBuf.length / 1024).toFixed(1);
 C.KJ_SRC_KB = (fullBuf.length / 1024).toFixed(1);
 const sri = b => 'sha384-' + crypto.createHash('sha384').update(b).digest('base64');
 C.SRI_MIN = sri(minBuf); C.SRI_FULL = sri(fullBuf);
+const PLUGINS = [
+  ['scroll', 'scroll-trigger', 'Scroll-linked animation, pinning, <code>$.scrollTo()</code>'], ['flip', 'flip', 'Flip layout animation'],
+  ['drag', 'draggable', 'Draggable with bounds, snap and inertia'], ['split', 'split-text', 'Split text into lines, words and characters'],
+  ['ui', 'ui-directives', '<code>$persist</code>, <code>kj-collapse</code>, <code>kj-trap</code>, <code>kj-mask</code>, <code>kj-intersect</code>, <code>kj-resize</code>'],
+  ['live', 'server-sent-events', 'Server-Sent Events and WebSockets for Hyper'],
+].map(([name, page, what]) => { const b = fs.readFileSync(path.join(REPO, `dist/plugins/jskjs.${name}.min.js`)); return { name, page, what, sri: sri(b), gz: (require('zlib').gzipSync(b, { level: 9 }).length / 1024).toFixed(1) }; });
 const OTHERS_GZ = C.SIZES.reduce((s, x) => s + x.gz, 0);
+C.OTHERS_KB = (OTHERS_GZ / 1024).toFixed(1);
+{ // measured jQuery compatibility (test/jquery-suite/results.json, produced by test/jquery-suite/run.js)
+  const R = JSON.parse(fs.readFileSync(path.join(REPO, 'test/jquery-suite/results.json'), 'utf8'));
+  C.JQ = { pass: R.passed.toLocaleString('en') + ' of ' + R.total.toLocaleString('en'), pct: (100 * R.passed / R.total).toFixed(1) + '%',
+    assertPct: (100 * R.assertPassed / R.assertTotal).toFixed(1) + '%', total: R.total, raw: R };
+}
 const KB = n => (n / 1024).toFixed(1);
 console.log(`jskjs.min.js ${minBuf.length} B, gzip ${gz} B (${C.KJ_GZ_KB} KB) — others ${KB(OTHERS_GZ)} KB`);
 
 /* ---------------- 2. content (after sizes are known) ---------------- */
 const L = require('./lib/layout');
 const { esc, codeBlock, stage, render, pageHead, ICON_GH } = L;
-const FEATURES = [...require('./content/features-core'), ...require('./content/features-hyper-pulse'), ...require('./content/features-motion-util')];
+const FEATURES = [...require('./content/features-core'), ...require('./content/features-hyper-pulse'), ...require('./content/features-motion-util'), ...require('./content/features-addons')];
 const DOCS = require('./content/docs-data');
 const JQ = require('./content/jquery');
 const COMPARE = require('./content/compare');
@@ -39,26 +50,14 @@ const AI = require('./content/ai');
 const RULES = require('./content/ai-rules');
 
 const MODS = {
-  core:   { name: 'Core',      long: 'Core · jQuery-compatible', from: 'jQuery', blurb: 'Selectors, DOM, traversal, events and fetch-powered AJAX — the jQuery API on native browser features.' },
+  core:   { name: 'Core',      long: 'Core · jQuery 3.7 API',    from: 'jQuery', blurb: 'The whole jQuery API — selectors, DOM, events, AJAX, effects — measured against jQuery\'s own test suite.' },
   hyper:  { name: 'Hyper',     long: 'Hyper · htmx-style',       from: 'htmx',   blurb: 'Requests described in HTML attributes. The server returns HTML; jsKjs puts it where you said.' },
-  pulse:  { name: 'Pulse',     long: 'Pulse · Alpine-style',     from: 'Alpine.js', blurb: 'Reactive state declared on the element: kj-data, kj-text, kj-model, @click, components and stores.' },
-  motion: { name: 'Motion',    long: 'Motion · GSAP-style',      from: 'GSAP',   blurb: 'Tweens, transforms, easing, stagger and timelines on requestAnimationFrame — with Promises.' },
+  pulse:  { name: 'Pulse',     long: 'Pulse · Alpine-style',     from: 'Alpine.js', blurb: 'Reactive state in your markup: kj-data, kj-for, kj-model, @click, transitions, stores and magics.' },
+  motion: { name: 'Motion',    long: 'Motion · GSAP-style',      from: 'GSAP',   blurb: 'Controllable tweens and timelines, every ease, stagger grids, keyframes — plus scroll, flip, drag and split add-ons.' },
   util:   { name: 'Utilities', long: 'Utilities',                from: 'jQuery', blurb: 'Debounce, throttle, deep extend, escaping, UUIDs and the classic $ helpers.' },
 };
 
-/* ---------------- docs overrides for v1.0.0 behaviour ---------------- */
-const DOC_OVERRIDES = {
-  '.not()': { s: '.not(selector | fn(i, el) | element | collection) → KJ', d: 'Drop matching elements. Accepts a selector, an element or collection, or a predicate function.', e: "$('.item').not('.sold-out').show();\n$('.item').not((i, el) => el.dataset.price > 100);" },
-  '.is()': { s: '.is(selector | fn(i, el) | element) → boolean', d: 'Test whether any element in the set matches a selector, element, collection or predicate.' },
-  '.css()': { d: 'Get a computed style from the first element, or set styles on all. Numbers become px except for unitless properties. Custom properties (<code>--name</code>) are read with <code>getPropertyValue</code> and written without px.', e: "$('.card').css('color');\n$('.card').css('margin-top', 20);          // → 20px\n$('.card').css({ opacity: .5, '--accent': 'tomato' });\n$(':root').css('--hue', 200);               // no px for custom properties" },
-  '$.timeline()': { s: '$.timeline({ paused?, onComplete?, ...defaults }) → timeline', d: 'Sequence tweens. Steps run in order; position <code>\'<\'</code> starts a step with the previous one; <code>\'+=0.3\'</code> waits 0.3 s first. Methods: <code>.to()</code>, <code>.from()</code>, <code>.fromTo()</code>, <code>.add(fn)</code> (waits if fn returns a Promise), <code>.play()</code> → Promise. Auto-plays unless <code>paused: true</code>.', e: "const tl = $.timeline({ paused: true, duration: .5, ease: 'power2.out' })\n  .from('.hero', { opacity: 0 })\n  .from('.hero h1', { y: 30 })\n  .from('.hero p', { y: 30 }, '<')    // together with the h1\n  .from('.cta', { scale: .8 }, '+=0.2');\nawait tl.play();" },
-  '$.component()': { s: '$.component(name, (...args) => state)', d: 'Register a reusable component factory, then use it with <code>kj-data="name"</code> or with arguments: <code>kj-data="name(4, \'Docs\')"</code>. An <code>init(el)</code> method receives the root element.', e: "$.component('rating', (initial = 0) => ({\n  value: initial,\n  rate(n) { this.value = n; },\n}));\n// <div kj-data=\"rating(4)\">…</div>" },
-  'kj-model': { d: 'Two-way binding for text, number and range inputs, textareas, selects, checkboxes (booleans) and radio buttons (the checked radio’s value). The field being typed in is never rewritten mid-typing; programmatic changes update it immediately.' },
-  'Lifecycle events': { d: '<code>kj:before</code> (before the request), <code>kj:after</code> (response received, before the swap; <code>detail.html</code>) and <code>kj:error</code> (<code>detail.error.status</code>) fire on the requesting element. <code>kj:load</code> fires on the target after the swap — or on its former parent when <code>outerHTML</code> replaced it. All bubble.' },
-  'Easings': { d: 'Built in: <code>linear, ease-in, ease-out, ease-in-out, power2.in, power2.out, power2.inOut, back.out, elastic.out, bounce.out</code> — exposed as <code>$.easings</code> — or pass any function mapping 0→1 progress.' },
-  'kj-get / kj-post / kj-put / kj-patch / kj-delete': { d: 'The URL to request with that HTTP verb. Forms send their fields; named inputs, selects and textareas send their own value. Bodies are URL-encoded (multipart when a form contains file inputs). Default triggers: forms → <code>submit</code>, inputs/selects → <code>change</code>, everything else → <code>click</code>.' },
-};
-for (const sec of DOCS) for (const f of sec.fns) if (DOC_OVERRIDES[f.n]) Object.assign(f, DOC_OVERRIDES[f.n]);
+
 
 const anchor = (secId, name) => secId + '-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const DOC_INDEX = {};
@@ -72,7 +71,21 @@ for (const ft of FEATURES) for (const n of ft.api || []) {
 /* ---------------- output helpers ---------------- */
 fs.rmSync(OUT, { recursive: true, force: true });
 const PAGES = [];
+// External links open in a new tab (with rel=noopener and a screen-reader hint); same-site links stay put
+function externalLinks(html) {
+  return html.replace(/<a\b([^>]*?)\bhref="(https?:\/\/(?!jskjs\.org)[^"]+)"([^>]*)>/g, (m, pre, href, post) => {
+    if (/\btarget=/.test(pre + post)) return m;
+    const attrs = (pre + post).replace(/\srel="[^"]*"/, '');
+    return `<a${attrs.replace(/\s+$/, '')} href="${href}" target="_blank" rel="noopener">`;
+  }).replace(/(<a\b[^>]*target="_blank"[^>]*>)([\s\S]*?)(<\/a>)/g, (m, open, inner, close) =>
+    inner.includes('sr-only') ? m : open + inner + '<span class="sr-only"> (opens in a new tab)</span>' + close);
+}
+const TOKENS = () => ({ VERSION: C.VERSION, KJ_GZ_KB: C.KJ_GZ_KB, OTHERS_KB: C.OTHERS_KB, JQ_PASS: C.JQ.pass, JQ_PASS_PCT: C.JQ.pct, JQ_ASSERT_PCT: C.JQ.assertPct, JQ_TOTAL: C.JQ.total });
+function fillTokens(text) { const t = TOKENS(); return text.replace(/\{\{(\w+)\}\}/g, (m, k) => t[k] != null ? t[k] : m); }
+for (const f of RULES.FILES) f.content = fillTokens(f.content);   // kit files are also written outside writeFile()
 function writeFile(rel, content) {
+  if (/\.(html|txt|md|mdc|xml|json)$/.test(rel) || !/\./.test(path.basename(rel))) content = fillTokens(content);
+  if (rel.endsWith('.html')) content = externalLinks(content);
   const f = path.join(OUT, rel);
   fs.mkdirSync(path.dirname(f), { recursive: true });
   fs.writeFileSync(f, content);
@@ -106,6 +119,8 @@ for (const dir of [`cdn/${C.VERSION}`, 'cdn']) {
   fs.mkdirSync(path.join(OUT, dir), { recursive: true });
   fs.copyFileSync(path.join(REPO, 'dist/jskjs.js'), path.join(OUT, dir, 'jskjs.js'));
   fs.copyFileSync(path.join(REPO, 'dist/jskjs.min.js'), path.join(OUT, dir, 'jskjs.min.js'));
+  fs.mkdirSync(path.join(OUT, dir, 'plugins'), { recursive: true });
+  for (const f of fs.readdirSync(path.join(REPO, 'dist/plugins'))) fs.copyFileSync(path.join(REPO, 'dist/plugins', f), path.join(OUT, dir, 'plugins', f));
 }
 
 /* =====================================================================
@@ -119,7 +134,7 @@ FEATURES.forEach((ft, i) => {
   const m = MODS[ft.mod];
   const page = {
     path: `/features/${ft.slug}/`, title: ft.title, seoTitle: `${ft.seo} — jsKjs`, desc: ft.desc, lede: ft.lede,
-    kicker: m.long, mod: ft.mod, nav: 'features', ogTitle: ft.title,
+    kicker: m.long, mod: ft.mod, nav: 'features', ogTitle: ft.title, plugins: ft.plugins,
     crumbs: [{ name: 'Features', path: '/features/' }, { name: m.name, path: `/features/#${ft.mod}` }, { name: ft.title, path: `/features/${ft.slug}/` }],
     headExtra: ft.css ? `<style>${ft.css}</style>` : '',
   };
@@ -158,25 +173,33 @@ FEATURES.forEach((ft, i) => {
 
 /* features hub */
 {
-  const page = { path: '/features/', title: 'Every jsKjs feature, with a live demo', seoTitle: 'jsKjs Features: 40 Live Demos of jQuery, htmx, Alpine & GSAP-style APIs',
+  const page = { path: '/features/', title: 'Every jsKjs feature, with a live demo', seoTitle: `jsKjs Features: ${FEATURES.length} Live Demos of jQuery, htmx, Alpine & GSAP-style APIs`,
     desc: `Browse all ${FEATURES.length} jsKjs features — jQuery-compatible core, htmx-style requests, Alpine-style reactivity, GSAP-style motion and utilities — each with a working demo and source.`,
     lede: `${FEATURES.length} features across five modules. Every page has a working demo — many backed by real PHP endpoints — plus the exact source that runs it.`,
     kicker: 'Features', nav: 'features', crumbs: [{ name: 'Features', path: '/features/' }] };
   page.jsonld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: page.title, description: page.desc, url: C.SITE + page.path,
     hasPart: FEATURES.map(f => ({ '@type': 'TechArticle', headline: f.title, url: `${C.SITE}/features/${f.slug}/` })) };
-  const modules = FEATURE_ORDER.map(k => `<div class="plate mod-top" data-mod="${k}" id="${k}"><span class="label">${MODS[k].long}</span><p style="margin-top:10px;font-size:15px;color:var(--muted)">${MODS[k].blurb}</p><p style="margin-top:8px;font:600 12.5px var(--mono)">${FEATURES.filter(f => f.mod === k).length} features</p></div>`).join('');
-  const cards = FEATURES.map(f => card(`/features/${f.slug}/`, f.mod, MODS[f.mod].name, esc(f.title), f.desc.split('. ')[0] + '.', 'Live demo →', `${f.title} ${f.desc} ${(f.api || []).join(' ')}`)).join('');
+  const short = f => { let t = f.desc.split('. ')[0].replace(/\s+—.*$/, ''); if (t.length > 96) t = t.slice(0, t.lastIndexOf(' ', 92)).replace(/[,;:]$/, '') + '…'; return t.replace(/\.$/, '') + (t.endsWith('…') ? '' : '.'); };
+  const ftCard = f => `<a class="card plate ft-card mod-top" data-mod="${f.mod}" href="/features/${f.slug}/" data-search="${esc(`${f.title} ${f.desc} ${(f.api || []).join(' ')}`)}"><h3>${esc(f.title)}</h3><p>${short(f)}</p><span class="go">${f.plugins ? 'Add-on · ' : ''}Live demo →</span></a>`;
+  const compareFor = { core: 'jquery', hyper: 'htmx', pulse: 'alpine', motion: 'gsap' };
+  const groups = FEATURE_ORDER.map(k => {
+    const list = FEATURES.filter(f => f.mod === k);
+    return `<section class="ft-group" data-mod="${k}" id="${k}" data-filter-group aria-labelledby="g-${k}">
+    <div class="ft-group-head"><span class="label">${MODS[k].long}</span><h2 id="g-${k}">${MODS[k].name}</h2><p>${MODS[k].blurb}</p>
+    ${compareFor[k] ? `<a href="/compare/${compareFor[k]}/" class="ft-group-link">What's ported from ${MODS[k].from} →</a>` : ''}</div>
+    <div class="ft-grid">${list.map(ftCard).join('')}</div>
+  </section>`;
+  }).join('\n');
   emit(page, pageHead(page) + `
 <div class="wrap section">
-  <div class="grid g3" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))">${modules}</div>
-  <div class="filterbar" style="margin-top:40px" role="search">
+  <div class="filterbar" role="search">
     <label for="ft-q" class="sr-only">Filter features</label>
-    <input id="ft-q" type="search" placeholder="Filter: try “scroll”, “form”, “kj-swap”…" data-filter="#ft-grid">
+    <input id="ft-q" type="search" placeholder="Filter: try “scroll”, “form”, “kj-swap”…" data-filter=".ft-grid">
     <button type="button" data-filter-mod="all" aria-pressed="true">All</button>
     ${FEATURE_ORDER.map(k => `<button type="button" data-filter-mod="${k}" aria-pressed="false">${MODS[k].name}</button>`).join('')}
     <span class="muted" id="filter-count" aria-live="polite" style="font:600 13px var(--mono)">${FEATURES.length} shown</span>
   </div>
-  <div class="grid g3" id="ft-grid">${cards}</div>
+  ${groups}
 </div>`);
 }
 
@@ -190,7 +213,7 @@ FEATURES.forEach((ft, i) => {
     kicker: 'Documentation', nav: 'docs', crumbs: [{ name: 'Docs', path: '/docs/' }] };
   page.jsonld = techArticle(page);
   const nav = DOCS.map(sec => `<div class="aside-group"><h2>${esc(sec.title)}</h2><ul>${sec.fns.map(f => `<li><a href="#${anchor(sec.id, f.n)}">${esc(f.n)}</a></li>`).join('')}</ul></div>`).join('');
-  const sections = DOCS.map(sec => `<section id="${sec.id}" style="margin-top:56px" data-mod="${{ hyper: 'hyper', pulse: 'pulse', motion: 'motion', effects: 'motion', utilities: 'util' }[sec.id] || 'core'}">
+  const sections = DOCS.map(sec => `<section id="${sec.id}" style="margin-top:56px" data-mod="${{ hyper: 'hyper', pulse: 'pulse', motion: 'motion', effects: 'motion', addons: 'motion', utilities: 'util', ajax: 'hyper' }[sec.id] || 'core'}">
     <p class="label">${esc(sec.title)}</p><h2 style="margin-top:12px">${esc(sec.title)}</h2><p class="muted" style="max-width:68ch;margin-top:8px">${sec.intro}</p>
     ${sec.fns.map(f => {
       const live = FEATURE_FOR_DOC[f.n];
@@ -208,7 +231,7 @@ FEATURES.forEach((ft, i) => {
 <div class="wrap section"><div class="layout" style="grid-template-columns:240px minmax(0,1fr)">
   <aside class="aside" aria-label="API sections" style="max-height:calc(100vh - 110px);overflow:auto">${nav}</aside>
   <div>
-    <div class="note" data-mod="motion"><strong>Compatibility notes</strong>Collections are real Arrays, so native <code>.map()</code>/<code>.slice()</code> return plain arrays. <code>.val()</code> on a checkbox returns a boolean. AJAX returns native Promises. Handlers receive native events. Full list: <a href="/migrate/">migrating from jQuery</a> and <a href="/compare/">comparisons</a>.</div>
+    <div class="note" data-mod="motion"><strong>Compatibility notes</strong>The core follows jQuery 3.7 semantics and passes {{JQ_PASS}} of jQuery's own unit tests ({{JQ_PASS_PCT}}). <code>$.ajax()</code> returns a jqXHR, handlers receive a <code>jQuery.Event</code>, and jQuery selector extensions (<code>:visible</code>, <code>:eq()</code>, <code>:contains()</code>) work. Collections also extend <code>Array</code>, so <code>forEach</code>, <code>includes</code> and <code>for…of</code> work too. Full list: <a href="/migrate/">migrating from jQuery</a> and <a href="/compare/">comparisons</a>.</div>
     ${sections}
     <section style="margin-top:56px"><h2>Browser support</h2><p style="margin-top:10px;max-width:70ch">Evergreen browsers: Chrome and Edge 90+, Firefox 90+, Safari 15+. Internet Explorer and pre-2021 browsers are unsupported by design — that is where the small size comes from.</p></section>
   </div>
@@ -290,26 +313,26 @@ const sizeChart = () => {
 };
 {
   const h = JQ.hub;
-  const page = { path: '/jquery/', title: h.title, seoTitle: h.seo, desc: h.desc, lede: h.lede, kicker: 'A fair review · 8 essays', nav: 'jquery', mod: 'hyper', crumbs: [{ name: 'What aged in jQuery', path: '/jquery/' }] };
+  const page = { path: '/jquery/', title: h.title, seoTitle: h.seo, desc: h.desc, lede: h.lede, kicker: 'A fair review · 8 essays', nav: 'jquery', mod: 'hyper', crumbs: [{ name: 'Where jQuery shows its age', path: '/jquery/' }] };
   page.jsonld = techArticle(page, { '@type': 'Article' });
   const cards = JQ.items.map(it => `<a class="card plate" data-mod="hyper" href="/jquery/${it.slug}/"><span class="series-num" aria-hidden="true">${String(it.n).padStart(2, '0')}</span><h3>${esc(it.title)}</h3><p>${it.desc.split('. ')[0]}.</p><span class="go">Read essay ${it.n} →</span></a>`).join('');
   emit(page, pageHead(page) + `<div class="wrap section"><div class="prose" style="margin-bottom:36px">${h.intro}</div><div class="grid g2">${cards}</div></div>`);
 }
 JQ.items.forEach((it, i) => {
   const page = { path: `/jquery/${it.slug}/`, title: it.title, seoTitle: `${it.seo} — jsKjs`, desc: it.desc, lede: it.lede, nav: 'jquery', mod: 'hyper',
-    kicker: `What aged in jQuery · ${it.n} of ${JQ.items.length}`, ogType: 'article',
-    crumbs: [{ name: 'What aged in jQuery', path: '/jquery/' }, { name: it.title, path: `/jquery/${it.slug}/` }] };
-  page.jsonld = techArticle(page, { '@type': 'Article', isPartOf: { '@type': 'CreativeWorkSeries', name: 'What aged in jQuery', url: C.SITE + '/jquery/' } });
+    kicker: `Where jQuery shows its age · ${it.n} of ${JQ.items.length}`, ogType: 'article',
+    crumbs: [{ name: 'Where jQuery shows its age', path: '/jquery/' }, { name: it.title, path: `/jquery/${it.slug}/` }] };
+  page.jsonld = techArticle(page, { '@type': 'Article', isPartOf: { '@type': 'CreativeWorkSeries', name: 'Where jQuery shows its age', url: C.SITE + '/jquery/' } });
   const prev = JQ.items[i - 1], next = JQ.items[i + 1];
   const sources = (it.sources || []).map(k => JQ.SRC[k]).filter(Boolean);
   emit(page, pageHead(page) + `
 <div class="wrap section"><div class="layout"><article>
   <div class="prose">
-    <h2>Why it made sense</h2><p>${it.then}</p>
-    <h2>What changed</h2>${it.now}
+    <h2>Why jQuery did it this way</h2><p>${it.then}</p>
+    <h2>What the browser does now</h2>${it.now}
   </div>
   ${it.sizes ? sizeChart() : ''}
-  <div class="prose"><h2>What jsKjs does instead</h2>${it.fix}</div>
+  <div class="prose"><h2>How jsKjs handles it</h2>${it.fix}</div>
   <div class="verdict"><div><h3>jQuery</h3>${codeBlock(it.before.code, it.before.lang)}</div><div><h3>jsKjs</h3>${codeBlock(it.after.code, it.after.lang)}</div></div>
   ${sources.length ? `<h2 style="margin-top:40px;font-size:1.2rem">Sources</h2><ul style="margin-top:10px">${sources.map(([t, u]) => `<li><a href="${u}" rel="noopener">${esc(t)}</a></li>`).join('')}</ul>` : ''}
   <nav class="pager" aria-label="Previous and next essay">
@@ -434,7 +457,7 @@ const toolCards = () => AI.TOOLS.map(t => card(`/ai/${t.slug}/`, 'pulse', esc(t.
   ${codeBlock(`# Universal (Codex, Copilot, Cursor, Cline, Roo, Windsurf…)\ncurl -fsSLo AGENTS.md ${C.SITE}/ai/kit/AGENTS.md\n\n# Claude Code\ncurl -fsSLo CLAUDE.md ${C.SITE}/ai/kit/CLAUDE.md\nmkdir -p .claude/skills/jskjs && curl -fsSLo .claude/skills/jskjs/SKILL.md ${C.SITE}/ai/kit/SKILL.md\n\n# Cursor\nmkdir -p .cursor/rules && curl -fsSLo .cursor/rules/jskjs.mdc ${C.SITE}/ai/kit/jskjs.mdc\n\n# GitHub Copilot\nmkdir -p .github && curl -fsSLo .github/copilot-instructions.md ${C.SITE}/ai/kit/copilot-instructions.md`, 'bash')}
   <h2 style="margin-top:40px">Every file</h2>
   ${RULES.FILES.map((f, i) => fileBlock(f.path, i === 0)).join('')}
-  <h2 style="margin-top:40px">Set-up guides</h2>
+  <h2 style="margin-top:40px">Setup guides</h2>
   <div class="grid g3" style="margin-top:18px">${toolCards()}</div>
 </div>`);
 }
@@ -445,7 +468,7 @@ AI.TOOLS.forEach(t => {
   emit(page, pageHead(page, `<div class="head-meta">${t.files.map(f => `<a class="btn btn-sm" href="/ai/kit/${KIT_FLAT[f]}" download>${esc(KIT_FLAT[f])}</a>`).join('')}</div>`) + `
 <div class="wrap section"><div class="layout"><article>
   ${t.intro ? `<div class="prose">${t.intro}</div>` : ''}
-  <h2>Set-up</h2>
+  <h2>Setup</h2>
   <ol style="margin-top:14px;padding-left:1.3em;max-width:72ch">${t.steps.map(s => `<li style="margin-top:12px">${s}</li>`).join('')}</ol>
   <h2 style="margin-top:44px">The files</h2>
   ${t.files.map((f, i) => fileBlock(f, i === 0)).join('')}
@@ -456,7 +479,7 @@ AI.TOOLS.forEach(t => {
   <ul style="margin-top:10px">${t.docs.map(([n, u]) => `<li><a href="${u}" rel="noopener">${esc(n)}</a></li>`).join('')}</ul>
 </article>
 <aside class="aside" aria-label="AI tools"><div class="aside-group"><h2>Tools</h2><ul>${AI.TOOLS.map(x => `<li><a href="/ai/${x.slug}/"${x === t ? ' aria-current="page"' : ''}>${esc(x.name)}</a></li>`).join('')}</ul></div>
-<div class="aside-group"><h2>More</h2><ul><li><a href="/ai/">Why jsKjs for agents</a></li><li><a href="/ai/kit/">The full kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li></ul></div></aside>
+<div class="aside-group"><h2>More for AI agents</h2><ul><li><a href="/ai/">Why jsKjs for agents</a></li><li><a href="/ai/kit/">The full kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li></ul></div></aside>
 </div></div>`);
 });
 {
@@ -571,7 +594,7 @@ echo "Hello, $name — served at " . date('H:i:s');`, 'php')}
   <h2 style="margin-top:44px">Browser support</h2>
   <div class="table-wrap"><table><thead><tr><th scope="col">Browser</th><th scope="col">Minimum</th></tr></thead><tbody><tr><td>Chrome / Edge</td><td>90</td></tr><tr><td>Firefox</td><td>90</td></tr><tr><td>Safari (macOS & iOS)</td><td>15</td></tr><tr><td>Internet Explorer</td><td>Not supported</td></tr></tbody></table></div>
   <h2 style="margin-top:44px">Where next?</h2>
-  <div class="grid g3" style="margin-top:18px">${card('/features/', 'core', 'Learn', 'All features', 'Forty live demos with source.')}${card('/docs/', 'hyper', 'Reference', 'API reference', 'Every function and attribute.')}${card('/migrate/', 'motion', 'Upgrade', 'Migrate from jQuery', 'Checklist and differences.')}</div>
+  <div class="grid g3" style="margin-top:18px">${card('/features/', 'core', 'Learn', 'All features', `${FEATURES.length} live demos with source.`)}${card('/docs/', 'hyper', 'Reference', 'API reference', 'Every function and attribute.')}${card('/migrate/', 'motion', 'Upgrade', 'Migrate from jQuery', 'Checklist and differences.')}</div>
 </article><aside class="aside" aria-label="On this page"><div class="aside-group"><h2>Quick links</h2><ul><li><a href="/cdn/">CDN & SRI</a></li><li><a href="/download/">Download the repo</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/ai/kit/">AI agent kit</a></li></ul></div></aside></div></div>`);
 }
 {
@@ -580,35 +603,32 @@ echo "Hello, $name — served at " . date('H:i:s');`, 'php')}
     lede: 'For most pages: swap one script tag, run your test pass, and fix the handful of differences below. Then adopt the new modules at your own pace.', kicker: 'Migrate', nav: 'start', mod: 'core', crumbs: [{ name: 'Migrate from jQuery', path: '/migrate/' }] };
   page.jsonld = techArticle(page);
   const diffs = [
-    ['<code>$.ajax()</code> returns a native Promise (not jqXHR)', '<code>.done/.fail/.always</code> and callbacks still work. <code>xhr.status</code> becomes <code>err.status</code>; <code>xhr.responseText</code> becomes <code>err.data</code>.'],
-    ['Handlers receive the native Event', 'Use <code>e.key</code>, <code>e.target</code>, <code>e.detail</code>. <code>e.originalEvent</code> does not exist (you already have it).'],
-    ['<code>.trigger(type, payload)</code> takes one payload', 'Pass an object instead of an array of extra parameters.'],
-    ['<code>.val()</code> on a checkbox returns <code>true/false</code>', 'Use <code>.attr("value")</code> if you need the value attribute.'],
-    ['Collections are real Arrays', 'Native <code>.map()</code> (callback <code>(el, i)</code>) returns a plain array. jQuery\'s <code>.map((i, el) =&gt; …)</code> → use <code>$.map()</code> or swap the parameters.'],
-    ['Selectors are pure CSS', 'Replace <code>:visible</code>, <code>:first</code>, <code>:eq(n)</code>, <code>:even</code> with methods or CSS (<code>:nth-child</code>).'],
-    ['Browser support', 'Evergreen only: no IE11, no pre-2021 Safari/Firefox.'],
+    ['Evergreen browsers only', 'Chrome/Edge/Firefox 90+, Safari 15+. No IE11 or pre-2021 browsers — if you still need them, stay on jQuery for those pages.'],
+    ['Data is stored in a WeakMap', 'Nothing is written to elements under <code>jQuery.expando</code>, and <code>$.cache</code> does not exist. Code that reads those internals directly should use <code>$.data()</code> / <code>$._data()</code>.'],
+    ['No Sizzle internals', '<code>$.find.compile</code>, <code>$.find.tokenize</code> and <code>$.expr.attrHandle</code> are absent. <code>$.expr.pseudos</code> and <code>$.expr.setFilters</code> (custom selectors) are supported.'],
+    ['Collections extend <code>Array</code>', 'jQuery methods keep jQuery behaviour (<code>.map((i, el) =&gt; …)</code>, <code>.filter(selector)</code>). Native extras such as <code>forEach</code>, <code>includes</code> and <code>for…of</code> also work, and <code>Array.isArray($(…))</code> is <code>true</code>.'],
+    ['Native <code>CustomEvent</code> detail', 'When a handler is fired by a native <code>CustomEvent</code>, its <code>detail</code> is passed as an extra handler argument. jQuery-triggered events are unchanged.'],
   ];
   const removed = [
-    ['.stop() .finish() .delay() .queue()', 'await, $.timeline(), setTimeout'], ['$.Deferred() $.when()', 'new Promise(), Promise.all()'],
-    ['.bind() .live() .delegate()', '.on() with a selector'], ['$.ajaxSetup()', 'a small wrapper around $.ajax'], ['.nextAll() .prevAll() .parentsUntil()', 'loops with .next() / .parent(), or native APIs'],
-    ['.wrapAll() .wrapInner() .unwrap()', 'native DOM (before/append)'], ['.innerWidth() .outerWidth()', 'getBoundingClientRect() / clientWidth'], ['$.grep() $.inArray()', 'Array.prototype.filter / includes'],
+    ['.live() .die()', '.on() with a selector (also removed in jQuery 1.9)'], ['.toggle(fn, fn) .size() $.browser', 'removed in jQuery 1.9–3.0; use click state, .length and feature detection'],
+    ['$.find.compile() $.find.tokenize()', 'not needed — custom pseudos via $.expr.pseudos'], ['jQuery.expando / $.cache access', '$.data() and $._data()'],
   ];
   emit(page, pageHead(page) + `<div class="wrap section" style="max-width:980px">
   <h2>The checklist</h2>
   <ol style="margin-top:14px;padding-left:1.3em;max-width:72ch">
-    <li style="margin-top:10px">Replace the jQuery script tag with ${'`'}jskjs.min.js${'`'.replace('`', '')} — see <a href="/cdn/">CDN</a>. jsKjs also defines <code>window.jQuery</code> if nothing else has.</li>
-    <li style="margin-top:10px">Search your code for the APIs in <a href="#removed">“Removed and replaced”</a> and for jQuery-only selectors (<code>:visible</code>, <code>:first</code>, <code>:eq</code>).</li>
-    <li style="margin-top:10px">Check AJAX error handlers: <code>xhr.status</code> → <code>err.status</code>.</li>
+    <li style="margin-top:10px">Replace the jQuery script tag with ${'`'}jskjs.min.js${'`'.replace('`', '')} — see <a href="/cdn/">CDN</a>. jsKjs defines both <code>$</code> and <code>window.jQuery</code>, and existing jQuery plugins attach to <code>$.fn</code> as usual.</li>
+    <li style="margin-top:10px">Search your code for the few APIs in <a href="#removed">“Not included”</a> — most sites use none of them.</li>
+    <li style="margin-top:10px">Check that your supported browsers are all evergreen (see below).</li>
     <li style="margin-top:10px">Run your tests or click through. Most pages need no further changes.</li>
     <li style="margin-top:10px">Optional: replace hand-wired AJAX with <a href="/features/declarative-requests/"><code>kj-*</code> attributes</a>, state juggling with <a href="/features/reactive-state/"><code>kj-data</code></a>, and <code>.animate()</code> with <a href="/features/tweens/"><code>$.to()</code></a>.</li>
   </ol>
   <h2 style="margin-top:48px">Behaviour that differs</h2>
   <div class="table-wrap"><table><thead><tr><th scope="col">Difference</th><th scope="col">What to do</th></tr></thead><tbody>${diffs.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join('')}</tbody></table></div>
-  <h2 style="margin-top:48px" id="removed">Removed and replaced</h2>
+  <h2 style="margin-top:48px" id="removed">Not included</h2>
   <div class="table-wrap"><table><thead><tr><th scope="col">jQuery</th><th scope="col">Use instead</th></tr></thead><tbody>${removed.map(([a, b]) => `<tr><td><code>${esc(a)}</code></td><td>${esc(b)}</td></tr>`).join('')}</tbody></table></div>
   <h2 style="margin-top:48px">Let an agent do it</h2>
   ${codeBlock(AI.PROMPTS[2].items[0][1], 'txt', 'Prompt')}
-  <p><a href="/compare/jquery/">Full line-by-line comparison with jQuery 4 →</a></p>
+  <p><a href="/compare/jquery/">Full line-by-line comparison with jQuery →</a></p>
 </div>`.replace("${'`'}jskjs.min.js${'`'.replace('`', '')}", '<code>jskjs.min.js</code>'));
 }
 {
@@ -625,10 +645,17 @@ echo "Hello, $name — served at " . date('H:i:s');`, 'php')}
   <p class="muted" style="margin-top:8px">${C.KJ_SRC_KB} KB, fully commented — the best way to read how jsKjs works</p>
   ${codeBlock(`<script src="https://jskjs.org/cdn/${C.VERSION}/jskjs.js"\n        integrity="${C.SRI_FULL}"\n        crossorigin="anonymous"></script>`, 'html')}
   <p><a class="btn" href="/cdn/${C.VERSION}/jskjs.js" download>Download jskjs.js</a></p>
+  <h2 style="margin-top:48px">Optional add-ons</h2>
+  <p class="muted" style="margin-top:8px;max-width:70ch">Load any of these <em>after</em> jskjs.min.js. Each is a few KB and only needed on pages that use it.</p>
+  <div class="table-wrap"><table><thead><tr><th scope="col">Add-on</th><th scope="col">Gzipped</th><th scope="col">Adds</th></tr></thead><tbody>
+  ${PLUGINS.map(pl => `<tr><td><a href="/features/${pl.page}/"><code>jskjs.${pl.name}.min.js</code></a></td><td>${pl.gz} KB</td><td>${pl.what}</td></tr>`).join('')}
+  </tbody></table></div>
+  ${codeBlock(PLUGINS.map(pl => `<script src="https://jskjs.org/cdn/${C.VERSION}/plugins/jskjs.${pl.name}.min.js"\n        integrity="${pl.sri}"\n        crossorigin="anonymous"></script>`).join('\n'), 'html')}
   <h2 style="margin-top:48px">All URLs</h2>
   <div class="table-wrap"><table><thead><tr><th scope="col">URL</th><th scope="col">Caching</th><th scope="col">Use for</th></tr></thead><tbody>
     <tr><td><code>/cdn/${C.VERSION}/jskjs.min.js</code></td><td>1 year, immutable</td><td>Production (with SRI)</td></tr>
     <tr><td><code>/cdn/${C.VERSION}/jskjs.js</code></td><td>1 year, immutable</td><td>Debugging (with SRI)</td></tr>
+    <tr><td><code>/cdn/${C.VERSION}/plugins/jskjs.*.min.js</code></td><td>1 year, immutable</td><td>Add-ons (with SRI)</td></tr>
     <tr><td><code>/cdn/jskjs.min.js</code></td><td>1 hour</td><td>Always-latest experiments — no SRI, may change</td></tr>
     <tr><td><code>/cdn/jskjs.js</code></td><td>1 hour</td><td>Always-latest source</td></tr>
   </tbody></table></div>
@@ -639,34 +666,31 @@ echo "Hello, $name — served at " . date('H:i:s');`, 'php')}
 }
 {
   const page = { path: '/releases/', title: 'Release notes', seoTitle: 'jsKjs Release Notes and Changelog',
-    desc: `jsKjs changelog. v${C.VERSION} (${C.RELEASE_DATE}): jQuery-compatible core, Hyper declarative requests, Pulse reactivity, Motion animation — ${C.KJ_GZ_KB} KB gzipped, MIT licensed.`,
+    desc: `jsKjs changelog. v${C.VERSION} (${C.RELEASE_DATE}): the jQuery 3.7 API with htmx, Alpine and GSAP feature sets and six optional add-ons — ${C.KJ_GZ_KB} KB gzipped, MIT licensed.`,
     lede: 'jsKjs follows semantic versioning. The documented API is stable within a major version.', kicker: 'Releases', nav: 'cdn', mod: 'motion', crumbs: [{ name: 'Releases', path: '/releases/' }] };
   page.jsonld = techArticle(page);
   emit(page, pageHead(page) + `<div class="wrap section" style="max-width:900px"><article class="plate screws" data-mod="motion">
   <p class="label">v${C.VERSION} · ${C.RELEASE_DATE} · first public release</p>
   <div class="prose" style="margin-top:16px">
-  <h2 style="margin-top:0">Core — jQuery-compatible</h2>
-  <p>Native <code>querySelectorAll</code> selectors; Array-subclass collections; content, attribute, class, CSS (including custom properties), geometry and WeakMap-backed data methods; traversal with selector/function/element matchers; insertion and removal; events with delegation, namespaces, <code>.one()</code> and custom-event payloads; fetch-based <code>$.ajax</code>, <code>$.get</code>, <code>$.post</code>, <code>$.getJSON</code>, <code>.load()</code>, <code>.serialize()</code>, <code>.serializeObject()</code>.</p>
-  <h2>Hyper — htmx-style</h2>
-  <p><code>kj-get/post/put/patch/delete</code>, <code>kj-target</code>, eight <code>kj-swap</code> strategies, <code>kj-trigger</code> (events, <code>delay:</code>, <code>load</code>, <code>revealed</code>, <code>every Ns</code>), <code>kj-confirm</code>, <code>kj-indicator</code> with automatic <code>aria-busy</code>, <code>kj-include</code>, <code>kj-vals</code>, <code>kj-push-url</code>; lifecycle events <code>kj:before/after/error/load</code>; automatic wiring of new content.</p>
-  <h2>Pulse — Alpine-style</h2>
-  <p><code>kj-data</code> with <code>init(el)</code>, <code>kj-text</code>, <code>kj-html</code>, <code>kj-show</code>, <code>kj-model</code> (text, number, range, select, checkbox, radio), <code>@event</code> with <code>.prevent/.stop/.enter/.escape</code>, <code>:attr</code> binding, <code>$.component()</code> with arguments, <code>$.store()</code>, <code>$.reactive()</code>.</p>
-  <h2>Motion — GSAP-style</h2>
-  <p><code>$.to/$.from/$.fromTo</code> with independent transforms, ten easings (<code>$.easings</code>) or custom functions, <code>stagger</code>, Promises; <code>$.timeline()</code> with <code>'&lt;'</code> and <code>'+=N'</code> positions, <code>paused</code>, <code>play()</code>, <code>onComplete</code>; classic <code>fadeIn/fadeOut/fadeToggle/slideDown/slideUp/slideToggle/animate</code>.</p>
+  <h2 style="margin-top:0">Core — the jQuery 3.7.1 API</h2>
+  <p>A modernised port of jQuery 3.7.1 (MIT): selectors with jQuery extensions on top of native <code>querySelectorAll</code>, traversal, manipulation, attributes and hooks, CSS and dimensions, the full event system (<code>jQuery.Event</code>, special events, delegation, namespaces), <code>$.ajax</code> with jqXHR, prefilters, transports, converters and JSONP, <code>$.Deferred</code>, <code>$.Callbacks</code>, <code>$.when</code>, queues and effects. Passes {{JQ_PASS}} of jQuery's own unit tests ({{JQ_PASS_PCT}}; {{JQ_ASSERT_PCT}} of assertions).</p>
+  <h2>Hyper — htmx 2 parity</h2>
+  <p>All core <code>kj-*</code> (and <code>hx-*</code>) attributes: verbs, extended targets, every swap style and modifier, trigger modifiers and filters, <code>kj-select</code>, out-of-band swaps, <code>kj-boost</code>, history, <code>kj-sync</code>, <code>kj-include</code>/<code>kj-vals</code>/<code>kj-headers</code>/<code>kj-params</code>, validation, request and response headers, and the htmx event set.</p>
+  <h2>Pulse — Alpine 3 parity</h2>
+  <p>Every Alpine directive as <code>kj-*</code> (and <code>x-*</code>): <code>kj-for</code> with keys, <code>kj-if</code>, <code>kj-transition</code>, <code>kj-teleport</code>, <code>kj-effect</code>, <code>kj-ref</code>, <code>kj-model</code> modifiers, full event modifiers, magics (<code>$refs $store $watch $dispatch $nextTick $id</code>…), <code>$.component()</code>, <code>$.store()</code>, <code>$.directive()</code>, <code>$.magic()</code>.</p>
+  <h2>Motion — GSAP 3 style</h2>
+  <p>Controllable, awaitable tweens and timelines (<code>pause reverse seek progress timeScale repeat yoyo</code>), labels and every position syntax, the full GSAP ease set, stagger objects and grids, keyframes, colour and SVG-attribute tweens, <code>$.set</code>, <code>quickTo</code>, <code>$.utils</code>. jQuery's <code>.animate()</code> and effects run alongside and accept GSAP ease names.</p>
+  <h2>Optional add-ons</h2>
+  <p><code>jskjs.scroll.js</code> (ScrollTrigger-style), <code>jskjs.flip.js</code>, <code>jskjs.drag.js</code> (Draggable), <code>jskjs.split.js</code> (SplitText), <code>jskjs.ui.js</code> (Alpine's Persist, Focus, Collapse, Mask, Intersect and Resize plugins) and <code>jskjs.live.js</code> (htmx's SSE and WebSocket extensions). See the <a href="/cdn/">CDN page</a>.</p>
   <h2>Hardening before launch</h2>
   <ul>
-    <li>Deep <code>$.extend</code> ignores <code>__proto__</code>, <code>constructor</code> and <code>prototype</code> keys (prototype-pollution fix, with regression test).</li>
-    <li>HTML strings with surrounding whitespace are parsed as HTML, not selectors.</li>
-    <li>Hyper sends URL-encoded bodies (multipart only for file uploads) and includes a named input's own value.</li>
-    <li><code>kj:after</code> fires before the swap and <code>kj:load</code> reaches document listeners even after <code>outerHTML</code> swaps.</li>
-    <li>Polling stops when its element is removed.</li>
-    <li><code>kj-model</code> supports radio buttons and accepts programmatic changes on focused fields.</li>
-    <li>Callback-style AJAX no longer reports unhandled promise rejections.</li>
-    <li><code>.not()</code>/<code>.is()</code> accept functions and elements; <code>.css()</code> reads and writes custom properties without <code>px</code>.</li>
-    <li>Timelines start <code>'&lt;'</code> steps together with the previous step; zero-duration tweens are safe.</li>
+    <li>Deep <code>$.extend</code> ignores <code>__proto__</code> keys (prototype-pollution fix, with regression test).</li>
+    <li>Element data lives in <code>WeakMap</code>s, so removed nodes never leak their data or handlers.</li>
+    <li>Built-in styles are applied with constructable stylesheets, so a strict <code>style-src</code> Content-Security-Policy is fine. (Pulse expressions still need <code>'unsafe-eval'</code>, like Alpine's standard build.)</li>
+    <li>Tweens and listeners are cleaned up when Hyper or Pulse removes content.</li>
   </ul>
   <h2>Footprint & support</h2>
-  <p>${C.KJ_MIN_KB} KB minified, ${C.KJ_GZ_KB} KB gzipped, zero dependencies. Chrome/Edge/Firefox 90+, Safari 15+. Tested with ${47} unit tests and real-browser checks of every demo on this site.</p>
+  <p>${C.KJ_MIN_KB} KB minified, ${C.KJ_GZ_KB} KB gzipped, zero dependencies. Chrome/Edge/Firefox 90+, Safari 15+. Tested with jQuery's own QUnit suite, 248 unit and parity tests, real-browser add-on tests, and end-to-end checks of every demo on this site.</p>
   </div></article>
   <p style="margin-top:24px">Report issues and follow future releases on <a href="${C.GITHUB}" rel="noopener">GitHub</a>.</p></div>`);
 }
@@ -705,7 +729,7 @@ echo "Hello, $name — served at " . date('H:i:s');`, 'php')}
         <div class="repo-actions">
           <a class="btn btn-primary" href="${C.GITHUB}" rel="noopener">${ICON_GH.replace('<svg', '<svg width="18" height="18"')} Open on GitHub</a>
           <a class="btn" href="${C.GITHUB_ZIP}" rel="noopener">Download ZIP</a>
-          <a class="btn" href="${C.GITHUB}/stargazers" rel="noopener">★ Star it</a>
+          <a class="btn" href="${C.GITHUB}" rel="noopener" title="Opens the repository; the Star button is at the top right">★ Star on GitHub</a>
         </div>
         ${codeBlock(`git clone ${C.GITHUB}.git\ncd jskjs && npm install && npm test`, 'bash')}
       </div>
@@ -714,9 +738,10 @@ echo "Hello, $name — served at " . date('H:i:s');`, 'php')}
   <div class="wrap section" style="max-width:900px">
     <h2>What's in the repository</h2>
     ${codeBlock(`jskjs/
-├── src/jskjs.js          ← the library, fully commented (${C.KJ_SRC_KB} KB)
-├── dist/                 ← jskjs.js + jskjs.min.js (${C.KJ_GZ_KB} KB gzipped)
-├── test/                 ← unit tests (Node + jsdom)
+├── src/parts/            ← the library source, fully commented (${C.KJ_SRC_KB} KB built)
+├── src/plugins/          ← optional add-ons: scroll, flip, drag, split, ui, live
+├── dist/                 ← jskjs.js + jskjs.min.js (${C.KJ_GZ_KB} KB gzipped) + plugins/
+├── test/                 ← unit & parity tests, add-on tests, jQuery's own QUnit suite runner
 ├── ai-kit/               ← AGENTS.md, CLAUDE.md, skills and rules for every agent
 ├── site/                 ← this website: generator, content, PHP demo endpoints
 ├── .github/workflows/    ← CI tests + optional Hostinger deploy branch
@@ -790,7 +815,7 @@ $('#h-list').on('click', 'li', function () { $(this).css('text-decoration', 'lin
   <p style="margin:14px 0 0"><b style="font:850 40px/1 var(--display)" kj-text="yearly ? '$120' : '$12'"></b>
     <span class="muted" kj-text="yearly ? 'per year — two months free' : 'per month'"></span></p>
 </div>` } },
-    { k: 'motion', title: 'Motion with taste', text: 'Tweens, transforms, ten easings, stagger and timelines on requestAnimationFrame — with Promises you can await. Seconds, like GSAP; classic fadeIn() still works.', link: '/features/#motion',
+    { k: 'motion', title: 'Motion with taste', text: 'Tweens, transforms, every GSAP ease, stagger and timelines on requestAnimationFrame — with Promises you can await. Seconds, like GSAP; classic fadeIn() still works.', link: '/features/#motion',
       demo: { title: 'A staggered wave', html: String.raw`
 <div id="h-dots" style="display:grid;grid-template-columns:repeat(12,1fr);gap:8px" aria-hidden="true"></div>
 <div class="row" style="margin-top:14px"><button type="button" id="h-wave">Play the wave</button></div>`,
@@ -807,7 +832,7 @@ $('#h-wave').on('click', async () => {
   emit(page, hero + `
 <div class="wrap section">${rowsHTML}</div>
 <div class="wrap section"><div class="feature-row" style="align-items:start" data-mod="util">
-  <div><p class="label">Measured, not guessed</p><h2 style="margin-top:14px">A twelfth of the weight</h2><p class="lede" style="margin-top:14px;color:var(--muted)">The official builds of the four libraries total ${KB(OTHERS_GZ)} KB gzipped. jsKjs is ${C.KJ_GZ_KB} KB, because it targets evergreen browsers and ports the parts most sites use. <a href="/compare/">See exactly what's included.</a></p></div>
+  <div><p class="label">Measured, not guessed</p><h2 style="margin-top:14px">${Math.round(100 - 100 * C.KJ_GZ_KB / C.OTHERS_KB)}% lighter than the four it replaces</h2><p class="lede" style="margin-top:14px;color:var(--muted)">The official builds of jQuery, htmx, Alpine and GSAP total ${KB(OTHERS_GZ)} KB gzipped. jsKjs is ${C.KJ_GZ_KB} KB with all four APIs, because it targets evergreen browsers only. Scroll, flip, drag and split are optional add-ons. <a href="/compare/">See exactly what's included.</a></p></div>
   <div>${sizeChart()}</div>
 </div></div>
 <div class="wrap section" data-mod="pulse">
@@ -817,7 +842,7 @@ $('#h-wave').on('click', async () => {
   <p style="margin-top:24px"><a class="btn btn-primary" href="/ai/">Why agents build better with jsKjs →</a> <a class="btn" href="/ai/kit/">Get the agent kit</a></p>
 </div>
 <div class="wrap section" data-mod="hyper">
-  <div class="section-head"><p class="label">A fair review</p><h2>What aged in jQuery</h2><p class="lede" style="color:var(--muted)">jQuery changed the web. Eight short, sourced essays on what aged — and what jsKjs does instead.</p></div>
+  <div class="section-head"><p class="label">A fair review</p><h2>Where jQuery shows its age</h2><p class="lede" style="color:var(--muted)">jQuery changed the web. Eight short, sourced essays on what aged — and what jsKjs does instead.</p></div>
   <div class="grid g4">${JQ.items.map(it => `<a class="card plate" data-mod="hyper" href="/jquery/${it.slug}/"><span class="series-num" aria-hidden="true" style="font-size:40px">${String(it.n).padStart(2, '0')}</span><h3>${esc(it.title)}</h3></a>`).join('')}</div>
 </div>
 <div class="band"><div class="wrap section" style="text-align:center">

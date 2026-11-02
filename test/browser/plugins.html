@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>jsKjs add-on tests</title>
+<style>
+  body { margin: 0; font: 16px/1.4 sans-serif; }
+  .spacer { height: 1500px; }
+  #pinwrap { height: 200px; background: #eef; }
+  #track { position: relative; width: 400px; height: 40px; background: #ddd; margin: 20px; }
+  #knob { position: absolute; left: 0; top: 0; width: 40px; height: 40px; background: #f80; }
+  #grid { display: grid; grid-template-columns: repeat(3, 100px); gap: 10px; margin: 20px; }
+  #grid.list { grid-template-columns: 100px; }
+  .card { height: 60px; background: #9cf; }
+  #para { width: 260px; font-size: 18px; }
+  #col { background: #cfc; }
+</style>
+</head>
+<body>
+<h1 id="hdr">Add-on tests</h1>
+<div id="track"><div id="knob" tabindex="0"></div></div>
+<div id="grid"><div class="card" data-flip-id="a">A</div><div class="card" data-flip-id="b">B</div><div class="card" data-flip-id="c">C</div></div>
+<p id="para">The quick brown fox jumps over the lazy dog, <b>twice</b> on Sundays.</p>
+<div kj-data="{ open: false, n: $persist(3).as('kj-test-n'), seen: 0, phone: '', w: 0 }" id="ui">
+  <button id="tog" @click="open = !open">toggle</button>
+  <div id="col" kj-show="open" kj-collapse.duration.100ms><p>collapsible content</p><p>line two</p></div>
+  <span id="pn" kj-text="n"></span><button id="inc" @click="n++">+</button>
+  <input id="mask" kj-mask="(999) 999-9999" kj-model="phone">
+  <div id="trap" kj-trap="open"><button id="t1">one</button><button id="t2">two</button></div>
+  <div id="sz" kj-resize="w = $width" style="width:123px">resize</div><b id="wv" kj-text="w"></b>
+  <div class="spacer"></div>
+  <div id="seen" kj-intersect="seen++">seen marker</div>
+</div>
+<div id="pinwrap"><div id="pin">PIN ME</div></div>
+<div class="spacer"></div>
+<div id="sse" kj-sse-connect="/stream" ><ul id="sse-list" kj-sse-swap="message" kj-swap="beforeend"></ul></div>
+
+<script src="../../dist/jskjs.js"></script>
+<script src="../../dist/plugins/jskjs.scroll.js"></script>
+<script src="../../dist/plugins/jskjs.flip.js"></script>
+<script src="../../dist/plugins/jskjs.drag.js"></script>
+<script src="../../dist/plugins/jskjs.split.js"></script>
+<script src="../../dist/plugins/jskjs.ui.js"></script>
+<script src="../../dist/plugins/jskjs.live.js"></script>
+<script>
+  window.__ready = true;
+</script>
+</body>
+</html>

@@ -192,7 +192,7 @@ function footer(page) {
     </div>
     ${col('Learn', [['/start/', 'Getting started'], ['/features/', 'All features'], ['/docs/', 'API reference'], ['/demo/', 'Feature tour'], ['/migrate/', 'Migrate from jQuery']])}
     ${col('Modules', [['/features/#core', 'Core (jQuery API)'], ['/features/#hyper', 'Hyper (htmx-style)'], ['/features/#pulse', 'Pulse (Alpine-style)'], ['/features/#motion', 'Motion (GSAP-style)'], ['/features/#util', 'Utilities']])}
-    ${col('Why jsKjs', [['/jquery/', 'What aged in jQuery'], ['/compare/jquery/', 'jsKjs vs jQuery'], ['/compare/htmx/', 'jsKjs vs htmx'], ['/compare/alpine/', 'jsKjs vs Alpine.js'], ['/compare/gsap/', 'jsKjs vs GSAP']])}
+    ${col('Why jsKjs', [['/jquery/', 'Where jQuery shows its age'], ['/compare/jquery/', 'jsKjs vs jQuery'], ['/compare/htmx/', 'jsKjs vs htmx'], ['/compare/alpine/', 'jsKjs vs Alpine.js'], ['/compare/gsap/', 'jsKjs vs GSAP']])}
     ${col('Build with AI', [['/ai/', 'Why agents love it'], ['/ai/kit/', 'Agent rules kit'], ['/ai/prompts/', 'Prompt library'], ['/ai/recipes/', 'Vibe recipes'], ['/llms.txt', 'llms.txt']])}
   </div>
   <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs ${C.VERSION} — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same ${C.KJ_GZ_KB} KB file you would ship. <a href="${C.GITHUB}/tree/main/site" rel="noopener">Read the site's source →</a></p></div>
@@ -204,7 +204,7 @@ function footer(page) {
 }
 
 function scripts(page) {
-  const lib = `<script src="/cdn/${C.VERSION}/jskjs.min.js"></script>`;
+  const lib = `<script src="/cdn/${C.VERSION}/jskjs.min.js"></script>` + (page.plugins || []).map(p => `\n<script src="/cdn/${C.VERSION}/plugins/jskjs.${p}.min.js"></script>`).join('');
   const site = `<script src="/assets/site.js?v=${C.ASSET_V}"></script>`;
   const pageJs = (page.scripts || []).map(s => `<script>\n${s}\n</script>`).join('\n');
   const raw = page.rawScripts || '';

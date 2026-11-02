@@ -9,7 +9,7 @@ module.exports = {
   // Change attribution here — it updates every page, JSON-LD and meta tag.
   AUTHORS: 'Karan Checker and Claude (Fable 5 / Opus 4.8)',
   AUTHOR_PEOPLE: [{ '@type': 'Person', name: 'Karan Checker', url: 'https://github.com/kchecker' }],
-  ASSET_V: '20261023',
+  ASSET_V: '20261029',
   KJ_GZ_KB: '8.1', // overwritten at build from the real minified file
   // Measured with gzip -9 on the official minified builds (npm, October 2026)
   SIZES: [
