@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kj-for, kj-if and kj-teleport: Keyed List Rendering in HTML (Alpine-style) — jsKjs</title>
+<meta name="description" content="Render keyed lists with kj-for, add and remove whole elements with kj-if, and move a template elsewhere in the page with kj-teleport. Interactive to-do demo.">
+<link rel="canonical" href="https://jskjs.org/features/list-rendering/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Karan Checker and Claude (Fable 5 / Opus 4.8)">
+<meta name="theme-color" content="#13152B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jsKjs">
+<meta property="og:title" content="Lists, conditionals and teleport">
+<meta property="og:description" content="Render keyed lists with kj-for, add and remove whole elements with kj-if, and move a template elsewhere in the page with kj-teleport. Interactive to-do demo.">
+<meta property="og:url" content="https://jskjs.org/features/list-rendering/">
+<meta property="og:image" content="https://jskjs.org/assets/og/features-list-rendering.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Lists, conditionals and teleport — jsKjs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lists, conditionals and teleport">
+<meta name="twitter:description" content="Render keyed lists with kj-for, add and remove whole elements with kj-if, and move a template elsewhere in the page with kj-teleport. Interactive to-do demo.">
+<meta name="twitter:image" content="https://jskjs.org/assets/og/features-list-rendering.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=20261029">
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('kj-theme');if(t)d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+.lr-list { list-style:none; padding:0; margin:12px 0 0; display:grid; gap:6px; }
+.lr-list li { display:flex; gap:10px; align-items:center; padding:8px 12px; border:1px solid var(--line); border-radius:10px; background:var(--surface); }
+.lr-list li.done span { text-decoration:line-through; color:var(--muted); }
+.lr-list li button { margin-left:auto; }
+.lr-modal { position:fixed; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.45); z-index:200; }
+.lr-modal > div { background:var(--surface); color:var(--text); padding:22px; border-radius:16px; max-width:360px; box-shadow:var(--shadow); }</style>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Lists, conditionals and teleport","description":"Render keyed lists with kj-for, add and remove whole elements with kj-if, and move a template elsewhere in the page with kj-teleport. Interactive to-do demo.","url":"https://jskjs.org/features/list-rendering/","author":[{"@type":"Person","name":"Karan Checker","url":"https://github.com/kchecker"}],"datePublished":"2026-10-23","dateModified":"2026-11-02","publisher":{"@type":"Organization","name":"jsKjs","url":"https://jskjs.org"},"image":"https://jskjs.org/assets/og/default.png","about":{"@type":"SoftwareSourceCode","name":"jsKjs","codeRepository":"https://github.com/kchecker/jskjs"},"proficiencyLevel":"Beginner","dependencies":"jsKjs 1.0.0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://jskjs.org/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://jskjs.org/features/"},{"@type":"ListItem","position":3,"name":"Pulse","item":"https://jskjs.org/features/#pulse"},{"@type":"ListItem","position":4,"name":"Lists, conditionals and teleport","item":"https://jskjs.org/features/list-rendering/"}]}]</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LYDFZTTQZ"></script>
+<script>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());    gtag('config', 'G-1LYDFZTTQZ'); </script>
+</head>
+<body data-mod="pulse">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="jsKjs home"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+    <nav class="nav-main" aria-label="Primary"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a></nav>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button" id="theme-toggle" kj-data="themeSwitch" @click="toggle()"
+      :aria-label="'Switch to ' + (dark ? 'light' : 'dark') + ' theme'" :aria-pressed="dark ? 'true' : 'false'" aria-label="Switch color theme">
+      <span class="ico ico-sun" kj-show="!dark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></span><span class="ico ico-moon" kj-show="dark" style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span></button>
+    <a class="btn-gh" href="/download/"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-text">Get jsKjs</span><span aria-hidden="true">🥁</span></a>
+    <div class="mnav" kj-data="mobileMenu" @keyup.escape="close()">
+      <button class="mnav-btn" type="button" @click="toggle()" :aria-expanded="open ? 'true' : 'false'" aria-expanded="false" aria-controls="mnav-panel"><span class="burger" aria-hidden="true"><i></i><i></i></span><span kj-text="open ? 'Close' : 'Menu'">Menu</span></button>
+      <nav class="panel-menu" id="mnav-panel" aria-label="Mobile" kj-show="open" style="display:none"><a href="/start/">Start</a><a href="/features/" aria-current="page">Features</a><a href="/docs/">Docs</a><a href="/demo/">Demo</a><a href="/ai/">AI agents</a><a href="/jquery/">Why not jQuery</a><a href="/compare/">Compare</a><a href="/cdn/">CDN</a><a href="/download/">Download 🥁</a></nav>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="band page-head-band"><div class="wrap page-head">
+  <nav aria-label="Breadcrumb"><ol class="crumbs"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/features/#pulse">Pulse</a></li><li><span aria-current="page">Lists, conditionals and teleport</span></li></ol></nav>
+  <p class="label" style="margin-top:22px">Pulse · Alpine-style</p>
+  <h1>Lists, conditionals and teleport</h1>
+  <p class="lede"><code>&lt;template kj-for="todo in todos" :key="todo.id"&gt;</code> renders one element per item and, with a key, moves existing nodes instead of rebuilding them.</p>
+  
+</div><svg class="cable" viewBox="0 0 560 260" aria-hidden="true"><path d="M10 250 C 120 40, 300 260, 550 20" stroke="var(--mod)" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/><path d="M60 258 C 200 120, 340 230, 556 120" stroke="var(--chrome-line)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="550" cy="20" r="9" fill="var(--chrome)" stroke="var(--mod)" stroke-width="4"/></svg></div>
+<div class="wrap section"><div class="layout"><article>
+  <div class="prose">
+<h2>Keyed lists</h2>
+<p><code>kj-for</code> goes on a <code>&lt;template&gt;</code> with exactly one root element. It accepts <code>item in items</code>, <code>(item, index) in items</code>, objects (<code>(value, key) in obj</code>) and ranges (<code>i in 5</code>). Add <code>:key</code> so reordering moves DOM nodes — inputs keep their focus and typed text.</p>
+<h2>kj-if and kj-teleport</h2>
+<p><code>kj-if</code> adds or removes its template's element entirely (unlike <code>kj-show</code>, which only hides it). <code>kj-teleport="body"</code> renders a template somewhere else — useful for modals that must escape an <code>overflow: hidden</code> parent — while keeping the component's state and event handlers.</p></div>
+  <section class="stage" aria-labelledby="stage-1-t">
+  <div class="stage-bar"><span class="led" aria-hidden="true"></span><h3 class="stage-title" id="stage-1-t" style="font:inherit">Live · Keyed to-do list with a teleported dialog</h3><span class="spacer"></span><span aria-hidden="true">jskjs 1.0.0</span></div>
+  <div class="stage-body" id="stage-1"><div kj-data="{ next: 4, draft: '', confirm: false,
+  todos: [{ id: 1, text: 'Read the docs', done: true }, { id: 2, text: 'Try a demo', done: false }, { id: 3, text: 'Ship it', done: false }] }">
+  <form class="row" @submit.prevent="if (draft.trim()) { todos.push({ id: next++, text: draft.trim(), done: false }); draft = '' }">
+    <div class="field" style="flex:1"><label for="lr-new">New item</label><input id="lr-new" kj-model="draft" placeholder="Something to do"></div>
+    <button style="align-self:end">Add</button>
+    <button type="button" style="align-self:end" @click="todos.reverse()">Reverse</button>
+  </form>
+  <ul class="lr-list">
+    <template kj-for="todo in todos" :key="todo.id">
+      <li :class="{ done: todo.done }">
+        <input type="checkbox" kj-model="todo.done" :aria-label="'Done: ' + todo.text">
+        <span kj-text="todo.text"></span>
+        <button type="button" @click="todos = todos.filter(t => t !== todo)" :aria-label="'Remove ' + todo.text">✕</button>
+      </li>
+    </template>
+  </ul>
+  <template kj-if="todos.length === 0"><p class="muted">Nothing left — nice.</p></template>
+  <p class="row" style="margin-top:12px"><span class="muted" kj-text="todos.filter(t => t.done).length + ' of ' + todos.length + ' done'"></span>
+    <button type="button" @click="confirm = true" :disabled="!todos.some(t => t.done)">Clear done…</button></p>
+  <template kj-teleport="body">
+    <div class="lr-modal" kj-show="confirm" @keydown.escape.window="confirm = false" role="dialog" aria-modal="true" aria-label="Clear completed items">
+      <div><p style="margin-top:0">Remove <b kj-text="todos.filter(t => t.done).length"></b> completed items?</p>
+        <div class="row"><button type="button" @click="todos = todos.filter(t => !t.done); confirm = false">Remove</button>
+        <button type="button" @click="confirm = false">Cancel</button></div></div>
+    </div>
+  </template>
+</div></div>
+  
+  <details class="stage-src"><summary>View the source for this demo</summary><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-104" aria-label="Copy HTML code">Copy</button><pre id="code-104" tabindex="0"><code><span class="t-tag">&lt;div</span> <span class="t-kj">kj-data</span><span class="t-p">=</span><span class="t-s">&quot;{ next: 4, draft: '', confirm: false,
+  todos: [{ id: 1, text: 'Read the docs', done: true }, { id: 2, text: 'Try a demo', done: false }, { id: 3, text: 'Ship it', done: false }] }&quot;</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;form</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span> <span class="t-kj">@submit.prevent</span><span class="t-p">=</span><span class="t-s">&quot;if (draft.trim()) { todos.push({ id: next++, text: draft.trim(), done: false }); draft = '' }&quot;</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;field&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;flex:1&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;label</span> <span class="t-at">for</span><span class="t-p">=</span><span class="t-s">&quot;lr-new&quot;</span><span class="t-tag">&gt;</span>New item<span class="t-tag">&lt;/label</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;input</span> <span class="t-at">id</span><span class="t-p">=</span><span class="t-s">&quot;lr-new&quot;</span> <span class="t-kj">kj-model</span><span class="t-p">=</span><span class="t-s">&quot;draft&quot;</span> <span class="t-at">placeholder</span><span class="t-p">=</span><span class="t-s">&quot;Something to do&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;align-self:end&quot;</span><span class="t-tag">&gt;</span>Add<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;align-self:end&quot;</span> <span class="t-kj">@click</span><span class="t-p">=</span><span class="t-s">&quot;todos.reverse()&quot;</span><span class="t-tag">&gt;</span>Reverse<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;/form</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;ul</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;lr-list&quot;</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;template</span> <span class="t-kj">kj-for</span><span class="t-p">=</span><span class="t-s">&quot;todo in todos&quot;</span> <span class="t-kj">:key</span><span class="t-p">=</span><span class="t-s">&quot;todo.id&quot;</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;li</span> <span class="t-kj">:class</span><span class="t-p">=</span><span class="t-s">&quot;{ done: todo.done }&quot;</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;input</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;checkbox&quot;</span> <span class="t-kj">kj-model</span><span class="t-p">=</span><span class="t-s">&quot;todo.done&quot;</span> <span class="t-kj">:aria-label</span><span class="t-p">=</span><span class="t-s">&quot;'Done: ' + todo.text&quot;</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;span</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;todo.text&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-kj">@click</span><span class="t-p">=</span><span class="t-s">&quot;todos</span> = <span class="t-at">todos.filter</span>(t =<span class="t-tag">&gt;</span> t !== todo)&quot; :aria-label=&quot;'Remove ' + todo.text&quot;&gt;✕<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;/template</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;/ul</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;template</span> <span class="t-kj">kj-if</span><span class="t-p">=</span><span class="t-s">&quot;todos.length === 0&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;p</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;muted&quot;</span><span class="t-tag">&gt;</span>Nothing left — nice.<span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/template</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;p</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin-top:12px&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;span</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;muted&quot;</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;todos.filter(t</span> =<span class="t-tag">&gt;</span> t.done).length + ' of ' + todos.length + ' done'&quot;&gt;<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-kj">@click</span><span class="t-p">=</span><span class="t-s">&quot;confirm = true&quot;</span> <span class="t-kj">:disabled</span><span class="t-p">=</span><span class="t-s">&quot;!todos.some(t</span> =<span class="t-tag">&gt;</span> t.done)&quot;&gt;Clear done…<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;template</span> <span class="t-kj">kj-teleport</span><span class="t-p">=</span><span class="t-s">&quot;body&quot;</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;lr-modal&quot;</span> <span class="t-kj">kj-show</span><span class="t-p">=</span><span class="t-s">&quot;confirm&quot;</span> <span class="t-kj">@keydown.escape.window</span><span class="t-p">=</span><span class="t-s">&quot;confirm = false&quot;</span> <span class="t-at">role</span><span class="t-p">=</span><span class="t-s">&quot;dialog&quot;</span> <span class="t-at">aria-modal</span><span class="t-p">=</span><span class="t-s">&quot;true&quot;</span> <span class="t-at">aria-label</span><span class="t-p">=</span><span class="t-s">&quot;Clear completed items&quot;</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;p</span> <span class="t-at">style</span><span class="t-p">=</span><span class="t-s">&quot;margin-top:0&quot;</span><span class="t-tag">&gt;</span>Remove <span class="t-tag">&lt;b</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;todos.filter(t</span> =<span class="t-tag">&gt;</span> t.done).length&quot;&gt;<span class="t-tag">&lt;/b</span><span class="t-tag">&gt;</span> completed items?<span class="t-tag">&lt;/p</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;div</span> <span class="t-at">class</span><span class="t-p">=</span><span class="t-s">&quot;row&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-kj">@click</span><span class="t-p">=</span><span class="t-s">&quot;todos</span> = <span class="t-at">todos.filter</span>(t =<span class="t-tag">&gt;</span> !t.done); confirm = false&quot;&gt;Remove<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;button</span> <span class="t-at">type</span><span class="t-p">=</span><span class="t-s">&quot;button&quot;</span> <span class="t-kj">@click</span><span class="t-p">=</span><span class="t-s">&quot;confirm = false&quot;</span><span class="t-tag">&gt;</span>Cancel<span class="t-tag">&lt;/button</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;/template</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;/div</span><span class="t-tag">&gt;</span></code></pre></div></details>
+</section>
+  <h2 style="margin-top:48px">More examples</h2><h3>Index, objects and ranges</h3><div class="code"><span class="code-label">HTML</span><button class="copy-btn" type="button" data-copy="code-105" aria-label="Copy HTML code">Copy</button><pre id="code-105" tabindex="0"><code><span class="t-tag">&lt;template</span> <span class="t-kj">kj-for</span><span class="t-p">=</span><span class="t-s">&quot;(user, i) in users&quot;</span> <span class="t-kj">:key</span><span class="t-p">=</span><span class="t-s">&quot;user.id&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;li</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;(i + 1) + '. ' + user.name&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/li</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/template</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;template</span> <span class="t-kj">kj-for</span><span class="t-p">=</span><span class="t-s">&quot;(value, key) in settings&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;dt</span> <span class="t-kj">kj-text</span><span class="t-p">=</span><span class="t-s">&quot;key&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/dt</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/template</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;template</span> <span class="t-kj">kj-for</span><span class="t-p">=</span><span class="t-s">&quot;n in 5&quot;</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;span</span><span class="t-tag">&gt;</span>★<span class="t-tag">&lt;/span</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;/template</span><span class="t-tag">&gt;</span></code></pre></div>
+  <h2 style="margin-top:48px">API</h2><div class="api-list"><div class="api-item"><span class="sig">&lt;template kj-if=&quot;expr&quot;&gt; · &lt;template kj-for=&quot;(item, i) in items&quot; :key=&quot;item.id&quot;&gt;</span><p>Add/remove DOM; keyed lists over arrays, objects or ranges.</p><a href="/docs/#pulse-kj-if-kj-for" style="font-size:14px">Reference: kj-if / kj-for →</a></div><div class="api-item"><span class="sig">kj-model[.lazy .number .trim .boolean .debounce.500ms .throttle .fill]=&quot;path&quot;</span><p>Two-way binding for inputs, checkboxes (booleans or arrays), radios and selects.</p><a href="/docs/#pulse-kj-model" style="font-size:14px">Reference: kj-model →</a></div><div class="api-item"><span class="sig">kj-data=&quot;{ … }&quot; · kj-data=&quot;component(args)&quot; · init() · destroy()</span><p>Declare a component. Nested components see their parents.</p><a href="/docs/#pulse-kj-data" style="font-size:14px">Reference: kj-data →</a></div></div>
+  <h2 style="margin-top:48px">Migrating</h2><div class="note"><strong>Coming from Alpine.js</strong><code>x-for</code>, <code>x-if</code> and <code>x-teleport</code> work as <code>kj-for</code>, <code>kj-if</code> and <code>kj-teleport</code> — and the <code>x-</code> spellings are accepted too.</div>
+  <h2 style="margin-top:48px">Related features</h2><div class="grid g3" style="margin-top:18px"><a class="card plate mod-top" data-mod="pulse" href="/features/conditional-display/"><span class="label">Pulse</span><h3>Conditional display</h3><p>Show and hide parts of the page from state with kj-show.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="pulse" href="/features/transitions/"><span class="label">Pulse</span><h3>Transitions</h3><p>Fade, scale and slide elements in and out when kj-show or kj-if changes, using kj-transition modifiers or your own CSS classes.</p><span class="go">Open →</span></a><a class="card plate mod-top" data-mod="pulse" href="/features/reactive-state/"><span class="label">Pulse</span><h3>Reactive state</h3><p>Declare state on an element with kj-data and every binding inside updates when it changes.</p><span class="go">Open →</span></a></div>
+  <nav class="pager" aria-label="Previous and next feature">
+    <a class="prev" href="/features/global-store/"><span class="dir">← Previous</span><strong>Global stores</strong></a>
+    <a class="next" href="/features/transitions/"><span class="dir">Next →</span><strong>Transitions</strong></a>
+  </nav>
+</article><aside class="aside" aria-label="Pulse features">
+    <div class="aside-group"><h2>Pulse · Alpine-style</h2><ul><li><a href="/features/reactive-state/">Reactive state</a></li><li><a href="/features/text-and-html-binding/">Text &amp; HTML binding</a></li><li><a href="/features/conditional-display/">Conditional display</a></li><li><a href="/features/two-way-binding/">Two-way binding</a></li><li><a href="/features/event-directives/">Event directives</a></li><li><a href="/features/attribute-binding/">Attribute binding</a></li><li><a href="/features/components/">Reusable components</a></li><li><a href="/features/global-store/">Global stores</a></li><li><a href="/features/list-rendering/" aria-current="page">Lists, conditionals and teleport</a></li><li><a href="/features/transitions/">Transitions</a></li><li><a href="/features/ui-directives/">UI directives</a></li></ul></div>
+    <div class="aside-group"><h2>Other modules</h2><ul><li><a href="/features/#core">Core · jQuery 3.7 API</a></li><li><a href="/features/#hyper">Hyper · htmx-style</a></li><li><a href="/features/#motion">Motion · GSAP-style</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div class="aside-group"><h2>Also</h2><ul><li><a href="/docs/">API reference</a></li><li><a href="/compare/alpine/">What's ported from Alpine.js</a></li><li><a href="/ai/">Build it with AI</a></li></ul></div>
+  </aside></div></div>
+</main>
+<footer class="band site-footer"><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="/"><span class="jack" aria-hidden="true"></span>jsKjs</a>
+      <p class="muted" style="color:var(--chrome-muted); margin-top:14px; font-size:14.5px; max-width:34ch">The jQuery you know, plus htmx-style requests, Alpine-style reactivity and GSAP-style motion, in about 53.8 KB.</p>
+      <p class="foot-cta"><a class="btn btn-sm" href="https://github.com/kchecker/jskjs" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> github.com/kchecker/jskjs<span class="sr-only"> (opens in a new tab)</span></a></p>
+    </div>
+    <div><h2>Learn</h2><ul><li><a href="/start/">Getting started</a></li><li><a href="/features/">All features</a></li><li><a href="/docs/">API reference</a></li><li><a href="/demo/">Feature tour</a></li><li><a href="/migrate/">Migrate from jQuery</a></li></ul></div>
+    <div><h2>Modules</h2><ul><li><a href="/features/#core">Core (jQuery API)</a></li><li><a href="/features/#hyper">Hyper (htmx-style)</a></li><li><a href="/features/#pulse">Pulse (Alpine-style)</a></li><li><a href="/features/#motion">Motion (GSAP-style)</a></li><li><a href="/features/#util">Utilities</a></li></ul></div>
+    <div><h2>Why jsKjs</h2><ul><li><a href="/jquery/">Where jQuery shows its age</a></li><li><a href="/compare/jquery/">jsKjs vs jQuery</a></li><li><a href="/compare/htmx/">jsKjs vs htmx</a></li><li><a href="/compare/alpine/">jsKjs vs Alpine.js</a></li><li><a href="/compare/gsap/">jsKjs vs GSAP</a></li></ul></div>
+    <div><h2>Build with AI</h2><ul><li><a href="/ai/">Why agents love it</a></li><li><a href="/ai/kit/">Agent rules kit</a></li><li><a href="/ai/prompts/">Prompt library</a></li><li><a href="/ai/recipes/">Vibe recipes</a></li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
+  </div>
+  <div class="built-with" data-mod="motion"><span class="label">Built with itself</span><p>This website runs on jsKjs 1.0.0 — the theme switch, mobile menu, copy buttons, filters, scroll entrances and every demo use the same 53.8 KB file you would ship. <a href="https://github.com/kchecker/jskjs/tree/main/site" target="_blank" rel="noopener">Read the site's source →<span class="sr-only"> (opens in a new tab)</span></a></p></div>
+  <div class="foot-base">
+    <span>© 2026 jsKjs · <a href="https://github.com/kchecker/jskjs/blob/main/LICENSE" target="_blank" rel="noopener">MIT License<span class="sr-only"> (opens in a new tab)</span></a> · Open source · <a href="/releases/">v1.0.0</a> · <a href="/cdn/">CDN</a> · <a href="/download/">Download</a></span>
+    <span>Authored by Karan Checker and Claude (Fable 5 / Opus 4.8)</span>
+  </div>
+</div></footer>
+<script src="/cdn/1.0.0/jskjs.min.js"></script>
+<script src="/assets/site.js?v=20261029"></script>
+
+
+</body>
+</html>

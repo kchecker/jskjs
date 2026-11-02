@@ -1,0 +1,6 @@
+[
+  { "name": "Ada Lovelace",     "role": "Analyst",  "commits": 1843 },
+  { "name": "Grace Hopper",     "role": "Compiler", "commits": 1906 },
+  { "name": "Hedy Lamarr",      "role": "Signals",  "commits": 1914 },
+  { "name": "Katherine Johnson","role": "Orbits",   "commits": 1918 }
+]

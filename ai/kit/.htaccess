@@ -1,0 +1,5 @@
+AddType text/markdown;charset=utf-8 .md .mdc
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex"
+  Header set Access-Control-Allow-Origin "*"
+</IfModule>
